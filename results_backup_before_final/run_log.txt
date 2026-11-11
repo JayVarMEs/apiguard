@@ -1,0 +1,92 @@
+started 06/11/2026 18:47:57.06 
+note: results/e1_best_params.json not found; tuning inside E2 (slower)
+API1 skipped
+API2 {'n_pos': 54, 'n_providers_pos': 29, 'n_eval': 304, 'prevalence': 0.175, 'pr_auc_heldout': 0.218, 'pr_auc_reference': 0.327, 'roc_auc_heldout': 0.571, 'lift_over_chance_ci95': [-0.0023491261363205616, 0.1593731257081469], 'recall_at_tau': 0.053, 'fpr_at_tau': 0.022, 'tau': 0.597, 'generalised': False}
+API3 {'n_pos': 24, 'n_providers_pos': 19, 'n_eval': 304, 'prevalence': 0.1, 'pr_auc_heldout': 0.152, 'pr_auc_reference': 0.277, 'roc_auc_heldout': 0.496, 'lift_over_chance_ci95': [-0.005057881381856742, 0.1458564211472994], 'recall_at_tau': 0.323, 'fpr_at_tau': 0.244, 'tau': 0.7, 'generalised': False}
+C:\Users\ACER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\xgboost\core.py:158: UserWarning: [19:01:24] WARNING: C:\buildkite-agent\builds\buildkite-windows-cpu-autoscaling-group-i-08cbc0333d8d4aae1-1\xgboost\xgboost-ci-windows\src\metric\auc.cc:324: Dataset is empty, or contains only positive or negative samples.
+  warnings.warn(smsg, UserWarning)
+API4 skipped
+API5 {'n_pos': 34, 'n_providers_pos': 19, 'n_eval': 304, 'prevalence': 0.092, 'pr_auc_heldout': 0.371, 'pr_auc_reference': 0.629, 'roc_auc_heldout': 0.914, 'lift_over_chance_ci95': [0.10631685504817351, 0.6237258184699804], 'recall_at_tau': 1.0, 'fpr_at_tau': 0.238, 'tau': 0.581, 'generalised': True}
+API6 skipped
+API7 skipped
+API8 skipped
+API9 skipped
+API10 skipped
+wrote results\e2.json
+seed 0
+  seed 0 fold 0 done
+  seed 0 fold 1 done
+  seed 0 fold 2 done
+  seed 0 fold 3 done
+  seed 0 fold 4 done
+seed 1
+  seed 1 fold 0 done
+  seed 1 fold 1 done
+  seed 1 fold 2 done
+  seed 1 fold 3 done
+  seed 1 fold 4 done
+seed 2
+  seed 2 fold 0 done
+  seed 2 fold 1 done
+  seed 2 fold 2 done
+  seed 2 fold 3 done
+  seed 2 fold 4 done
+seed 3
+  seed 3 fold 0 done
+  seed 3 fold 1 done
+  seed 3 fold 2 done
+  seed 3 fold 3 done
+  seed 3 fold 4 done
+seed 4
+  seed 4 fold 0 done
+  seed 4 fold 1 done
+  seed 4 fold 2 done
+  seed 4 fold 3 done
+  seed 4 fold 4 done
+wrote results\e1.json
+ablation none [0.4381302727467402, 0.025880156734313126]
+ablation A [0.2972209034055386, 0.008350477480349394]
+ablation B [0.40964595994002373, 0.03675505759917472]
+ablation C [0.4609777777019737, 0.008217727533205155]
+ablation D [0.43912003283189915, 0.017301869601866166]
+ablation E [0.4448836625606287, 0.011797445657231953]
+ablation F [0.4771086587033918, 0.035854783338226476]
+wrote results\e5.json
+wrote models\model.json | 66 features | tau=0.626 | rounds=92 | positive rate 0.283
+latency 14 endpoints: 1.47 s
+latency 18 endpoints: 1.59 s
+latency 25 endpoints: 1.72 s
+latency 15 endpoints: 1.67 s
+latency 11 endpoints: 1.44 s
+latency 41 endpoints: 1.63 s
+latency 13 endpoints: 1.63 s
+latency 45 endpoints: 1.79 s
+latency 61 endpoints: 8.1 s
+latency 78 endpoints: 2.15 s
+latency 99 endpoints: 3.01 s
+latency 51 endpoints: 2.05 s
+latency 91 endpoints: 4.5 s
+latency 56 endpoints: 5.02 s
+latency 52 endpoints: 2.85 s
+latency 96 endpoints: 2.13 s
+latency 111 endpoints: 2.84 s
+latency 144 endpoints: 2.52 s
+latency 104 endpoints: 2.64 s
+latency 109 endpoints: 3.07 s
+latency 205 endpoints: 5.81 s
+latency 121 endpoints: 5.06 s
+latency 151 endpoints: 2.35 s
+latency 138 endpoints: 3.96 s
+latency 358 endpoints: 4.12 s
+latency 324 endpoints: 2.92 s
+latency 282 endpoints: 8.47 s
+latency 361 endpoints: 7.75 s
+latency 350 endpoints: 4.23 s
+latency 274 endpoints: 2.43 s
+latency 422 endpoints: 10.51 s
+latency 252 endpoints: 8.51 s
+wrote results\e3.json
+demo/specs/vampi_openapi3.yaml {'n_endpoints': 14, 'n_flaw_endpoints': 10, 'n_design_visible': 5, 'unmatched_L3_rows': [], 'tau': 0.626, 'rank_of_flaw_endpoints': [1, 2, 4, 5, 8, 9, 10, 11, 12, 14], 'rank_of_design_visible': [8, 9, 10, 11, 12], 'roc_auc_all': 0.475, 'pr_auc_all': 0.773, 'prevalence': 0.714, 'roc_auc_design_visible': 0.222, 'pr_auc_design_visible': 0.286}
+wrote results\e4.json
+figures written to results/
+finished 06/11/2026 19:45:42.64 

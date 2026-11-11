@@ -1,0 +1,472 @@
+﻿Schemathesis v4.33.2
+ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+ Γ£à  Loaded specification from /specs/vampi_openapi3.yaml (in 3.69s)
+
+     Base URL:         http://host.docker.internal:5000
+     Specification:    Open API 3.0.1
+     Operations:       14 selected / 14 total
+
+ Γ£à  API capabilities:
+
+     Supports NULL byte in headers:                            Γ£ô
+     Accepts backslash and control characters in URL paths:    Γ£ô
+
+ Γ¥î  Examples (in 1.99s)
+
+     Γ£à  7 passed  Γ¥î  1 failed  ΓÅ¡   6 skipped
+
+ Γ¥î  Coverage (in 8.45s)
+
+     Γ£à  5 passed  Γ¥î  9 failed
+
+ Γ¥î  Fuzzing (in 11.01s)
+
+     Γ£à  9 passed  Γ¥î  5 failed
+
+ Γ¥î  Stateful (in 31.36s)
+
+     Scenarios:    112
+     API Links:    9 covered / 9 selected / 9 total (9 inferred)
+
+     Γ£à 106 passed  Γ¥î 6 failed
+
+=================================== FAILURES ===================================
+_________________________ DELETE /users/v1/{username} __________________________
+1. Test Case ID: nKdjZ4
+
+- ST105 Undocumented Content-Type
+
+    Received: application/problem+json
+    Documented: application/json
+
+[401] Unauthorized:
+
+    `{
+      "detail": "No authorization token provided",
+      "status": 401,
+      "title": "Unauthorized",
+      "type": "about:blank"
+    }`
+
+Reproduce with:
+
+    curl -X DELETE http://host.docker.internal:5000/users/v1/admin
+
+    st replay nKdjZ4
+
+__________________________ GET /books/v1/{book_title} __________________________
+1. Test Case ID: omdYTy
+
+- ST108 Response violates schema
+
+    {"book_title":"book99","owner":"name1","secret":"pass1secret"} is not of type "array"
+
+    Validated against the response schema for status code 200.
+
+    Schema:
+
+        {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "book_title": {
+                        "type": "string",
+                        "example": "bookTitle77"
+                    },
+                    "owner": {
+                        "type": "string",
+                        "example": "name1"
+                    },
+                    "secret": {
+                        "type": "string",
+                        "example": "secret for bookTitle77"
+                    }
+                }
+            }
+        }
+
+    Value:
+
+        {
+            "book_title": "book99",
+            "owner": "name1",
+            "secret": "pass1secret"
+        }
+
+[200] OK:
+
+    `{"book_title": "book99", "owner": "name1", "secret": "pass1secret"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' http://host.docker.internal:5000/books/v1/book99
+
+    st replay omdYTy
+
+2. Test Case ID: VzAHtQ
+
+- ST105 Undocumented Content-Type
+
+    Received: application/problem+json
+    Documented: application/json
+
+[401] Unauthorized:
+
+    `{
+      "detail": "No authorization token provided",
+      "status": 401,
+      "title": "Unauthorized",
+      "type": "about:blank"
+    }`
+
+Reproduce with:
+
+    curl -X GET http://host.docker.internal:5000/books/v1/book99
+
+    st replay VzAHtQ
+
+___________________________________ GET /me ____________________________________
+1. Test Case ID: 74yZ5L
+
+- ST105 Undocumented Content-Type
+
+    Received: application/problem+json
+    Documented: application/json
+
+[401] Unauthorized:
+
+    `{
+      "detail": "No authorization token provided",
+      "status": 401,
+      "title": "Unauthorized",
+      "type": "about:blank"
+    }`
+
+Reproduce with:
+
+    curl -X GET http://host.docker.internal:5000/me
+
+    st replay 74yZ5L
+
+___________________________ OPTIONS /users/v1/_debug ___________________________
+1. Test Case ID: lAtXPJ
+
+- ST205 Allow header mismatch
+
+    `Allow: HEAD, GET, DELETE, OPTIONS` does not match the schema. Undocumented methods advertised: DELETE
+
+    List exactly the methods this resource supports in `Allow`
+
+[200] OK:
+
+    <EMPTY>
+
+Reproduce with:
+
+    curl -X OPTIONS -H 'Authorization: [Filtered]' http://host.docker.internal:5000/users/v1/_debug
+
+    st replay lAtXPJ
+
+___________________________ OPTIONS /users/v1/login ____________________________
+1. Test Case ID: NIReAl
+
+- ST205 Allow header mismatch
+
+    `Allow: HEAD, POST, GET, DELETE, OPTIONS` does not match the schema. Undocumented methods advertised: DELETE, GET
+
+    List exactly the methods this resource supports in `Allow`
+
+[200] OK:
+
+    <EMPTY>
+
+Reproduce with:
+
+    curl -X OPTIONS -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{"username": "name1", "password": "[Filtered]"}' http://host.docker.internal:5000/users/v1/login
+
+    st replay NIReAl
+
+__________________________ OPTIONS /users/v1/register __________________________
+1. Test Case ID: 3RiJGh
+
+- ST205 Allow header mismatch
+
+    `Allow: HEAD, POST, GET, DELETE, OPTIONS` does not match the schema. Undocumented methods advertised: DELETE, GET
+
+    List exactly the methods this resource supports in `Allow`
+
+[200] OK:
+
+    <EMPTY>
+
+Reproduce with:
+
+    curl -X OPTIONS -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{"username": "name1", "password": "[Filtered]", "email": "user@tempmail.com"}' http://host.docker.internal:5000/users/v1/register
+
+    st replay 3RiJGh
+
+________________________________ POST /books/v1 ________________________________
+1. Test Case ID: VdCUHb
+
+- ST105 Undocumented Content-Type
+
+    Received: application/problem+json
+    Documented: application/json
+
+[401] Unauthorized:
+
+    `{
+      "detail": "No authorization token provided",
+      "status": 401,
+      "title": "Unauthorized",
+      "type": "about:blank"
+    }`
+
+Reproduce with:
+
+    curl -X POST -H 'Content-Type: application/json' -d '{"book_title": "book99", "secret": "[Filtered]"}' http://host.docker.internal:5000/books/v1
+
+    st replay VdCUHb
+
+2. Test Case ID: Y3HTvL
+
+- ST202 Schema-valid request rejected
+
+    Valid data should have been accepted
+    Expected: 2xx, 3xx, 401, 403, 404, 409, 429, 5xx
+
+[400] Bad Request:
+
+    `{ "status": "fail", "message": "Please provide a proper JSON body."}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{}' http://host.docker.internal:5000/books/v1
+
+    st replay Y3HTvL
+
+_____________________________ POST /users/v1/login _____________________________
+1. Test Case ID: 5h4r1Y
+
+- ST202 Schema-valid request rejected
+
+    Valid data should have been accepted
+    Expected: 2xx, 3xx, 401, 403, 404, 409, 429, 5xx
+
+[400] Bad Request:
+
+    `{ "status": "fail", "message": "'username' is a required property"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{}' http://host.docker.internal:5000/users/v1/login
+
+    st replay 5h4r1Y
+
+___________________________ POST /users/v1/register ____________________________
+1. Test Case ID: GLha50
+
+- ST202 Schema-valid request rejected
+
+    Valid data should have been accepted
+    Expected: 2xx, 3xx, 401, 403, 404, 409, 429, 5xx
+
+[400] Bad Request:
+
+    `{ "status": "fail", "message": "'username' is a required property"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{}' http://host.docker.internal:5000/users/v1/register
+
+    st replay GLha50
+
+________________________ PUT /users/v1/{username}/email ________________________
+1. Test Case ID: n9x5nz
+
+- ST105 Undocumented Content-Type
+
+    Received: application/problem+json
+    Documented: application/json
+
+[401] Unauthorized:
+
+    `{
+      "detail": "No authorization token provided",
+      "status": 401,
+      "title": "Unauthorized",
+      "type": "about:blank"
+    }`
+
+Reproduce with:
+
+    curl -X PUT -H 'Content-Type: application/json' -d '{"email": "mail3@mail.com"}' http://host.docker.internal:5000/users/v1/name1/email
+
+    st replay n9x5nz
+
+2. Test Case ID: hHpdGW
+
+- ST202 Schema-valid request rejected
+
+    Valid data should have been accepted
+    Expected: 2xx, 3xx, 401, 403, 404, 409, 429, 5xx
+
+[400] Bad Request:
+
+    `{ "status": "fail", "message": "Please provide a proper JSON body."}`
+
+Reproduce with:
+
+    curl -X PUT -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{}' http://host.docker.internal:5000/users/v1/name1/email
+
+    st replay hHpdGW
+
+______________________ PUT /users/v1/{username}/password _______________________
+1. Test Case ID: OUKjmU
+
+- ST105 Undocumented Content-Type
+
+    Received: application/problem+json
+    Documented: application/json
+
+[401] Unauthorized:
+
+    `{
+      "detail": "No authorization token provided",
+      "status": 401,
+      "title": "Unauthorized",
+      "type": "about:blank"
+    }`
+
+Reproduce with:
+
+    curl -X PUT -H 'Content-Type: application/json' -d '{"password": "[Filtered]"}' http://host.docker.internal:5000/users/v1/name1/password
+
+    st replay OUKjmU
+
+2. Test Case ID: WVP3HM
+
+- ST202 Schema-valid request rejected
+
+    Valid data should have been accepted
+    Expected: 2xx, 3xx, 401, 403, 404, 409, 429, 5xx
+
+[400] Bad Request:
+
+    `{ "status": "fail", "message": "Malformed Data"}`
+
+Reproduce with:
+
+    curl -X PUT -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{}' http://host.docker.internal:5000/users/v1/name2/password
+
+    st replay WVP3HM
+
+________________________________ Stateful tests ________________________________
+1. Test Case ID: skom7K
+
+- ST101 Server error
+
+- ST103 Undocumented status code
+
+    Received: 500
+    Documented: 200, 400, 401
+
+[500] Internal Server Error:
+
+    `<!doctype html>
+    <html lang=en>
+      <head>
+        <title>sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: books.book_title
+    [SQL: INSERT INTO books (book_title, secret_content, user_id) VALUES (?, ?, ?)]
+    [parameters: ('bookTitle59', '\xa0┬⌐+\U000c1ad8├⌐', 1)]
+    (Background on this error at: https://sqlalche.me/e/20/gkpj)
+     // Werkzeug Debugger</title>
+        <link rel="stylesheet" href="?__debugger__=yes&amp;cmd=resource&amp;f=style.css">
+        <link rel="shortcut icon"
+            href="?__debu // Output truncated...`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{"\u0003d\n\u00b4\udab2\ude37T\u009a\udaab\udc6b\ud967\udf42": {"\u00ac": true, "R\u00b7\u00fd\u00be_\b4": false, "\u0082\u00f4_\u009b\u00a7\ud91c\udd1e\ud93b\udd3a\u000es": [156665075, null, true]}, "y\u00cb\u00ce": {"\u00f4\ud9f0\udd08h": -2.7890234552027625e+275}, ".exe": [1.093886713535204e-170], "\udafc\udd84\u00bf": [{"\uda76\uddbf\u008d\u00a5y\u008a\ud92a\ude83\u00dd'"'"'\u00c8\ud9bb\udedf": true, "\u00c3": false}], "\uda30\ude601\u0014\ud85a\udfc9\u00c7\u00f9": [{"\u009f\u00a9\u00bf\b\u0006\u00e6": -1e-05, "/\u0001\u00e97": [-2.00001, "", -1.5001424740790812e+16]}], "book_title": "bookTitle59", "secret": "[Filtered]"}' http://host.docker.internal:5000/books/v1
+
+    st replay skom7K
+
+2. Test Case ID: 8t6X8S
+
+- ST302 Created resource not found
+
+    The API returned `404 Not Found` for a resource that was just created.
+
+    Created with      : `POST /books/v1`
+    Not available with: `GET /books/v1/{book_title}`
+
+[404] Not Found:
+
+    `{
+      "detail": "The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.",
+      "status": 404,
+      "title": "Not Found",
+      "type": "about:blank"
+    }`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{"secret": "[Filtered]", "book_title": ""}' http://host.docker.internal:5000/books/v1
+    curl -X GET -H 'Authorization: [Filtered]' http://host.docker.internal:5000/books/v1/
+
+    st replay 8t6X8S
+
+=================================== WARNINGS ===================================
+
+Authentication failed: 1 operation returned only 401/403 responses
+
+401 Unauthorized (1 operation):
+  - DELETE /users/v1/{username}
+
+≡ƒÆí Ensure valid authentication credentials are set via `--auth` or `-H`
+
+=================================== SUMMARY ====================================
+
+API Operations:
+  Selected: 14/14
+  Tested: 14
+
+Test Phases:
+  Γ¥î Examples
+  Γ¥î Coverage
+  Γ¥î Fuzzing
+  Γ¥î Stateful
+
+Failures:
+  Γ¥î ST101 Server error: 1
+  Γ¥î ST108 Response violates schema: 1
+  Γ¥î ST205 Allow header mismatch: 3
+  Γ¥î ST302 Created resource not found: 1
+  Γ¥î ST202 Schema-valid request rejected: 5
+  Γ¥î ST105 Undocumented Content-Type: 6
+  Γ¥î ST103 Undocumented status code: 1
+
+For more information, run `st explain <code>` for ST101, ST103, ST105, ST108, ST202, ST205, ST302.
+
+Warnings:
+  ΓÜá∩╕Å Authentication failed: 1 operation returned only 401/403 responses
+
+_______________________________ Schema Coverage ________________________________
+
+Operations           14/14   100.0%
+Parameters            6/10    60.0%  (4 partial)
+Keywords             11/24    45.8%  (13 partial)
+Examples             14/14   100.0%
+Responses            25/28    89.2%
+Response Keywords   114/134   85.0%
+
+HTML report         ./schema-coverage.html
+
+Test cases:
+  805 generated, 17 found 18 unique failures
+
+Seed: 230536010127379937488180257152295147083
+
+======================= 18 failures, 1 warning in 53.38s =======================

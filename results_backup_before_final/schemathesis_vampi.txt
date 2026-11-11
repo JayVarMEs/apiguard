@@ -1,0 +1,475 @@
+Unable to find image 'schemathesis/schemathesis:stable' locally
+stable: Pulling from schemathesis/schemathesis
+1d0f90e45bda: Pulling fs layer
+fb2e6b43bfe3: Pulling fs layer
+881fc932939e: Pulling fs layer
+ed17d8f13329: Pulling fs layer
+52a1f52a59fb: Pulling fs layer
+1dfa34cf3e91: Pulling fs layer
+9f290178940b: Pulling fs layer
+ed17d8f13329: Download complete
+1d0f90e45bda: Download complete
+52a1f52a59fb: Download complete
+881fc932939e: Download complete
+9f290178940b: Download complete
+fb2e6b43bfe3: Download complete
+44136fa355b3: Download complete
+2fb6343ac256: Download complete
+881fc932939e: Pull complete
+ed17d8f13329: Pull complete
+fb2e6b43bfe3: Pull complete
+1dfa34cf3e91: Download complete
+1dfa34cf3e91: Pull complete
+52a1f52a59fb: Pull complete
+9f290178940b: Pull complete
+1d0f90e45bda: Pull complete
+Digest: sha256:b6521357a7262c725cf10c6237fdf075b6d027219c0aca93c9930497d1824c85
+Status: Downloaded newer image for schemathesis/schemathesis:stable
+Schemathesis v4.33.2
+━━━━━━━━━━━━━━━━━━━━
+
+ ✅  Loaded specification from /specs/vampi_openapi3.yaml (in 3.78s)
+
+     Base URL:         http://host.docker.internal:5000
+     Specification:    Open API 3.0.1
+     Operations:       14 selected / 14 total
+
+ ✅  API capabilities:
+
+     Supports NULL byte in headers:                            ✓
+     Accepts backslash and control characters in URL paths:    ✓
+
+ ❌  Examples (in 1.39s)
+
+     ✅  1 passed  ❌  7 failed  ⏭   6 skipped
+
+ ❌  Coverage (in 6.49s)
+
+     ✅  4 passed  ❌ 10 failed
+
+ ❌  Fuzzing (in 1.79s)
+
+     ✅  5 passed  ❌  9 failed
+
+ ❌  Stateful (in 24.20s)
+
+     Scenarios:    80
+     API Links:    7 covered / 9 selected / 9 total (9 inferred)
+
+     ✅ 74 passed  ❌ 6 failed
+
+=================================== FAILURES ===================================
+_________________________ DELETE /users/v1/{username} __________________________
+1. Test Case ID: D97cJX
+
+- ST105 Undocumented Content-Type
+
+    Received: application/problem+json
+    Documented: application/json
+
+[401] Unauthorized:
+
+    `{
+      "detail": "Invalid authorization header",
+      "status": 401,
+      "title": "Unauthorized",
+      "type": "about:blank"
+    }`
+
+Reproduce with:
+
+    curl -X DELETE -H 'Authorization: [Filtered]' http://host.docker.internal:5000/users/v1/name1
+
+    st replay D97cJX
+
+________________________________ GET /books/v1 _________________________________
+1. Test Case ID: H2iK8E
+
+- ST101 Server error
+
+- ST103 Undocumented status code
+
+    Received: 500
+    Documented: 200
+
+[500] Internal Server Error:
+
+    `<!doctype html>
+    <html lang=en>
+      <head>
+        <title>sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: books
+    [SQL: SELECT books.id AS books_id, books.book_title AS books_book_title, books.secret_content AS books_secret_content, books.user_id AS books_user_id 
+    FROM books]
+    (Background on this error at: https://sqlalche.me/e/20/e3q8)
+     // Werkzeug Debugger</title>
+        <link rel="stylesheet" href="?__debugger__=yes&amp;cmd=resource&amp;f=style.css">
+        <link rel="shortcut icon"
+            hr // Output truncated...`
+
+Reproduce with:
+
+    curl -X GET http://host.docker.internal:5000/books/v1
+
+    st replay H2iK8E
+
+__________________________ GET /books/v1/{book_title} __________________________
+1. Test Case ID: sTbdQX
+
+- ST105 Undocumented Content-Type
+
+    Received: application/problem+json
+    Documented: application/json
+
+[401] Unauthorized:
+
+    `{
+      "detail": "Invalid authorization header",
+      "status": 401,
+      "title": "Unauthorized",
+      "type": "about:blank"
+    }`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' http://host.docker.internal:5000/books/v1/bookTitle77
+
+    st replay sTbdQX
+
+___________________________________ GET /me ____________________________________
+1. Test Case ID: cdxaKG
+
+- ST105 Undocumented Content-Type
+
+    Received: application/problem+json
+    Documented: application/json
+
+[401] Unauthorized:
+
+    `{
+      "detail": "No authorization token provided",
+      "status": 401,
+      "title": "Unauthorized",
+      "type": "about:blank"
+    }`
+
+Reproduce with:
+
+    curl -X GET http://host.docker.internal:5000/me
+
+    st replay cdxaKG
+
+___________________________ GET /users/v1/{username} ___________________________
+1. Test Case ID: XbpnSW
+
+- ST101 Server error
+
+- ST103 Undocumented status code
+
+    Received: 500
+    Documented: 200, 404
+
+[500] Internal Server Error:
+
+    `<!doctype html>
+    <html lang=en>
+      <head>
+        <title>sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: users
+    [SQL: SELECT * FROM users WHERE username = 'name1']
+    (Background on this error at: https://sqlalche.me/e/20/e3q8)
+     // Werkzeug Debugger</title>
+        <link rel="stylesheet" href="?__debugger__=yes&amp;cmd=resource&amp;f=style.css">
+        <link rel="shortcut icon"
+            href="?__debugger__=yes&amp;cmd=resource&amp;f=console.png">
+        <script src="?__debugger__=yes&amp;cmd=resource& // Output truncated...`
+
+Reproduce with:
+
+    curl -X GET http://host.docker.internal:5000/users/v1/name1
+
+    st replay XbpnSW
+
+___________________________ OPTIONS /users/v1/_debug ___________________________
+1. Test Case ID: m0UZXY
+
+- ST205 Allow header mismatch
+
+    `Allow: HEAD, GET, DELETE, OPTIONS` does not match the schema. Undocumented methods advertised: DELETE
+
+    List exactly the methods this resource supports in `Allow`
+
+[200] OK:
+
+    <EMPTY>
+
+Reproduce with:
+
+    curl -X OPTIONS http://host.docker.internal:5000/users/v1/_debug
+
+    st replay m0UZXY
+
+___________________________ OPTIONS /users/v1/login ____________________________
+1. Test Case ID: 2I7obL
+
+- ST205 Allow header mismatch
+
+    `Allow: HEAD, POST, GET, DELETE, OPTIONS` does not match the schema. Undocumented methods advertised: DELETE, GET
+
+    List exactly the methods this resource supports in `Allow`
+
+[200] OK:
+
+    <EMPTY>
+
+Reproduce with:
+
+    curl -X OPTIONS -H 'Content-Type: application/json' -d '{"username": "name1", "password": "[Filtered]"}' http://host.docker.internal:5000/users/v1/login
+
+    st replay 2I7obL
+
+__________________________ OPTIONS /users/v1/register __________________________
+1. Test Case ID: HrjW43
+
+- ST205 Allow header mismatch
+
+    `Allow: HEAD, POST, GET, DELETE, OPTIONS` does not match the schema. Undocumented methods advertised: DELETE, GET
+
+    List exactly the methods this resource supports in `Allow`
+
+[200] OK:
+
+    <EMPTY>
+
+Reproduce with:
+
+    curl -X OPTIONS -H 'Content-Type: application/json' -d '{"username": "name1", "password": "[Filtered]", "email": "user@tempmail.com"}' http://host.docker.internal:5000/users/v1/register
+
+    st replay HrjW43
+
+________________________________ POST /books/v1 ________________________________
+1. Test Case ID: QvYceF
+
+- ST105 Undocumented Content-Type
+
+    Received: application/problem+json
+    Documented: application/json
+
+[401] Unauthorized:
+
+    `{
+      "detail": "Invalid authorization header",
+      "status": 401,
+      "title": "Unauthorized",
+      "type": "about:blank"
+    }`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{"book_title": "book99", "secret": "[Filtered]"}' http://host.docker.internal:5000/books/v1
+
+    st replay QvYceF
+
+_____________________________ POST /users/v1/login _____________________________
+1. Test Case ID: iAJ3rG
+
+- ST202 Schema-valid request rejected
+
+    Valid data should have been accepted
+    Expected: 2xx, 3xx, 401, 403, 404, 409, 429, 5xx
+
+[400] Bad Request:
+
+    `{ "status": "fail", "message": "'username' is a required property"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Content-Type: application/json' -d '{}' http://host.docker.internal:5000/users/v1/login
+
+    st replay iAJ3rG
+
+___________________________ POST /users/v1/register ____________________________
+1. Test Case ID: r0qXF4
+
+- ST101 Server error
+
+- ST103 Undocumented status code
+
+    Received: 500
+    Documented: 200, 400
+
+[500] Internal Server Error:
+
+    `<!doctype html>
+    <html lang=en>
+      <head>
+        <title>sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: users
+    [SQL: SELECT users.id AS users_id, users.username AS users_username, users.password AS users_password, users.email AS users_email, users.admin AS users_admin 
+    FROM users 
+    WHERE users.username = ?
+     LIMIT ? OFFSET ?]
+    [parameters: ('name1', 1, 0)]
+    (Background on this error at: https://sqlalche.me/e/20/e3q8)
+     // Werkzeug Debugger</title>
+        <link rel="stylesheet" href="?__debugger // Output truncated...`
+
+Reproduce with:
+
+    curl -X POST -H 'Content-Type: application/json' -d '{"username": "name1", "password": "[Filtered]", "email": "user@tempmail.com"}' http://host.docker.internal:5000/users/v1/register
+
+    st replay r0qXF4
+
+2. Test Case ID: CHo5Dp
+
+- ST202 Schema-valid request rejected
+
+    Valid data should have been accepted
+    Expected: 2xx, 3xx, 401, 403, 404, 409, 429, 5xx
+
+[400] Bad Request:
+
+    `{ "status": "fail", "message": "'username' is a required property"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Content-Type: application/json' -d '{}' http://host.docker.internal:5000/users/v1/register
+
+    st replay CHo5Dp
+
+________________________ PUT /users/v1/{username}/email ________________________
+1. Test Case ID: IWRnMn
+
+- ST105 Undocumented Content-Type
+
+    Received: application/problem+json
+    Documented: application/json
+
+[401] Unauthorized:
+
+    `{
+      "detail": "Invalid authorization header",
+      "status": 401,
+      "title": "Unauthorized",
+      "type": "about:blank"
+    }`
+
+Reproduce with:
+
+    curl -X PUT -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{"email": "mail3@mail.com"}' http://host.docker.internal:5000/users/v1/name1/email
+
+    st replay IWRnMn
+
+______________________ PUT /users/v1/{username}/password _______________________
+1. Test Case ID: L2t7hI
+
+- ST105 Undocumented Content-Type
+
+    Received: application/problem+json
+    Documented: application/json
+
+[401] Unauthorized:
+
+    `{
+      "detail": "Invalid authorization header",
+      "status": 401,
+      "title": "Unauthorized",
+      "type": "about:blank"
+    }`
+
+Reproduce with:
+
+    curl -X PUT -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{"password": "[Filtered]"}' http://host.docker.internal:5000/users/v1/name1/password
+
+    st replay L2t7hI
+
+________________________________ Stateful tests ________________________________
+1. Test Case ID: mJFYMk
+
+- ST202 Schema-valid request rejected
+
+    Valid data should have been accepted
+    Expected: 2xx, 3xx, 401, 403, 404, 409, 429, 5xx
+
+[400] Bad Request:
+
+    `{ "status": "fail", "message": "Please provide a proper JSON body."}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{"-\u0014)\u00a3\u0094\uda78\udc27": {}, "\ud800\udddb\u0092\u00a2\u000b\u000f\u00ddN?\u0000\udad9\uddde\uda02\udff6D\ud89c\udc0a\u00c7": [211604253], "\u00f0\udb4e\uddf53\u00abH\udabb\udc24E\u0083m\u001df": [{"\u00abD\u00bf\u00b7\u00e5": 1.8984271216943732e+16, "": true, "|\u009cM\u00ba\u00f1\u0096": null}], "a$\u00ea\ud978\udcaa\udb75\ude1a\u00a7": [], ".exe": {"\r\u0000\u00f1\u0014\ud8b0\udeb7": 98229399}}' http://host.docker.internal:5000/books/v1
+
+    st replay mJFYMk
+
+2. Test Case ID: TSwn5O
+
+- ST202 Schema-valid request rejected
+
+    Valid data should have been accepted
+    Expected: 2xx, 3xx, 401, 403, 404, 409, 429, 5xx
+    Hint: The request body contains 3 additional properties not defined in the schema (`z.`, `¤@êÑ[å`, `ã𲷌魡#𱥁`). The server appears to reject properties the schema allows. Declare `additionalProperties: false` if extras are not accepted, or make the server ignore unknown fields.
+
+[400] Bad Request:
+
+    `{ "status": "fail", "message": "Please provide a proper JSON body."}`
+
+Reproduce with:
+
+    curl -X GET http://host.docker.internal:5000/users/v1
+    curl -X PUT -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{"": {"": [], "E\u00c9\u00b2\u0088\uda5f\udf710\u00ba\u0094": 783501543, "U\uda10\ude5e\u00fd\uda05\udf04{": -2954764}, "\u00c1": "$\u00f0\udab2\udd21\u00b7\ud965\udca6\u00d1v\udba2\udcc6\ud840\ude55\u00a9\ud9bd\ude69\ud944\uddec\u00d0\u001b\u008dD\u00cf\u00a9%J4\u009f@K\u00dd\u00ce\u0091\u00f1\u00a3U\ud8cc\udf4d\u00e92", "email": "mail2@mail.com"}' http://host.docker.internal:5000/users/v1/admin/email
+    curl -X PUT -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{"\u00e3\ud88b\uddcc\u9b61#\ud886\udd41": [false, "__main__", -14641750], "\u00a4@\u00ea\u00d1[\u00e5": -10000000000000, "z.": [1908]}' http://host.docker.internal:5000/users/v1/name1/email
+
+    st replay TSwn5O
+
+=================================== WARNINGS ===================================
+
+Authentication failed: 6 operations returned only 401/403 responses
+
+401 Unauthorized (6 operations):
+  - DELETE /users/v1/{username}
+  - GET /books/v1/{book_title}
+  - GET /me
+  - POST /books/v1
+  - PUT /users/v1/{username}/email
+  - PUT /users/v1/{username}/password
+
+💡 Ensure valid authentication credentials are set via `--auth` or `-H`
+
+=================================== SUMMARY ====================================
+
+API Operations:
+  Selected: 14/14
+  Tested: 14
+
+Test Phases:
+  ❌ Examples
+  ❌ Coverage
+  ❌ Fuzzing
+  ❌ Stateful
+
+Failures:
+  ❌ ST101 Server error: 3
+  ❌ ST205 Allow header mismatch: 3
+  ❌ ST202 Schema-valid request rejected: 4
+  ❌ ST105 Undocumented Content-Type: 6
+  ❌ ST103 Undocumented status code: 3
+
+For more information, run `st explain <code>` for ST101, ST103, ST105, ST202, ST205.
+
+Warnings:
+  ⚠️ Authentication failed: 6 operations returned only 401/403 responses
+
+_______________________________ Schema Coverage ________________________________
+
+Operations           14/14   100.0%
+Parameters            5/10    50.0%  (5 partial)
+Keywords              6/24    25.0%  (18 partial)
+Examples             14/14   100.0%
+Responses            17/28    60.7%
+Response Keywords    80/134   59.7%
+
+HTML report         ./schema-coverage.html
+
+Test cases:
+  485 generated, 16 found 19 unique failures
+
+Seed: 158779962261818798834950811562776879709
+
+======================= 19 failures, 1 warning in 34.49s =======================

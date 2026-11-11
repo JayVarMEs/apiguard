@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>APIGUARD demo</title>
+<style>
+:root{--bg:#f6f4ef;--card:#fff;--ink:#1b2430;--mut:#6b7482;--line:#e3dfd5;--amber:#b36b00;--teal:#17707f;--ok:#1d8a4e;--bad:#c0392b;--okbg:#e6f4ec;--badbg:#fbe9e7}
+@media (prefers-color-scheme:dark){:root{--bg:#12161c;--card:#1a2029;--ink:#e8ecf1;--mut:#8f9aab;--line:#2b3340;--amber:#e0a040;--teal:#4fb3c2;--ok:#4cc58a;--bad:#ff7a6b;--okbg:#14291f;--badbg:#3a1d1a}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,Segoe UI,sans-serif}
+header{padding:20px 28px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+header h1{margin:0;font-size:22px;letter-spacing:.5px}header span{color:var(--mut)}
+main{display:grid;grid-template-columns:340px 1fr;gap:20px;padding:20px 28px;max-width:1300px;margin:auto}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin:0 0 10px}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;color:var(--mut);cursor:pointer}
+.drop.on{border-color:var(--teal);color:var(--ink)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+button,select,input{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:7px 10px}
+button{cursor:pointer}button:hover{border-color:var(--teal)}
+button.primary{background:var(--teal);color:#fff;border-color:var(--teal);width:100%;padding:11px;font-weight:600;margin-top:12px}
+button.primary:disabled{opacity:.5}
+label{display:block;font-size:13px;color:var(--mut);margin-top:10px}
+label input,label select{width:100%;margin-top:3px}
+small{color:var(--mut)}
+#banner{border-radius:12px;padding:18px 22px;display:flex;align-items:center;gap:16px;margin-bottom:16px}
+#banner.pass{background:var(--okbg);border:1px solid var(--ok)}#banner.fail{background:var(--badbg);border:1px solid var(--bad)}
+#banner b{font-size:34px;letter-spacing:1px}#banner.pass b{color:var(--ok)}#banner.fail b{color:var(--bad)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.stat b{display:block;font-size:22px}.stat small{display:block}
+table{width:100%;border-collapse:collapse}th{font-size:12px;text-align:left;color:var(--mut);padding:6px 8px;border-bottom:1px solid var(--line)}
+td{padding:8px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr.ep{cursor:pointer}tr.ep:hover{background:rgba(127,127,127,.08)}
+.m{font:600 11px monospace;padding:2px 6px;border-radius:5px;background:var(--line)}
+.path{font-family:ui-monospace,Consolas,monospace;font-size:13px;word-break:break-all}
+.bar{position:relative;height:10px;background:var(--line);border-radius:5px;min-width:120px}
+.bar i{position:absolute;left:0;top:0;bottom:0;border-radius:5px;background:var(--teal)}
+.bar i.hi{background:var(--bad)}.bar u{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--amber)}
+.tag{font-size:11px;padding:2px 7px;border-radius:9px;border:1px solid var(--line);color:var(--mut)}
+.tag.flag{border-color:var(--bad);color:var(--bad)}
+.why td{background:rgba(127,127,127,.06)}
+.why ul{margin:4px 0 8px 18px;padding:0}.why code{font-size:12px}
+.up{color:var(--bad)}.dn{color:var(--teal)}
+#err{color:var(--bad);white-space:pre-wrap;font-family:monospace;font-size:12px}
+.empty{color:var(--mut);text-align:center;padding:60px 0}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid #fff6;border-top-color:#fff;border-radius:50%;animation:r 1s linear infinite;vertical-align:-2px;margin-right:8px}
+@keyframes r{to{transform:rotate(360deg)}}
+</style></head><body>
+<header><h1>APIGUARD</h1><span>Continuous API security gate for CI/CD: upload an OpenAPI file, get a pass/fail decision and a ranked list of risky endpoints.</span></header>
+<main>
+<section class="card" style="align-self:start">
+  <h2>1. OpenAPI file</h2>
+  <div class="drop" id="drop">Drop a .yaml / .json file here<br><small>or click to choose</small></div>
+  <input type="file" id="file" accept=".yaml,.yml,.json" hidden>
+  <div class="row" id="samples"></div>
+  <small id="fname">No file chosen.</small>
+  <h2 style="margin-top:16px">2. Settings</h2>
+  <label>Model
+    <select id="model"><option value="l2plus">Reference-label model (E7, default)</option><option value="scanner">Scanner-trained model (E1 to E4)</option><option value="l2only">L2-only model (E6)</option></select></label>
+  <label>Threshold &tau; <small>(empty = model's own)</small><input id="tau" type="number" step="0.01" min="0" max="1" placeholder="e.g. 0.53"></label>
+  <label>Tolerated endpoints at or above &tau; (k)<input id="k" type="number" min="0" value="0"></label>
+  <label>Base spec <small>(optional: only new or changed endpoints count)</small><input type="file" id="basefile" accept=".yaml,.yml,.json"></label>
+  <button class="primary" id="go" disabled>Scan</button>
+</section>
+<section id="out"><div class="card empty">Choose a file or a sample, then press <b>Scan</b>.<br><small>A scan takes a few seconds (Spectral rules, 66 features, model, SHAP).</small></div></section>
+</main>
+<script>
+const $=s=>document.querySelector(s);let spec=null,base=null,name='';
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function setSpec(t,n){spec=t;name=n;$('#fname').textContent='Loaded: '+n+' ('+t.length.toLocaleString()+' characters)';$('#go').disabled=false}
+function readFile(f,cb){const r=new FileReader();r.onload=()=>cb(r.result);r.readAsText(f)}
+$('#drop').onclick=()=>$('#file').click();
+$('#file').onchange=e=>{const f=e.target.files[0];if(f)readFile(f,t=>setSpec(t,f.name))};
+['dragover','dragenter'].forEach(ev=>$('#drop').addEventListener(ev,e=>{e.preventDefault();$('#drop').classList.add('on')}));
+['dragleave','drop'].forEach(ev=>$('#drop').addEventListener(ev,e=>{e.preventDefault();$('#drop').classList.remove('on')}));
+$('#drop').addEventListener('drop',e=>{const f=e.dataTransfer.files[0];if(f)readFile(f,t=>setSpec(t,f.name))});
+$('#basefile').onchange=e=>{const f=e.target.files[0];if(f)readFile(f,t=>base=t);else base=null};
+fetch('/samples').then(r=>r.json()).then(l=>{$('#samples').innerHTML=l.map(n=>`<button data-n="${esc(n)}">${esc(n.replace(/_openapi3|\.yaml|\.json/g,''))}</button>`).join('');
+ document.querySelectorAll('#samples button').forEach(b=>b.onclick=()=>fetch('/sample/'+b.dataset.n).then(r=>r.text()).then(t=>setSpec(t,b.dataset.n)))});
+$('#go').onclick=async()=>{
+  const b=$('#go');b.disabled=true;b.innerHTML='<span class="spin"></span>Scanning...';
+  $('#out').innerHTML='<div class="card empty">Scanning '+esc(name)+'...</div>';
+  try{
+    const r=await fetch('/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({spec,filename:name,base,model:$('#model').value,tau:$('#tau').value,k:$('#k').value||0})});
+    render(await r.json());
+  }catch(e){$('#out').innerHTML='<div class="card"><div id="err">'+esc(e)+'</div></div>'}
+  b.disabled=false;b.textContent='Scan';
+};
+let REP=null;
+function render(d){
+  if(d.error){$('#out').innerHTML='<div class="card"><h2>Scan failed</h2><div id="err">'+esc(d.error)+'</div></div>';return}
+  REP=d;const pass=d.gate===0,tau=d.threshold;
+  const eps=[...d.endpoints].sort((a,b)=>b.score-a.score);
+  const flagged=eps.filter(e=>e.in_scope&&e.above_tau);
+  const top=eps[0]?eps[0].score:0;
+  let h=`<div id="banner" class="${pass?'pass':'fail'}"><b>${pass?'PASS':'FAIL'}</b><div>${pass?'No in-scope endpoint reaches the threshold.':`${d.n_above_in_scope} in-scope endpoint(s) at or above &tau; = ${tau.toFixed(2)}; the gate tolerates ${d.max_above}. Merge blocked.`}<br><small>${esc(name)}${d.base?' compared with a base spec':''} &middot; APIGUARD ${esc(d.version)}</small></div>
+   <div style="margin-left:auto"><button id="dl">Download JSON</button></div></div>
+   <div class="stats"><div class="stat"><b>${d.n_endpoints}</b><small>endpoints</small></div><div class="stat"><b>${d.n_in_scope}</b><small>in gate scope</small></div><div class="stat"><b>${d.n_above_in_scope}</b><small>at or above &tau;</small></div><div class="stat"><b>${tau.toFixed(2)}</b><small>threshold &tau; (k = ${d.max_above})</small></div></div>
+   <div class="card"><h2>Endpoints ranked by risk score <small>(click a row to see why)</small></h2><table><thead><tr><th>#</th><th>Endpoint</th><th style="width:200px">Risk score</th><th>Gate</th></tr></thead><tbody>`;
+  eps.forEach((e,i)=>{
+    const w=Math.min(100,e.score*100);const flag=e.in_scope&&e.above_tau;
+    h+=`<tr class="ep" data-i="${i}"><td>${i+1}</td><td><span class="m">${esc(e.method.toUpperCase())}</span> <span class="path">${esc(e.path)}</span></td>
+      <td><div class="bar"><i class="${flag?'hi':''}" style="width:${w}%"></i><u style="left:${tau*100}%"></u></div><small>${e.score.toFixed(3)}</small></td>
+      <td>${flag?'<span class="tag flag">at/above &tau;</span>':e.in_scope?'<span class="tag">in scope</span>':'<span class="tag">out of scope</span>'}</td></tr>
+      <tr class="why" id="w${i}" hidden><td></td><td colspan="3"><b>Why the model scored it this way</b> <small>(SHAP; + raises the score)</small><ul>${
+        (e.reasons||[]).map(([f,c])=>`<li><code>${esc(f)}</code> = ${e.reason_values&&e.reason_values[f]!==undefined?e.reason_values[f]:'?'} <span class="${c>=0?'up':'dn'}">${c>=0?'+':''}${c.toFixed(3)}</span></li>`).join('')||'<li><small>No SHAP reasons for this endpoint (only the gate-counted endpoints and the top ten get them).</small></li>'}</ul>
+        <b>Scanner rules that fired</b><ul>${(e.scanner_rules||[]).map(r=>`<li><code>${esc(r)}</code></li>`).join('')||'<li><small>none</small></li>'}</ul></td></tr>`;
+  });
+  h+='</tbody></table><small>Amber line = threshold &tau;. Red bars are at or above it.</small></div>';
+  $('#out').innerHTML=h;
+  document.querySelectorAll('tr.ep').forEach(r=>r.onclick=()=>{const w=$('#w'+r.dataset.i);w.hidden=!w.hidden});
+  $('#dl').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(REP,null,2)],{type:'application/json'}));a.download='apiguard_report.json';a.click()};
+}
+</script></body></html>

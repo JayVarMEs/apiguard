@@ -1,0 +1,1085 @@
+{
+ "apps": {
+  "demo/specs/crapi_openapi3.json": {
+   "n_endpoints": 44,
+   "n_flaw_endpoints": 15,
+   "n_design_visible": 3,
+   "unmatched_L3_rows": [],
+   "tau": 0.531306803226471,
+   "rank_of_flaw_endpoints": [
+    6,
+    8,
+    11,
+    14,
+    19,
+    20,
+    26,
+    28,
+    30,
+    34,
+    35,
+    39,
+    40,
+    41,
+    42
+   ],
+   "rank_of_design_visible": [
+    6,
+    20,
+    26
+   ],
+   "roc_auc_all": 0.3724137931034483,
+   "pr_auc_all": 0.29257771468297783,
+   "prevalence": 0.3409090909090909,
+   "roc_auc_design_visible": 0.6219512195121951,
+   "pr_auc_design_visible": 0.12576312576312576,
+   "table": [
+    {
+     "rank": 1,
+     "method": "POST",
+     "path": "/identity/api/auth/v2.7/user/login-with-token",
+     "score": 0.6541624665260315,
+     "above_tau": true,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api2:2023-write-restricted",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy"
+     ],
+     "because": [
+      "sens_resp_ratio",
+      "has_security",
+      "m_get"
+     ],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 2,
+     "method": "POST",
+     "path": "/identity/api/auth/login",
+     "score": 0.6212377548217773,
+     "above_tau": true,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api2:2023-write-restricted",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy"
+     ],
+     "because": [
+      "sens_resp_ratio",
+      "has_security",
+      "src_inherited"
+     ],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 3,
+     "method": "GET",
+     "path": "/workshop/api/shop/return_qr_code",
+     "score": 0.6052555441856384,
+     "above_tau": true,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy",
+      "owasp:api4:2023-rate-limit"
+     ],
+     "because": [
+      "has_security",
+      "src_none",
+      "src_own"
+     ],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 4,
+     "method": "POST",
+     "path": "/identity/api/auth/v4.0/user/login-with-token",
+     "score": 0.5673803091049194,
+     "above_tau": true,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api2:2023-write-restricted",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 5,
+     "method": "POST",
+     "path": "/identity/api/auth/forget-password",
+     "score": 0.5297702550888062,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api2:2023-write-restricted",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 6,
+     "method": "GET",
+     "path": "/workshop/api/mechanic/receive_report",
+     "score": 0.5195697546005249,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api2:2023-read-restricted",
+      "owasp:api3:2023-no-additionalProperties",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format"
+     ],
+     "because": [],
+     "documented_flaw": 1,
+     "category": "API2"
+    },
+    {
+     "rank": 7,
+     "method": "POST",
+     "path": "/identity/api/auth/signup",
+     "score": 0.4941602945327759,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api2:2023-write-restricted",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 8,
+     "method": "POST",
+     "path": "/identity/api/auth/v2/check-otp",
+     "score": 0.4941602945327759,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api2:2023-write-restricted",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy"
+     ],
+     "because": [],
+     "documented_flaw": 1,
+     "category": "API2;API4"
+    },
+    {
+     "rank": 9,
+     "method": "POST",
+     "path": "/identity/api/auth/v3/check-otp",
+     "score": 0.4941602945327759,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api2:2023-write-restricted",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 10,
+     "method": "POST",
+     "path": "/workshop/api/mechanic/signup",
+     "score": 0.4941602945327759,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api2:2023-write-restricted",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 11,
+     "method": "GET",
+     "path": "/identity/api/v2/user/dashboard",
+     "score": 0.4628629684448242,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy",
+      "owasp:api4:2023-rate-limit"
+     ],
+     "because": [],
+     "documented_flaw": 1,
+     "category": "API2"
+    },
+    {
+     "rank": 12,
+     "method": "GET",
+     "path": "/workshop/api/management/users/all",
+     "score": 0.41540101170539856,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy",
+      "owasp:api4:2023-rate-limit"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 13,
+     "method": "GET",
+     "path": "/workshop/api/mechanic/service_requests",
+     "score": 0.350829154253006,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy",
+      "owasp:api4:2023-rate-limit"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 14,
+     "method": "GET",
+     "path": "/workshop/api/mechanic/mechanic_report",
+     "score": 0.334602952003479,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api1:2023-no-numeric-ids",
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy"
+     ],
+     "because": [],
+     "documented_flaw": 1,
+     "category": "API1"
+    },
+    {
+     "rank": 15,
+     "method": "POST",
+     "path": "/community/api/v2/community/posts/{postId}/comment",
+     "score": 0.3052532970905304,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy",
+      "owasp:api4:2023-rate-limit"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 16,
+     "method": "POST",
+     "path": "/identity/api/v2/user/videos",
+     "score": 0.24553626775741577,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy",
+      "owasp:api4:2023-rate-limit"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 17,
+     "method": "GET",
+     "path": "/workshop/api/mechanic/",
+     "score": 0.24553626775741577,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy",
+      "owasp:api4:2023-rate-limit"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 18,
+     "method": "POST",
+     "path": "/community/api/v2/community/posts",
+     "score": 0.22139984369277954,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy",
+      "owasp:api4:2023-rate-limit"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 19,
+     "method": "PUT",
+     "path": "/identity/api/v2/user/videos/{video_id}",
+     "score": 0.2112506926059723,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api1:2023-no-numeric-ids",
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy"
+     ],
+     "because": [],
+     "documented_flaw": 1,
+     "category": "API3"
+    },
+    {
+     "rank": 20,
+     "method": "GET",
+     "path": "/community/api/v2/community/posts/recent",
+     "score": 0.20902226865291595,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy",
+      "owasp:api4:2023-rate-limit"
+     ],
+     "because": [],
+     "documented_flaw": 1,
+     "category": "API3"
+    },
+    {
+     "rank": 21,
+     "method": "GET",
+     "path": "/workshop/api/shop/orders/all",
+     "score": 0.20902226865291595,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy",
+      "owasp:api4:2023-rate-limit"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 22,
+     "method": "GET",
+     "path": "/identity/api/v2/vehicle/vehicles",
+     "score": 0.2085413634777069,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy",
+      "owasp:api4:2023-rate-limit"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 23,
+     "method": "POST",
+     "path": "/identity/api/v2/user/change-email",
+     "score": 0.19768618047237396,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy",
+      "owasp:api4:2023-rate-limit"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 24,
+     "method": "POST",
+     "path": "/identity/api/v2/user/reset-password",
+     "score": 0.19768618047237396,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy",
+      "owasp:api4:2023-rate-limit"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 25,
+     "method": "POST",
+     "path": "/identity/api/v2/user/verify-email-token",
+     "score": 0.19768618047237396,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy",
+      "owasp:api4:2023-rate-limit"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 26,
+     "method": "GET",
+     "path": "/identity/api/v2/user/videos/{video_id}",
+     "score": 0.19256113469600677,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api1:2023-no-numeric-ids",
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy"
+     ],
+     "because": [],
+     "documented_flaw": 1,
+     "category": "API3"
+    },
+    {
+     "rank": 27,
+     "method": "GET",
+     "path": "/community/api/v2/community/posts/{postId}",
+     "score": 0.18098822236061096,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy",
+      "owasp:api4:2023-rate-limit"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 28,
+     "method": "POST",
+     "path": "/workshop/api/shop/orders/return_order",
+     "score": 0.18098822236061096,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api1:2023-no-numeric-ids",
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy"
+     ],
+     "because": [],
+     "documented_flaw": 1,
+     "category": "API6"
+    },
+    {
+     "rank": 29,
+     "method": "GET",
+     "path": "/workshop/api/shop/orders/{order_id}",
+     "score": 0.18098822236061096,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api1:2023-no-numeric-ids",
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 30,
+     "method": "PUT",
+     "path": "/workshop/api/shop/orders/{order_id}",
+     "score": 0.18098822236061096,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api1:2023-no-numeric-ids",
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy"
+     ],
+     "because": [],
+     "documented_flaw": 1,
+     "category": "API3"
+    },
+    {
+     "rank": 31,
+     "method": "GET",
+     "path": "/identity/api/v2/user/videos/convert_video",
+     "score": 0.17765848338603973,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api1:2023-no-numeric-ids",
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 32,
+     "method": "DELETE",
+     "path": "/identity/api/v2/user/videos/{video_id}",
+     "score": 0.17765848338603973,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api1:2023-no-numeric-ids",
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 33,
+     "method": "POST",
+     "path": "/community/api/v2/coupon/new-coupon",
+     "score": 0.15472374856472015,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy",
+      "owasp:api4:2023-rate-limit"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 34,
+     "method": "POST",
+     "path": "/community/api/v2/coupon/validate-coupon",
+     "score": 0.15472374856472015,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy",
+      "owasp:api4:2023-rate-limit"
+     ],
+     "because": [],
+     "documented_flaw": 1,
+     "category": "API8"
+    },
+    {
+     "rank": 35,
+     "method": "DELETE",
+     "path": "/identity/api/v2/admin/videos/{video_id}",
+     "score": 0.15472374856472015,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api1:2023-no-numeric-ids",
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy"
+     ],
+     "because": [],
+     "documented_flaw": 1,
+     "category": "API5"
+    },
+    {
+     "rank": 36,
+     "method": "POST",
+     "path": "/identity/api/v2/user/pictures",
+     "score": 0.15472374856472015,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy",
+      "owasp:api4:2023-rate-limit"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 37,
+     "method": "POST",
+     "path": "/identity/api/v2/vehicle/add_vehicle",
+     "score": 0.15472374856472015,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy",
+      "owasp:api4:2023-rate-limit"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 38,
+     "method": "POST",
+     "path": "/identity/api/v2/vehicle/resend_email",
+     "score": 0.15472374856472015,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy",
+      "owasp:api4:2023-rate-limit"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 39,
+     "method": "GET",
+     "path": "/identity/api/v2/vehicle/{vehicleId}/location",
+     "score": 0.15472374856472015,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy",
+      "owasp:api4:2023-rate-limit"
+     ],
+     "because": [],
+     "documented_flaw": 1,
+     "category": "API1"
+    },
+    {
+     "rank": 40,
+     "method": "POST",
+     "path": "/workshop/api/merchant/contact_mechanic",
+     "score": 0.15472374856472015,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy",
+      "owasp:api4:2023-rate-limit"
+     ],
+     "because": [],
+     "documented_flaw": 1,
+     "category": "API4;API7"
+    },
+    {
+     "rank": 41,
+     "method": "POST",
+     "path": "/workshop/api/shop/apply_coupon",
+     "score": 0.15472374856472015,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy",
+      "owasp:api4:2023-rate-limit"
+     ],
+     "because": [],
+     "documented_flaw": 1,
+     "category": "API8"
+    },
+    {
+     "rank": 42,
+     "method": "POST",
+     "path": "/workshop/api/shop/orders",
+     "score": 0.15472374856472015,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy",
+      "owasp:api4:2023-rate-limit"
+     ],
+     "because": [],
+     "documented_flaw": 1,
+     "category": "API3"
+    },
+    {
+     "rank": 43,
+     "method": "GET",
+     "path": "/workshop/api/shop/products",
+     "score": 0.15472374856472015,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy",
+      "owasp:api4:2023-rate-limit"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 44,
+     "method": "POST",
+     "path": "/workshop/api/shop/products",
+     "score": 0.15472374856472015,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api3:2023-no-additionalProperties",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-integer-format",
+      "owasp:api4:2023-integer-limit-legacy"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    }
+   ]
+  },
+  "demo/specs/vampi_openapi3.yaml": {
+   "n_endpoints": 14,
+   "n_flaw_endpoints": 10,
+   "n_design_visible": 5,
+   "unmatched_L3_rows": [],
+   "tau": 0.531306803226471,
+   "rank_of_flaw_endpoints": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    7,
+    9,
+    10,
+    11,
+    12
+   ],
+   "rank_of_design_visible": [
+    1,
+    4,
+    5,
+    7,
+    10
+   ],
+   "roc_auc_all": 0.7875000000000001,
+   "pr_auc_all": 0.9101587301587301,
+   "prevalence": 0.7142857142857143,
+   "roc_auc_design_visible": 0.7444444444444445,
+   "pr_auc_design_visible": 0.6342857142857143,
+   "table": [
+    {
+     "rank": 1,
+     "method": "GET",
+     "path": "/users/v1/{username}",
+     "score": 0.6779226660728455,
+     "above_tau": true,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api2:2023-read-restricted",
+      "owasp:api4:2023-rate-limit",
+      "owasp:api4:2023-rate-limit-responses-429",
+      "owasp:api4:2023-string-limit"
+     ],
+     "because": [
+      "has_security",
+      "sens_resp_ratio",
+      "src_none"
+     ],
+     "documented_flaw": 1,
+     "category": "API1;API2"
+    },
+    {
+     "rank": 2,
+     "method": "POST",
+     "path": "/users/v1/login",
+     "score": 0.6604615449905396,
+     "above_tau": true,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api2:2023-write-restricted",
+      "owasp:api4:2023-rate-limit",
+      "owasp:api4:2023-rate-limit-responses-429",
+      "owasp:api4:2023-string-limit"
+     ],
+     "because": [
+      "has_security",
+      "sens_resp_ratio",
+      "src_none"
+     ],
+     "documented_flaw": 1,
+     "category": "API2;API4"
+    },
+    {
+     "rank": 3,
+     "method": "POST",
+     "path": "/users/v1/register",
+     "score": 0.6604615449905396,
+     "above_tau": true,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api2:2023-write-restricted",
+      "owasp:api4:2023-rate-limit",
+      "owasp:api4:2023-rate-limit-responses-429",
+      "owasp:api4:2023-string-limit"
+     ],
+     "because": [
+      "has_security",
+      "src_none",
+      "m_get"
+     ],
+     "documented_flaw": 1,
+     "category": "API3"
+    },
+    {
+     "rank": 4,
+     "method": "GET",
+     "path": "/users/v1/_debug",
+     "score": 0.6499115824699402,
+     "above_tau": true,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api2:2023-read-restricted",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-rate-limit",
+      "owasp:api4:2023-rate-limit-responses-429"
+     ],
+     "because": [],
+     "documented_flaw": 1,
+     "category": "API3"
+    },
+    {
+     "rank": 5,
+     "method": "GET",
+     "path": "/users/v1",
+     "score": 0.5240778923034668,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api2:2023-read-restricted",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-rate-limit",
+      "owasp:api4:2023-rate-limit-responses-429"
+     ],
+     "because": [],
+     "documented_flaw": 1,
+     "category": "API2;API3"
+    },
+    {
+     "rank": 6,
+     "method": "GET",
+     "path": "/",
+     "score": 0.5057575106620789,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api2:2023-read-restricted",
+      "owasp:api4:2023-rate-limit",
+      "owasp:api4:2023-rate-limit-responses-429",
+      "owasp:api4:2023-string-limit"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 7,
+     "method": "GET",
+     "path": "/books/v1",
+     "score": 0.5057575106620789,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api2:2023-read-restricted",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-rate-limit",
+      "owasp:api4:2023-rate-limit-responses-429"
+     ],
+     "because": [],
+     "documented_flaw": 1,
+     "category": "API2"
+    },
+    {
+     "rank": 8,
+     "method": "GET",
+     "path": "/me",
+     "score": 0.4628629684448242,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-rate-limit",
+      "owasp:api4:2023-rate-limit-responses-429",
+      "owasp:api4:2023-string-limit",
+      "owasp:api4:2023-string-restricted"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 9,
+     "method": "GET",
+     "path": "/books/v1/{book_title}",
+     "score": 0.44383034110069275,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-array-limit",
+      "owasp:api4:2023-rate-limit",
+      "owasp:api4:2023-rate-limit-responses-429",
+      "owasp:api4:2023-string-limit"
+     ],
+     "because": [],
+     "documented_flaw": 1,
+     "category": "API1"
+    },
+    {
+     "rank": 10,
+     "method": "GET",
+     "path": "/createdb",
+     "score": 0.43266233801841736,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api2:2023-read-restricted",
+      "owasp:api4:2023-rate-limit",
+      "owasp:api4:2023-rate-limit-responses-429",
+      "owasp:api4:2023-string-limit"
+     ],
+     "because": [],
+     "documented_flaw": 1,
+     "category": "API5"
+    },
+    {
+     "rank": 11,
+     "method": "PUT",
+     "path": "/users/v1/{username}/email",
+     "score": 0.1987392157316208,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-rate-limit",
+      "owasp:api4:2023-rate-limit-responses-429",
+      "owasp:api4:2023-string-limit",
+      "owasp:api4:2023-string-restricted"
+     ],
+     "because": [],
+     "documented_flaw": 1,
+     "category": "API4"
+    },
+    {
+     "rank": 12,
+     "method": "PUT",
+     "path": "/users/v1/{username}/password",
+     "score": 0.1987392157316208,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-rate-limit",
+      "owasp:api4:2023-rate-limit-responses-429",
+      "owasp:api4:2023-string-limit",
+      "owasp:api4:2023-string-restricted"
+     ],
+     "because": [],
+     "documented_flaw": 1,
+     "category": "API1"
+    },
+    {
+     "rank": 13,
+     "method": "DELETE",
+     "path": "/users/v1/{username}",
+     "score": 0.19094645977020264,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-rate-limit",
+      "owasp:api4:2023-rate-limit-responses-429",
+      "owasp:api4:2023-string-limit",
+      "owasp:api4:2023-string-restricted"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    },
+    {
+     "rank": 14,
+     "method": "POST",
+     "path": "/books/v1",
+     "score": 0.1582794487476349,
+     "above_tau": false,
+     "scanner": [
+      "owasp:api2:2023-jwt-best-practices",
+      "owasp:api4:2023-rate-limit",
+      "owasp:api4:2023-rate-limit-responses-429",
+      "owasp:api4:2023-string-limit",
+      "owasp:api4:2023-string-restricted"
+     ],
+     "because": [],
+     "documented_flaw": 0,
+     "category": ""
+    }
+   ]
+  }
+ },
+ "label_source": "L3",
+ "model_uses_scanner_features": true
+}
