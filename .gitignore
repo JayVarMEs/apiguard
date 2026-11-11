@@ -7,3 +7,11 @@ __pycache__/
 dist/
 build/
 *.spec
+
+results_backup_before_final/
+results_tmp/
+*.bak
+UPLOAD_TO_OVERLEAF/
+Claude outputs/
+_archive_iac/
+.vscode/
