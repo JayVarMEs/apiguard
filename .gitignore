@@ -15,3 +15,6 @@ UPLOAD_TO_OVERLEAF/
 Claude outputs/
 _archive_iac/
 .vscode/
+
+APIGUARD_APP/
+extras/
