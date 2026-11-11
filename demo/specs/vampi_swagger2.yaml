@@ -1,0 +1,73 @@
+# The SAME VAmPI endpoints written as Swagger 2.0 instead of OpenAPI 3.
+# Only a slice of the API -- it exists so the demo can show that S0 flattens
+# both specification versions into one identical internal form.
+swagger: "2.0"
+info: {title: VAmPI, description: Swagger 2.0 slice of VAmPI, version: '0.1'}
+host: localhost:5000
+basePath: /
+schemes: [http]
+consumes: [application/json]
+produces: [application/json]
+securityDefinitions:
+  bearerAuth: {type: apiKey, name: Authorization, in: header}
+definitions:
+  UserFull:
+    type: object
+    properties:
+      admin: {type: boolean}
+      email: {type: string}
+      password: {type: string}
+      username: {type: string}
+paths:
+  /users/v1/login:
+    post:
+      tags: [users]
+      summary: Login to VAmPI
+      operationId: api_views.users.login_user
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              username: {type: string}
+              password: {type: string}
+      responses:
+        "200":
+          description: Sucessfully logged in user
+          schema:
+            type: object
+            properties:
+              auth_token: {type: string}
+              message: {type: string}
+  /users/v1/_debug:
+    get:
+      tags: [users]
+      summary: Retrieves all details for all users
+      operationId: api_views.users.debug
+      responses:
+        "200":
+          description: See all details of the users
+          schema:
+            type: object
+            properties:
+              users:
+                type: array
+                items: {$ref: '#/definitions/UserFull'}
+  /users/v1/{username}:
+    parameters:
+      - {name: username, in: path, required: true, type: string}
+    delete:
+      security:
+        - bearerAuth: []
+      tags: [users]
+      summary: Deletes user by username (Only Admins)
+      operationId: api_views.users.delete_user
+      responses:
+        "200":
+          description: Successfully deleted user
+          schema:
+            type: object
+            properties:
+              message: {type: string}

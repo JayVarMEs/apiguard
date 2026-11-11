@@ -1,0 +1,129 @@
+
+==============================================================================
+1. S0 input
+==============================================================================
+file            : demo/specs/vampi_openapi3.yaml
+size            : 14,873 bytes
+spec id         : VAmPI@0.1
+detected version: openapi-3.x
+content hash    : 1a9a673accc91e0f...   (T1 de-duplicates on this)
+endpoints E(S)  : 14
+
+==============================================================================
+2. One record per (path, method) -- this is E(S)
+==============================================================================
+METHOD  PATH                           AUTH          PARAM BODY  RESP 
+------------------------------------------------------------------------------
+GET     /createdb                      none          0     0     1    
+GET     /                              none          0     0     3    
+GET     /users/v1                      none          0     0     3    
+GET     /users/v1/_debug               none          0     0     5    
+POST    /users/v1/register             none          0     3     2    
+POST    /users/v1/login                none          0     2     5    
+GET     /me                            own           0     0     7    
+GET     /users/v1/{username}           none          1     0     4    
+DELETE  /users/v1/{username}           own           1     0     6    
+PUT     /users/v1/{username}/email     own           1     1     4    
+PUT     /users/v1/{username}/password  own           1     1     4    
+GET     /books/v1                      none          0     0     3    
+POST    /books/v1                      own           0     2     6    
+GET     /books/v1/{book_title}         own           1     0     8    
+
+==============================================================================
+3. What S0 already exposes that a rule scanner does not
+==============================================================================
+Endpoints with NO security requirement that return sensitive fields:
+(feature group C -- 'no auth AND sensitive response' is one flag for S2a)
+
+  GET    /users/v1                        -> email
+  GET    /users/v1/_debug                 -> admin, email, password
+  POST   /users/v1/login                  -> auth_token
+  GET    /users/v1/{username}             -> email
+
+Endpoints that DO require authentication:
+  GET    /me                              -> bearerAuth (http/bearer) [own]
+  DELETE /users/v1/{username}             -> bearerAuth (http/bearer) [own]
+  PUT    /users/v1/{username}/email       -> bearerAuth (http/bearer) [own]
+  PUT    /users/v1/{username}/password    -> bearerAuth (http/bearer) [own]
+  POST   /books/v1                        -> bearerAuth (http/bearer) [own]
+  GET    /books/v1/{book_title}           -> bearerAuth (http/bearer) [own]
+
+==============================================================================
+4. One full normalised record (what S2a receives)
+==============================================================================
+{
+  "endpoint_id": "5308c015a995ecb8",
+  "spec_id": "VAmPI@0.1",
+  "spec_hash": "1a9a673accc91e0f83821487dc3f232d14627d5fccec5fb807db4bfced741d10",
+  "source_file": "vampi_openapi3.yaml",
+  "source_version": "openapi-3.x",
+  "schema_version": "s0-1.0",
+  "path": "/users/v1/_debug",
+  "method": "get",
+  "operation_id": "api_views.users.debug",
+  "path_parameters": [],
+  "parameters": [],
+  "request_body": null,
+  "responses": [
+    {
+      "status_code": "200",
+      "content_types": [
+        "application/json"
+      ],
+      "properties": [
+        "users[]: object",
+        "users[].admin: boolean",
+        "users[].email: string",
+        "users[].password: string",
+        "users[].username: string"
+      ],
+      "description_len": 28,
+      "header_names": []
+    }
+  ],
+  "security": [],
+  "security_source": "none",
+  "servers": [
+    "http://localhost:5000"
+  ],
+  "summary_len": 35,
+  "description_len": 34,
+  "tags": [
+    "users"
+  ],
+  "deprecated": false,
+  "has_example": true,
+  "warnings": []
+}
+
+(the JSONL output keeps every property field in full)
+
+==============================================================================
+5. Same endpoint, two specification versions -> one internal form
+==============================================================================
+field                  openapi 3.0.1                  swagger 2.0                   
+------------------------------------------------------------------------------
+source_version         openapi-3.x                    swagger-2.0                     <>
+operation_id           api_views.users.debug          api_views.users.debug           =
+security_source        none                           none                            =
+servers                http://localhost:5000          http://localhost:5000           =
+response props         admin,email,password,username, admin,email,password,username,  =
+
+Swagger 2 'body' parameter became a request body, not a parameter:
+  parameters   : []
+  request body : required=True props=['username', 'password']
+  content types: ['application/json']
+
+Path-level parameter merged into the operation (swagger 2 file):
+  DELETE /users/v1/{username} -> parameters [('username', 'path')]
+
+==============================================================================
+6. Corpus mode -- a broken spec is logged, never dropped
+==============================================================================
+  PARSE FAILURE  broken_spec.yaml: yaml/json parse error: while parsing a flow sequence
+
+  specs parsed = 2   failed = 1   parse-failure rate = 33.3%   endpoints = 17
+  -> demo/out/vampi_endpoints.jsonl
+  -> demo/out/parse_errors.jsonl
+
+==============================================================================

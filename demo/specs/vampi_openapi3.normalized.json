@@ -1,0 +1,1675 @@
+{
+  "spec_id": "VAmPI@0.1",
+  "spec_hash": "1a9a673accc91e0f83821487dc3f232d14627d5fccec5fb807db4bfced741d10",
+  "source_file": "vampi_openapi3.yaml",
+  "source_version": "openapi-3.x",
+  "endpoint_count": 14,
+  "warnings": [],
+  "endpoints": [
+    {
+      "endpoint_id": "165b71368c2e4f4d",
+      "spec_id": "VAmPI@0.1",
+      "spec_hash": "1a9a673accc91e0f83821487dc3f232d14627d5fccec5fb807db4bfced741d10",
+      "source_file": "/sessions/rcw-017jhtvmyudbtgvygwisdgct/mnt/cyberProject/demo/specs/vampi_openapi3.yaml",
+      "source_version": "openapi-3.x",
+      "schema_version": "s0-1.0",
+      "path": "/createdb",
+      "method": "get",
+      "operation_id": "api_views.main.populate_db",
+      "path_parameters": [],
+      "parameters": [],
+      "request_body": null,
+      "responses": [
+        {
+          "status_code": "200",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "message",
+              "name": "message",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 50,
+          "header_names": []
+        }
+      ],
+      "security": [],
+      "security_source": "none",
+      "servers": [
+        "http://localhost:5000"
+      ],
+      "summary_len": 50,
+      "description_len": 50,
+      "tags": [
+        "db-init"
+      ],
+      "deprecated": false,
+      "has_example": true,
+      "warnings": []
+    },
+    {
+      "endpoint_id": "9612376b222cc6ac",
+      "spec_id": "VAmPI@0.1",
+      "spec_hash": "1a9a673accc91e0f83821487dc3f232d14627d5fccec5fb807db4bfced741d10",
+      "source_file": "/sessions/rcw-017jhtvmyudbtgvygwisdgct/mnt/cyberProject/demo/specs/vampi_openapi3.yaml",
+      "source_version": "openapi-3.x",
+      "schema_version": "s0-1.0",
+      "path": "/",
+      "method": "get",
+      "operation_id": "api_views.main.basic",
+      "path_parameters": [],
+      "parameters": [],
+      "request_body": null,
+      "responses": [
+        {
+          "status_code": "200",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "message",
+              "name": "message",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "help",
+              "name": "help",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "vulnerable",
+              "name": "vulnerable",
+              "type": "number",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 11,
+          "header_names": []
+        }
+      ],
+      "security": [],
+      "security_source": "none",
+      "servers": [
+        "http://localhost:5000"
+      ],
+      "summary_len": 10,
+      "description_len": 37,
+      "tags": [
+        "home"
+      ],
+      "deprecated": false,
+      "has_example": true,
+      "warnings": []
+    },
+    {
+      "endpoint_id": "990a887e3652af7b",
+      "spec_id": "VAmPI@0.1",
+      "spec_hash": "1a9a673accc91e0f83821487dc3f232d14627d5fccec5fb807db4bfced741d10",
+      "source_file": "/sessions/rcw-017jhtvmyudbtgvygwisdgct/mnt/cyberProject/demo/specs/vampi_openapi3.yaml",
+      "source_version": "openapi-3.x",
+      "schema_version": "s0-1.0",
+      "path": "/users/v1",
+      "method": "get",
+      "operation_id": "api_views.users.get_all_users",
+      "path_parameters": [],
+      "parameters": [],
+      "request_body": null,
+      "responses": [
+        {
+          "status_code": "200",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "users[]",
+              "name": "users",
+              "type": "object",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 2,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "users[].email",
+              "name": "email",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 3,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "users[].username",
+              "name": "username",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 3,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 30,
+          "header_names": []
+        }
+      ],
+      "security": [],
+      "security_source": "none",
+      "servers": [
+        "http://localhost:5000"
+      ],
+      "summary_len": 19,
+      "description_len": 41,
+      "tags": [
+        "users"
+      ],
+      "deprecated": false,
+      "has_example": true,
+      "warnings": []
+    },
+    {
+      "endpoint_id": "5308c015a995ecb8",
+      "spec_id": "VAmPI@0.1",
+      "spec_hash": "1a9a673accc91e0f83821487dc3f232d14627d5fccec5fb807db4bfced741d10",
+      "source_file": "/sessions/rcw-017jhtvmyudbtgvygwisdgct/mnt/cyberProject/demo/specs/vampi_openapi3.yaml",
+      "source_version": "openapi-3.x",
+      "schema_version": "s0-1.0",
+      "path": "/users/v1/_debug",
+      "method": "get",
+      "operation_id": "api_views.users.debug",
+      "path_parameters": [],
+      "parameters": [],
+      "request_body": null,
+      "responses": [
+        {
+          "status_code": "200",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "users[]",
+              "name": "users",
+              "type": "object",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 2,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "users[].admin",
+              "name": "admin",
+              "type": "boolean",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 3,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "users[].email",
+              "name": "email",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 3,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "users[].password",
+              "name": "password",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 3,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "users[].username",
+              "name": "username",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 3,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 28,
+          "header_names": []
+        }
+      ],
+      "security": [],
+      "security_source": "none",
+      "servers": [
+        "http://localhost:5000"
+      ],
+      "summary_len": 35,
+      "description_len": 34,
+      "tags": [
+        "users"
+      ],
+      "deprecated": false,
+      "has_example": true,
+      "warnings": []
+    },
+    {
+      "endpoint_id": "e2b95f3d95dbcbcd",
+      "spec_id": "VAmPI@0.1",
+      "spec_hash": "1a9a673accc91e0f83821487dc3f232d14627d5fccec5fb807db4bfced741d10",
+      "source_file": "/sessions/rcw-017jhtvmyudbtgvygwisdgct/mnt/cyberProject/demo/specs/vampi_openapi3.yaml",
+      "source_version": "openapi-3.x",
+      "schema_version": "s0-1.0",
+      "path": "/users/v1/register",
+      "method": "post",
+      "operation_id": "api_views.users.register_user",
+      "path_parameters": [],
+      "parameters": [],
+      "request_body": {
+        "required": true,
+        "content_types": [
+          "application/json"
+        ],
+        "properties": [
+          {
+            "path": "username",
+            "name": "username",
+            "type": "string",
+            "format": null,
+            "required": false,
+            "nullable": false,
+            "depth": 1,
+            "read_only": false,
+            "write_only": false,
+            "truncated": false
+          },
+          {
+            "path": "password",
+            "name": "password",
+            "type": "string",
+            "format": null,
+            "required": false,
+            "nullable": false,
+            "depth": 1,
+            "read_only": false,
+            "write_only": false,
+            "truncated": false
+          },
+          {
+            "path": "email",
+            "name": "email",
+            "type": "string",
+            "format": null,
+            "required": false,
+            "nullable": false,
+            "depth": 1,
+            "read_only": false,
+            "write_only": false,
+            "truncated": false
+          }
+        ]
+      },
+      "responses": [
+        {
+          "status_code": "200",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "message",
+              "name": "message",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "status",
+              "name": "status",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 25,
+          "header_names": []
+        },
+        {
+          "status_code": "400",
+          "content_types": [],
+          "properties": [],
+          "description_len": 15,
+          "header_names": []
+        }
+      ],
+      "security": [],
+      "security_source": "none",
+      "servers": [
+        "http://localhost:5000"
+      ],
+      "summary_len": 17,
+      "description_len": 17,
+      "tags": [
+        "users"
+      ],
+      "deprecated": false,
+      "has_example": true,
+      "warnings": []
+    },
+    {
+      "endpoint_id": "a7aa63fc2bb5835c",
+      "spec_id": "VAmPI@0.1",
+      "spec_hash": "1a9a673accc91e0f83821487dc3f232d14627d5fccec5fb807db4bfced741d10",
+      "source_file": "/sessions/rcw-017jhtvmyudbtgvygwisdgct/mnt/cyberProject/demo/specs/vampi_openapi3.yaml",
+      "source_version": "openapi-3.x",
+      "schema_version": "s0-1.0",
+      "path": "/users/v1/login",
+      "method": "post",
+      "operation_id": "api_views.users.login_user",
+      "path_parameters": [],
+      "parameters": [],
+      "request_body": {
+        "required": true,
+        "content_types": [
+          "application/json"
+        ],
+        "properties": [
+          {
+            "path": "username",
+            "name": "username",
+            "type": "string",
+            "format": null,
+            "required": false,
+            "nullable": false,
+            "depth": 1,
+            "read_only": false,
+            "write_only": false,
+            "truncated": false
+          },
+          {
+            "path": "password",
+            "name": "password",
+            "type": "string",
+            "format": null,
+            "required": false,
+            "nullable": false,
+            "depth": 1,
+            "read_only": false,
+            "write_only": false,
+            "truncated": false
+          }
+        ]
+      },
+      "responses": [
+        {
+          "status_code": "200",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "auth_token",
+              "name": "auth_token",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "message",
+              "name": "message",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "status",
+              "name": "status",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 26,
+          "header_names": []
+        },
+        {
+          "status_code": "400",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "status",
+              "name": "status",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "message",
+              "name": "message",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 15,
+          "header_names": []
+        }
+      ],
+      "security": [],
+      "security_source": "none",
+      "servers": [
+        "http://localhost:5000"
+      ],
+      "summary_len": 14,
+      "description_len": 14,
+      "tags": [
+        "users"
+      ],
+      "deprecated": false,
+      "has_example": true,
+      "warnings": []
+    },
+    {
+      "endpoint_id": "dd7e03b047062888",
+      "spec_id": "VAmPI@0.1",
+      "spec_hash": "1a9a673accc91e0f83821487dc3f232d14627d5fccec5fb807db4bfced741d10",
+      "source_file": "/sessions/rcw-017jhtvmyudbtgvygwisdgct/mnt/cyberProject/demo/specs/vampi_openapi3.yaml",
+      "source_version": "openapi-3.x",
+      "schema_version": "s0-1.0",
+      "path": "/me",
+      "method": "get",
+      "operation_id": "api_views.users.me",
+      "path_parameters": [],
+      "parameters": [],
+      "request_body": null,
+      "responses": [
+        {
+          "status_code": "200",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "data",
+              "name": "data",
+              "type": "object",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "data.admin",
+              "name": "admin",
+              "type": "boolean",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 2,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "data.email",
+              "name": "email",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 2,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "data.username",
+              "name": "username",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 2,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "status",
+              "name": "status",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 25,
+          "header_names": []
+        },
+        {
+          "status_code": "401",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "status",
+              "name": "status",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "message",
+              "name": "message",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 61,
+          "header_names": []
+        }
+      ],
+      "security": [
+        {
+          "scheme_name": "bearerAuth",
+          "scheme_type": "http",
+          "scheme_subtype": "bearer",
+          "location": null,
+          "scopes": []
+        }
+      ],
+      "security_source": "own",
+      "servers": [
+        "http://localhost:5000"
+      ],
+      "summary_len": 34,
+      "description_len": 59,
+      "tags": [
+        "users"
+      ],
+      "deprecated": false,
+      "has_example": true,
+      "warnings": []
+    },
+    {
+      "endpoint_id": "c8a09f770b6d6355",
+      "spec_id": "VAmPI@0.1",
+      "spec_hash": "1a9a673accc91e0f83821487dc3f232d14627d5fccec5fb807db4bfced741d10",
+      "source_file": "/sessions/rcw-017jhtvmyudbtgvygwisdgct/mnt/cyberProject/demo/specs/vampi_openapi3.yaml",
+      "source_version": "openapi-3.x",
+      "schema_version": "s0-1.0",
+      "path": "/users/v1/{username}",
+      "method": "get",
+      "operation_id": "api_views.users.get_by_username",
+      "path_parameters": [
+        "username"
+      ],
+      "parameters": [
+        {
+          "name": "username",
+          "location": "path",
+          "required": true,
+          "type": "string",
+          "format": null,
+          "deprecated": false,
+          "has_example": false,
+          "description_len": 22
+        }
+      ],
+      "request_body": null,
+      "responses": [
+        {
+          "status_code": "200",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "username",
+              "name": "username",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "email",
+              "name": "email",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 30,
+          "header_names": []
+        },
+        {
+          "status_code": "404",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "status",
+              "name": "status",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "message",
+              "name": "message",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 14,
+          "header_names": []
+        }
+      ],
+      "security": [],
+      "security_source": "none",
+      "servers": [
+        "http://localhost:5000"
+      ],
+      "summary_len": 26,
+      "description_len": 25,
+      "tags": [
+        "users"
+      ],
+      "deprecated": false,
+      "has_example": true,
+      "warnings": []
+    },
+    {
+      "endpoint_id": "49e83e19d0768234",
+      "spec_id": "VAmPI@0.1",
+      "spec_hash": "1a9a673accc91e0f83821487dc3f232d14627d5fccec5fb807db4bfced741d10",
+      "source_file": "/sessions/rcw-017jhtvmyudbtgvygwisdgct/mnt/cyberProject/demo/specs/vampi_openapi3.yaml",
+      "source_version": "openapi-3.x",
+      "schema_version": "s0-1.0",
+      "path": "/users/v1/{username}",
+      "method": "delete",
+      "operation_id": "api_views.users.delete_user",
+      "path_parameters": [
+        "username"
+      ],
+      "parameters": [
+        {
+          "name": "username",
+          "location": "path",
+          "required": true,
+          "type": "string",
+          "format": null,
+          "deprecated": false,
+          "has_example": false,
+          "description_len": 15
+        }
+      ],
+      "request_body": null,
+      "responses": [
+        {
+          "status_code": "200",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "message",
+              "name": "message",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "status",
+              "name": "status",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 25,
+          "header_names": []
+        },
+        {
+          "status_code": "401",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "status",
+              "name": "status",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "message",
+              "name": "message",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 19,
+          "header_names": []
+        },
+        {
+          "status_code": "404",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "status",
+              "name": "status",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "message",
+              "name": "message",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 14,
+          "header_names": []
+        }
+      ],
+      "security": [
+        {
+          "scheme_name": "bearerAuth",
+          "scheme_type": "http",
+          "scheme_subtype": "bearer",
+          "location": null,
+          "scopes": []
+        }
+      ],
+      "security_source": "own",
+      "servers": [
+        "http://localhost:5000"
+      ],
+      "summary_len": 38,
+      "description_len": 38,
+      "tags": [
+        "users"
+      ],
+      "deprecated": false,
+      "has_example": true,
+      "warnings": []
+    },
+    {
+      "endpoint_id": "077130e221c3070a",
+      "spec_id": "VAmPI@0.1",
+      "spec_hash": "1a9a673accc91e0f83821487dc3f232d14627d5fccec5fb807db4bfced741d10",
+      "source_file": "/sessions/rcw-017jhtvmyudbtgvygwisdgct/mnt/cyberProject/demo/specs/vampi_openapi3.yaml",
+      "source_version": "openapi-3.x",
+      "schema_version": "s0-1.0",
+      "path": "/users/v1/{username}/email",
+      "method": "put",
+      "operation_id": "api_views.users.update_email",
+      "path_parameters": [
+        "username"
+      ],
+      "parameters": [
+        {
+          "name": "username",
+          "location": "path",
+          "required": true,
+          "type": "string",
+          "format": null,
+          "deprecated": false,
+          "has_example": false,
+          "description_len": 24
+        }
+      ],
+      "request_body": {
+        "required": true,
+        "content_types": [
+          "application/json"
+        ],
+        "properties": [
+          {
+            "path": "email",
+            "name": "email",
+            "type": "string",
+            "format": null,
+            "required": false,
+            "nullable": false,
+            "depth": 1,
+            "read_only": false,
+            "write_only": false,
+            "truncated": false
+          }
+        ]
+      },
+      "responses": [
+        {
+          "status_code": "204",
+          "content_types": [],
+          "properties": [],
+          "description_len": 31,
+          "header_names": []
+        },
+        {
+          "status_code": "400",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "status",
+              "name": "status",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "message",
+              "name": "message",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 15,
+          "header_names": []
+        },
+        {
+          "status_code": "401",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "status",
+              "name": "status",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "message",
+              "name": "message",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 19,
+          "header_names": []
+        }
+      ],
+      "security": [
+        {
+          "scheme_name": "bearerAuth",
+          "scheme_type": "http",
+          "scheme_subtype": "bearer",
+          "location": null,
+          "scopes": []
+        }
+      ],
+      "security_source": "own",
+      "servers": [
+        "http://localhost:5000"
+      ],
+      "summary_len": 18,
+      "description_len": 27,
+      "tags": [
+        "users"
+      ],
+      "deprecated": false,
+      "has_example": true,
+      "warnings": []
+    },
+    {
+      "endpoint_id": "a375967609dc53cf",
+      "spec_id": "VAmPI@0.1",
+      "spec_hash": "1a9a673accc91e0f83821487dc3f232d14627d5fccec5fb807db4bfced741d10",
+      "source_file": "/sessions/rcw-017jhtvmyudbtgvygwisdgct/mnt/cyberProject/demo/specs/vampi_openapi3.yaml",
+      "source_version": "openapi-3.x",
+      "schema_version": "s0-1.0",
+      "path": "/users/v1/{username}/password",
+      "method": "put",
+      "operation_id": "api_views.users.update_password",
+      "path_parameters": [
+        "username"
+      ],
+      "parameters": [
+        {
+          "name": "username",
+          "location": "path",
+          "required": true,
+          "type": "string",
+          "format": null,
+          "deprecated": false,
+          "has_example": false,
+          "description_len": 27
+        }
+      ],
+      "request_body": {
+        "required": true,
+        "content_types": [
+          "application/json"
+        ],
+        "properties": [
+          {
+            "path": "password",
+            "name": "password",
+            "type": "string",
+            "format": null,
+            "required": false,
+            "nullable": false,
+            "depth": 1,
+            "read_only": false,
+            "write_only": false,
+            "truncated": false
+          }
+        ]
+      },
+      "responses": [
+        {
+          "status_code": "204",
+          "content_types": [],
+          "properties": [],
+          "description_len": 35,
+          "header_names": []
+        },
+        {
+          "status_code": "400",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "status",
+              "name": "status",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "message",
+              "name": "message",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 15,
+          "header_names": []
+        },
+        {
+          "status_code": "401",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "status",
+              "name": "status",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "message",
+              "name": "message",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 19,
+          "header_names": []
+        }
+      ],
+      "security": [
+        {
+          "scheme_name": "bearerAuth",
+          "scheme_type": "http",
+          "scheme_subtype": "bearer",
+          "location": null,
+          "scopes": []
+        }
+      ],
+      "security_source": "own",
+      "servers": [
+        "http://localhost:5000"
+      ],
+      "summary_len": 21,
+      "description_len": 21,
+      "tags": [
+        "users"
+      ],
+      "deprecated": false,
+      "has_example": true,
+      "warnings": []
+    },
+    {
+      "endpoint_id": "85e6b12e75f64fc0",
+      "spec_id": "VAmPI@0.1",
+      "spec_hash": "1a9a673accc91e0f83821487dc3f232d14627d5fccec5fb807db4bfced741d10",
+      "source_file": "/sessions/rcw-017jhtvmyudbtgvygwisdgct/mnt/cyberProject/demo/specs/vampi_openapi3.yaml",
+      "source_version": "openapi-3.x",
+      "schema_version": "s0-1.0",
+      "path": "/books/v1",
+      "method": "get",
+      "operation_id": "api_views.books.get_all_books",
+      "path_parameters": [],
+      "parameters": [],
+      "request_body": null,
+      "responses": [
+        {
+          "status_code": "200",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "Books[]",
+              "name": "Books",
+              "type": "object",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 2,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "Books[].book_title",
+              "name": "book_title",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 3,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "Books[].user",
+              "name": "user",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 3,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 13,
+          "header_names": []
+        }
+      ],
+      "security": [],
+      "security_source": "none",
+      "servers": [
+        "http://localhost:5000"
+      ],
+      "summary_len": 19,
+      "description_len": 19,
+      "tags": [
+        "books"
+      ],
+      "deprecated": false,
+      "has_example": false,
+      "warnings": []
+    },
+    {
+      "endpoint_id": "547b3d1b1b484db2",
+      "spec_id": "VAmPI@0.1",
+      "spec_hash": "1a9a673accc91e0f83821487dc3f232d14627d5fccec5fb807db4bfced741d10",
+      "source_file": "/sessions/rcw-017jhtvmyudbtgvygwisdgct/mnt/cyberProject/demo/specs/vampi_openapi3.yaml",
+      "source_version": "openapi-3.x",
+      "schema_version": "s0-1.0",
+      "path": "/books/v1",
+      "method": "post",
+      "operation_id": "api_views.books.add_new_book",
+      "path_parameters": [],
+      "parameters": [],
+      "request_body": {
+        "required": true,
+        "content_types": [
+          "application/json"
+        ],
+        "properties": [
+          {
+            "path": "book_title",
+            "name": "book_title",
+            "type": "string",
+            "format": null,
+            "required": false,
+            "nullable": false,
+            "depth": 1,
+            "read_only": false,
+            "write_only": false,
+            "truncated": false
+          },
+          {
+            "path": "secret",
+            "name": "secret",
+            "type": "string",
+            "format": null,
+            "required": false,
+            "nullable": false,
+            "depth": 1,
+            "read_only": false,
+            "write_only": false,
+            "truncated": false
+          }
+        ]
+      },
+      "responses": [
+        {
+          "status_code": "200",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "message",
+              "name": "message",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "status",
+              "name": "status",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 25,
+          "header_names": []
+        },
+        {
+          "status_code": "400",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "status",
+              "name": "status",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "message",
+              "name": "message",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 15,
+          "header_names": []
+        },
+        {
+          "status_code": "401",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "status",
+              "name": "status",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "message",
+              "name": "message",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 19,
+          "header_names": []
+        }
+      ],
+      "security": [
+        {
+          "scheme_name": "bearerAuth",
+          "scheme_type": "http",
+          "scheme_subtype": "bearer",
+          "location": null,
+          "scopes": []
+        }
+      ],
+      "security_source": "own",
+      "servers": [
+        "http://localhost:5000"
+      ],
+      "summary_len": 12,
+      "description_len": 12,
+      "tags": [
+        "books"
+      ],
+      "deprecated": false,
+      "has_example": true,
+      "warnings": []
+    },
+    {
+      "endpoint_id": "ee55e26178e6258c",
+      "spec_id": "VAmPI@0.1",
+      "spec_hash": "1a9a673accc91e0f83821487dc3f232d14627d5fccec5fb807db4bfced741d10",
+      "source_file": "/sessions/rcw-017jhtvmyudbtgvygwisdgct/mnt/cyberProject/demo/specs/vampi_openapi3.yaml",
+      "source_version": "openapi-3.x",
+      "schema_version": "s0-1.0",
+      "path": "/books/v1/{book_title}",
+      "method": "get",
+      "operation_id": "api_views.books.get_by_title",
+      "path_parameters": [
+        "book_title"
+      ],
+      "parameters": [
+        {
+          "name": "book_title",
+          "location": "path",
+          "required": true,
+          "type": "string",
+          "format": null,
+          "deprecated": false,
+          "has_example": false,
+          "description_len": 18
+        }
+      ],
+      "request_body": null,
+      "responses": [
+        {
+          "status_code": "200",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "[]",
+              "name": "",
+              "type": "object",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "[].book_title",
+              "name": "book_title",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 2,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "[].owner",
+              "name": "owner",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 2,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "[].secret",
+              "name": "secret",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 2,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 31,
+          "header_names": []
+        },
+        {
+          "status_code": "401",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "status",
+              "name": "status",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "message",
+              "name": "message",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 19,
+          "header_names": []
+        },
+        {
+          "status_code": "404",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "status",
+              "name": "status",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "message",
+              "name": "message",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 14,
+          "header_names": []
+        }
+      ],
+      "security": [
+        {
+          "scheme_name": "bearerAuth",
+          "scheme_type": "http",
+          "scheme_subtype": "bearer",
+          "location": null,
+          "scopes": []
+        }
+      ],
+      "security_source": "own",
+      "servers": [
+        "http://localhost:5000"
+      ],
+      "summary_len": 41,
+      "description_len": 73,
+      "tags": [
+        "books"
+      ],
+      "deprecated": false,
+      "has_example": true,
+      "warnings": []
+    }
+  ]
+}

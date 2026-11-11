@@ -1,0 +1,9 @@
+node_modules/
+corpus/
+data/dataset*
+results/
+__pycache__/
+*.pyc
+dist/
+build/
+*.spec

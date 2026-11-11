@@ -1,0 +1,1122 @@
+{
+  "spec_id": "ShopAPI@1.2",
+  "spec_hash": "70ae501029dc0d54fbdc30ddd39c896a42d2c4ccfd414dd10e48790232b04b67",
+  "source_file": "test_api.yaml",
+  "source_version": "openapi-3.x",
+  "endpoint_count": 8,
+  "warnings": [],
+  "endpoints": [
+    {
+      "endpoint_id": "69e896f325f45064",
+      "spec_id": "ShopAPI@1.2",
+      "spec_hash": "70ae501029dc0d54fbdc30ddd39c896a42d2c4ccfd414dd10e48790232b04b67",
+      "source_file": "/sessions/rcw-017jhtvmyudbtgvygwisdgct/mnt/cyberProject/demo/specs/test_api.yaml",
+      "source_version": "openapi-3.x",
+      "schema_version": "s0-1.0",
+      "path": "/health",
+      "method": "get",
+      "operation_id": "healthCheck",
+      "path_parameters": [],
+      "parameters": [],
+      "request_body": null,
+      "responses": [
+        {
+          "status_code": "200",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "status",
+              "name": "status",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "uptime_seconds",
+              "name": "uptime_seconds",
+              "type": "integer",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 18,
+          "header_names": []
+        }
+      ],
+      "security": [
+        {
+          "scheme_name": "apiKeyAuth",
+          "scheme_type": "apiKey",
+          "scheme_subtype": null,
+          "location": "header",
+          "scopes": []
+        }
+      ],
+      "security_source": "inherited",
+      "servers": [
+        "https://api.shop.example.com/v1"
+      ],
+      "summary_len": 14,
+      "description_len": 34,
+      "tags": [
+        "ops"
+      ],
+      "deprecated": false,
+      "has_example": true,
+      "warnings": []
+    },
+    {
+      "endpoint_id": "2cafe0a05ec25440",
+      "spec_id": "ShopAPI@1.2",
+      "spec_hash": "70ae501029dc0d54fbdc30ddd39c896a42d2c4ccfd414dd10e48790232b04b67",
+      "source_file": "/sessions/rcw-017jhtvmyudbtgvygwisdgct/mnt/cyberProject/demo/specs/test_api.yaml",
+      "source_version": "openapi-3.x",
+      "schema_version": "s0-1.0",
+      "path": "/products",
+      "method": "get",
+      "operation_id": "listProducts",
+      "path_parameters": [],
+      "parameters": [
+        {
+          "name": "page",
+          "location": "query",
+          "required": false,
+          "type": "integer",
+          "format": null,
+          "deprecated": false,
+          "has_example": false,
+          "description_len": 0
+        },
+        {
+          "name": "page_size",
+          "location": "query",
+          "required": false,
+          "type": "integer",
+          "format": null,
+          "deprecated": false,
+          "has_example": false,
+          "description_len": 0
+        }
+      ],
+      "request_body": null,
+      "responses": [
+        {
+          "status_code": "200",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "items[]",
+              "name": "items",
+              "type": "object",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 2,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "items[].id",
+              "name": "id",
+              "type": "string",
+              "format": "uuid",
+              "required": true,
+              "nullable": false,
+              "depth": 3,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "items[].name",
+              "name": "name",
+              "type": "string",
+              "format": null,
+              "required": true,
+              "nullable": false,
+              "depth": 3,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "items[].price",
+              "name": "price",
+              "type": "number",
+              "format": "double",
+              "required": true,
+              "nullable": false,
+              "depth": 3,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "items[].in_stock",
+              "name": "in_stock",
+              "type": "boolean",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 3,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "items[].category",
+              "name": "category",
+              "type": "object",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 3,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "items[].category.id",
+              "name": "id",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 4,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "items[].category.name",
+              "name": "name",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 4,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "items[].category.parent",
+              "name": "parent",
+              "type": "object",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 4,
+              "read_only": false,
+              "write_only": false,
+              "truncated": true
+            },
+            {
+              "path": "total",
+              "name": "total",
+              "type": "integer",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 18,
+          "header_names": []
+        },
+        {
+          "status_code": "401",
+          "content_types": [],
+          "properties": [],
+          "description_len": 26,
+          "header_names": []
+        }
+      ],
+      "security": [
+        {
+          "scheme_name": "apiKeyAuth",
+          "scheme_type": "apiKey",
+          "scheme_subtype": null,
+          "location": "header",
+          "scopes": []
+        }
+      ],
+      "security_source": "inherited",
+      "servers": [
+        "https://api.shop.example.com/v1"
+      ],
+      "summary_len": 13,
+      "description_len": 44,
+      "tags": [
+        "catalogue"
+      ],
+      "deprecated": false,
+      "has_example": false,
+      "warnings": []
+    },
+    {
+      "endpoint_id": "8d29dc93788c6165",
+      "spec_id": "ShopAPI@1.2",
+      "spec_hash": "70ae501029dc0d54fbdc30ddd39c896a42d2c4ccfd414dd10e48790232b04b67",
+      "source_file": "/sessions/rcw-017jhtvmyudbtgvygwisdgct/mnt/cyberProject/demo/specs/test_api.yaml",
+      "source_version": "openapi-3.x",
+      "schema_version": "s0-1.0",
+      "path": "/customers/{customerId}",
+      "method": "get",
+      "operation_id": "getCustomer",
+      "path_parameters": [
+        "customerId"
+      ],
+      "parameters": [
+        {
+          "name": "customerId",
+          "location": "path",
+          "required": true,
+          "type": "string",
+          "format": "uuid",
+          "deprecated": false,
+          "has_example": false,
+          "description_len": 26
+        }
+      ],
+      "request_body": null,
+      "responses": [
+        {
+          "status_code": "200",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "first_name",
+              "name": "first_name",
+              "type": "string",
+              "format": null,
+              "required": true,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "last_name",
+              "name": "last_name",
+              "type": "string",
+              "format": null,
+              "required": true,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "date_of_birth",
+              "name": "date_of_birth",
+              "type": "string",
+              "format": "date",
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "id",
+              "name": "id",
+              "type": "string",
+              "format": "uuid",
+              "required": true,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "email",
+              "name": "email",
+              "type": "string",
+              "format": "email",
+              "required": true,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "phone",
+              "name": "phone",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "ssn",
+              "name": "ssn",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "address",
+              "name": "address",
+              "type": "object",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "address.line1",
+              "name": "line1",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 2,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "address.city",
+              "name": "city",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 2,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "address.postal_code",
+              "name": "postal_code",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 2,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "address.country",
+              "name": "country",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 2,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "saved_card",
+              "name": "saved_card",
+              "type": "object",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "saved_card.brand",
+              "name": "brand",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 2,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "saved_card.number",
+              "name": "number",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 2,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "saved_card.expiry",
+              "name": "expiry",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 2,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "saved_card.balance",
+              "name": "balance",
+              "type": "number",
+              "format": "double",
+              "required": false,
+              "nullable": false,
+              "depth": 2,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 12,
+          "header_names": []
+        },
+        {
+          "status_code": "404",
+          "content_types": [],
+          "properties": [],
+          "description_len": 16,
+          "header_names": []
+        }
+      ],
+      "security": [
+        {
+          "scheme_name": "apiKeyAuth",
+          "scheme_type": "apiKey",
+          "scheme_subtype": null,
+          "location": "header",
+          "scopes": []
+        }
+      ],
+      "security_source": "inherited",
+      "servers": [
+        "https://api.shop.example.com/v1"
+      ],
+      "summary_len": 16,
+      "description_len": 33,
+      "tags": [
+        "customers"
+      ],
+      "deprecated": false,
+      "has_example": false,
+      "warnings": []
+    },
+    {
+      "endpoint_id": "0bfb0a4457438970",
+      "spec_id": "ShopAPI@1.2",
+      "spec_hash": "70ae501029dc0d54fbdc30ddd39c896a42d2c4ccfd414dd10e48790232b04b67",
+      "source_file": "/sessions/rcw-017jhtvmyudbtgvygwisdgct/mnt/cyberProject/demo/specs/test_api.yaml",
+      "source_version": "openapi-3.x",
+      "schema_version": "s0-1.0",
+      "path": "/customers/{customerId}",
+      "method": "delete",
+      "operation_id": "deleteCustomer",
+      "path_parameters": [
+        "customerId"
+      ],
+      "parameters": [
+        {
+          "name": "customerId",
+          "location": "path",
+          "required": true,
+          "type": "string",
+          "format": "uuid",
+          "deprecated": false,
+          "has_example": false,
+          "description_len": 26
+        }
+      ],
+      "request_body": null,
+      "responses": [
+        {
+          "status_code": "204",
+          "content_types": [],
+          "properties": [],
+          "description_len": 7,
+          "header_names": []
+        },
+        {
+          "status_code": "401",
+          "content_types": [],
+          "properties": [],
+          "description_len": 17,
+          "header_names": []
+        },
+        {
+          "status_code": "403",
+          "content_types": [],
+          "properties": [],
+          "description_len": 11,
+          "header_names": []
+        }
+      ],
+      "security": [
+        {
+          "scheme_name": "bearerAuth",
+          "scheme_type": "http",
+          "scheme_subtype": "bearer",
+          "location": null,
+          "scopes": []
+        }
+      ],
+      "security_source": "own",
+      "servers": [
+        "https://api.shop.example.com/v1"
+      ],
+      "summary_len": 17,
+      "description_len": 50,
+      "tags": [
+        "customers"
+      ],
+      "deprecated": false,
+      "has_example": false,
+      "warnings": []
+    },
+    {
+      "endpoint_id": "0f9d2a250578dd08",
+      "spec_id": "ShopAPI@1.2",
+      "spec_hash": "70ae501029dc0d54fbdc30ddd39c896a42d2c4ccfd414dd10e48790232b04b67",
+      "source_file": "/sessions/rcw-017jhtvmyudbtgvygwisdgct/mnt/cyberProject/demo/specs/test_api.yaml",
+      "source_version": "openapi-3.x",
+      "schema_version": "s0-1.0",
+      "path": "/customers/{customerId}/password",
+      "method": "put",
+      "operation_id": "resetPassword",
+      "path_parameters": [
+        "customerId"
+      ],
+      "parameters": [
+        {
+          "name": "customerId",
+          "location": "path",
+          "required": true,
+          "type": "string",
+          "format": null,
+          "deprecated": false,
+          "has_example": false,
+          "description_len": 0
+        }
+      ],
+      "request_body": {
+        "required": true,
+        "content_types": [
+          "application/json"
+        ],
+        "properties": [
+          {
+            "path": "new_password",
+            "name": "new_password",
+            "type": "string",
+            "format": "password",
+            "required": true,
+            "nullable": false,
+            "depth": 1,
+            "read_only": false,
+            "write_only": false,
+            "truncated": false
+          }
+        ]
+      },
+      "responses": [
+        {
+          "status_code": "204",
+          "content_types": [],
+          "properties": [],
+          "description_len": 16,
+          "header_names": []
+        },
+        {
+          "status_code": "400",
+          "content_types": [],
+          "properties": [],
+          "description_len": 13,
+          "header_names": []
+        }
+      ],
+      "security": [
+        {
+          "scheme_name": "apiKeyAuth",
+          "scheme_type": "apiKey",
+          "scheme_subtype": null,
+          "location": "header",
+          "scopes": []
+        }
+      ],
+      "security_source": "inherited",
+      "servers": [
+        "https://api.shop.example.com/v1"
+      ],
+      "summary_len": 25,
+      "description_len": 49,
+      "tags": [
+        "customers"
+      ],
+      "deprecated": true,
+      "has_example": false,
+      "warnings": []
+    },
+    {
+      "endpoint_id": "e5fb91659a00722f",
+      "spec_id": "ShopAPI@1.2",
+      "spec_hash": "70ae501029dc0d54fbdc30ddd39c896a42d2c4ccfd414dd10e48790232b04b67",
+      "source_file": "/sessions/rcw-017jhtvmyudbtgvygwisdgct/mnt/cyberProject/demo/specs/test_api.yaml",
+      "source_version": "openapi-3.x",
+      "schema_version": "s0-1.0",
+      "path": "/internal/dump-users",
+      "method": "get",
+      "operation_id": "dumpUsers",
+      "path_parameters": [],
+      "parameters": [],
+      "request_body": null,
+      "responses": [
+        {
+          "status_code": "200",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "[]",
+              "name": "",
+              "type": "object",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "[].id",
+              "name": "id",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 2,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "[].email",
+              "name": "email",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 2,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "[].password_hash",
+              "name": "password_hash",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 2,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "[].session_token",
+              "name": "session_token",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 2,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "[].is_admin",
+              "name": "is_admin",
+              "type": "boolean",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 2,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 14,
+          "header_names": []
+        }
+      ],
+      "security": [],
+      "security_source": "override_none",
+      "servers": [
+        "https://api.shop.example.com/v1"
+      ],
+      "summary_len": 18,
+      "description_len": 26,
+      "tags": [
+        "internal"
+      ],
+      "deprecated": false,
+      "has_example": false,
+      "warnings": []
+    },
+    {
+      "endpoint_id": "975349d7ec31e034",
+      "spec_id": "ShopAPI@1.2",
+      "spec_hash": "70ae501029dc0d54fbdc30ddd39c896a42d2c4ccfd414dd10e48790232b04b67",
+      "source_file": "/sessions/rcw-017jhtvmyudbtgvygwisdgct/mnt/cyberProject/demo/specs/test_api.yaml",
+      "source_version": "openapi-3.x",
+      "schema_version": "s0-1.0",
+      "path": "/orders",
+      "method": "post",
+      "operation_id": "createOrder",
+      "path_parameters": [],
+      "parameters": [],
+      "request_body": {
+        "required": true,
+        "content_types": [
+          "application/json"
+        ],
+        "properties": [
+          {
+            "path": "customer_id",
+            "name": "customer_id",
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "nullable": false,
+            "depth": 1,
+            "read_only": false,
+            "write_only": false,
+            "truncated": false
+          },
+          {
+            "path": "lines[]",
+            "name": "lines",
+            "type": "object",
+            "format": null,
+            "required": true,
+            "nullable": false,
+            "depth": 2,
+            "read_only": false,
+            "write_only": false,
+            "truncated": false
+          },
+          {
+            "path": "lines[].product_id",
+            "name": "product_id",
+            "type": "string",
+            "format": null,
+            "required": true,
+            "nullable": false,
+            "depth": 3,
+            "read_only": false,
+            "write_only": false,
+            "truncated": false
+          },
+          {
+            "path": "lines[].quantity",
+            "name": "quantity",
+            "type": "integer",
+            "format": null,
+            "required": true,
+            "nullable": false,
+            "depth": 3,
+            "read_only": false,
+            "write_only": false,
+            "truncated": false
+          },
+          {
+            "path": "payment_card",
+            "name": "payment_card",
+            "type": "object",
+            "format": null,
+            "required": false,
+            "nullable": false,
+            "depth": 1,
+            "read_only": false,
+            "write_only": false,
+            "truncated": false
+          },
+          {
+            "path": "payment_card.brand",
+            "name": "brand",
+            "type": "string",
+            "format": null,
+            "required": false,
+            "nullable": false,
+            "depth": 2,
+            "read_only": false,
+            "write_only": false,
+            "truncated": false
+          },
+          {
+            "path": "payment_card.number",
+            "name": "number",
+            "type": "string",
+            "format": null,
+            "required": false,
+            "nullable": false,
+            "depth": 2,
+            "read_only": false,
+            "write_only": false,
+            "truncated": false
+          },
+          {
+            "path": "payment_card.expiry",
+            "name": "expiry",
+            "type": "string",
+            "format": null,
+            "required": false,
+            "nullable": false,
+            "depth": 2,
+            "read_only": false,
+            "write_only": false,
+            "truncated": false
+          },
+          {
+            "path": "payment_card.balance",
+            "name": "balance",
+            "type": "number",
+            "format": "double",
+            "required": false,
+            "nullable": false,
+            "depth": 2,
+            "read_only": false,
+            "write_only": false,
+            "truncated": false
+          },
+          {
+            "path": "note",
+            "name": "note",
+            "type": "string",
+            "format": null,
+            "required": false,
+            "nullable": false,
+            "depth": 1,
+            "read_only": false,
+            "write_only": false,
+            "truncated": false
+          }
+        ]
+      },
+      "responses": [
+        {
+          "status_code": "201",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "order_id",
+              "name": "order_id",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "total",
+              "name": "total",
+              "type": "number",
+              "format": "double",
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            }
+          ],
+          "description_len": 13,
+          "header_names": []
+        },
+        {
+          "status_code": "400",
+          "content_types": [],
+          "properties": [],
+          "description_len": 13,
+          "header_names": []
+        },
+        {
+          "status_code": "401",
+          "content_types": [],
+          "properties": [],
+          "description_len": 17,
+          "header_names": []
+        }
+      ],
+      "security": [
+        {
+          "scheme_name": "oauth2Auth",
+          "scheme_type": "oauth2",
+          "scheme_subtype": null,
+          "location": null,
+          "scopes": [
+            "orders:write"
+          ]
+        }
+      ],
+      "security_source": "own",
+      "servers": [
+        "https://api.shop.example.com/v1"
+      ],
+      "summary_len": 14,
+      "description_len": 48,
+      "tags": [
+        "orders"
+      ],
+      "deprecated": false,
+      "has_example": false,
+      "warnings": []
+    },
+    {
+      "endpoint_id": "8a5eed8ddb6f0171",
+      "spec_id": "ShopAPI@1.2",
+      "spec_hash": "70ae501029dc0d54fbdc30ddd39c896a42d2c4ccfd414dd10e48790232b04b67",
+      "source_file": "/sessions/rcw-017jhtvmyudbtgvygwisdgct/mnt/cyberProject/demo/specs/test_api.yaml",
+      "source_version": "openapi-3.x",
+      "schema_version": "s0-1.0",
+      "path": "/categories/{categoryId}",
+      "method": "get",
+      "operation_id": "getCategory",
+      "path_parameters": [
+        "categoryId"
+      ],
+      "parameters": [
+        {
+          "name": "categoryId",
+          "location": "path",
+          "required": true,
+          "type": "string",
+          "format": null,
+          "deprecated": false,
+          "has_example": false,
+          "description_len": 0
+        }
+      ],
+      "request_body": null,
+      "responses": [
+        {
+          "status_code": "200",
+          "content_types": [
+            "application/json"
+          ],
+          "properties": [
+            {
+              "path": "id",
+              "name": "id",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "name",
+              "name": "name",
+              "type": "string",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": false
+            },
+            {
+              "path": "parent",
+              "name": "parent",
+              "type": "object",
+              "format": null,
+              "required": false,
+              "nullable": false,
+              "depth": 1,
+              "read_only": false,
+              "write_only": false,
+              "truncated": true
+            }
+          ],
+          "description_len": 12,
+          "header_names": []
+        }
+      ],
+      "security": [
+        {
+          "scheme_name": "apiKeyAuth",
+          "scheme_type": "apiKey",
+          "scheme_subtype": null,
+          "location": "header",
+          "scopes": []
+        }
+      ],
+      "security_source": "inherited",
+      "servers": [
+        "https://api.shop.example.com/v1"
+      ],
+      "summary_len": 14,
+      "description_len": 62,
+      "tags": [
+        "catalogue"
+      ],
+      "deprecated": false,
+      "has_example": false,
+      "warnings": []
+    }
+  ]
+}

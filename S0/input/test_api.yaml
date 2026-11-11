@@ -1,0 +1,309 @@
+# ---------------------------------------------------------------------------
+# ShopAPI -- a small test specification for the APIGUARD S0 normaliser.
+#
+# It is deliberately mixed: some endpoints are well designed, some are not.
+# Every S0 behaviour has at least one example in here, so you can check the
+# normalised output by eye.
+#
+#   what to look for                     where
+#   -----------------------------------  ------------------------------------
+#   security_source = inherited          GET /products
+#   security_source = own                POST /orders   (its own oauth2 scopes)
+#   security_source = override_none      GET /internal/dump-users  (security: [])
+#   security_source = none               (nothing here -- a global rule exists)
+#   path-level parameter merged          /customers/{customerId}  (both methods)
+#   $ref resolved                        Product, Customer, Order
+#   circular $ref cut                    Category.parent -> Category
+#   allOf merged                         Customer (Person + contact fields)
+#   array flattened to items[]           GET /products
+#   sensitive response fields            Customer.email, ssn, Card.number
+#   deprecated operation                 PUT /customers/{customerId}/password
+# ---------------------------------------------------------------------------
+openapi: 3.0.3
+info:
+  title: ShopAPI
+  description: Small deliberately-mixed API used to test the S0 normaliser.
+  version: '1.2'
+
+servers:
+  - url: https://api.shop.example.com/v1
+
+# applies to every operation that does not state its own
+security:
+  - apiKeyAuth: []
+
+paths:
+
+  /health:
+    get:
+      operationId: healthCheck
+      summary: Liveness probe
+      description: Returns ok when the service is up.
+      tags: [ops]
+      responses:
+        '200':
+          description: service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: {type: string, example: ok}
+                  uptime_seconds: {type: integer}
+
+  /products:
+    get:
+      operationId: listProducts
+      summary: List products
+      description: Returns the product catalogue, newest first.
+      tags: [catalogue]
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema: {type: integer, default: 1}
+        - name: page_size
+          in: query
+          required: false
+          schema: {type: integer, default: 20}
+      responses:
+        '200':
+          description: a page of products
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items: {$ref: '#/components/schemas/Product'}
+                  total: {type: integer}
+        '401':
+          description: missing or invalid api key
+
+  /customers/{customerId}:
+    # path-level parameter -- S0 must copy this into BOTH operations below
+    parameters:
+      - name: customerId
+        in: path
+        required: true
+        description: identifier of the customer
+        schema: {type: string, format: uuid}
+    get:
+      operationId: getCustomer
+      summary: Get one customer
+      description: Returns the full customer record.
+      tags: [customers]
+      responses:
+        '200':
+          description: the customer
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Customer'}
+        '404':
+          description: no such customer
+    delete:
+      operationId: deleteCustomer
+      summary: Delete a customer
+      description: Permanently removes the customer and their orders.
+      tags: [customers]
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: deleted
+        '401':
+          description: not authenticated
+        '403':
+          description: not allowed
+
+  /customers/{customerId}/password:
+    put:
+      operationId: resetPassword
+      summary: Reset a customer password
+      description: Legacy endpoint. Use the account service instead.
+      tags: [customers]
+      deprecated: true
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          schema: {type: string}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [new_password]
+              properties:
+                new_password: {type: string, format: password}
+      responses:
+        '204':
+          description: password changed
+        '400':
+          description: weak password
+
+  /internal/dump-users:
+    get:
+      operationId: dumpUsers
+      summary: Dump all user rows
+      description: Internal debugging helper.
+      tags: [internal]
+      # explicitly switches the global requirement OFF -- this is the
+      # override_none case, and it is a different risk from simply having none
+      security: []
+      responses:
+        '200':
+          description: every user row
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: string}
+                    email: {type: string}
+                    password_hash: {type: string}
+                    session_token: {type: string}
+                    is_admin: {type: boolean}
+
+  /orders:
+    post:
+      operationId: createOrder
+      summary: Place an order
+      description: Creates an order for the authenticated customer.
+      tags: [orders]
+      security:
+        - oauth2Auth: [orders:write]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/Order'}
+      responses:
+        '201':
+          description: order created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order_id: {type: string}
+                  total: {type: number, format: double}
+        '400':
+          description: invalid order
+        '401':
+          description: not authenticated
+
+  /categories/{categoryId}:
+    get:
+      operationId: getCategory
+      summary: Get a category
+      description: Categories nest inside each other, so this schema is circular.
+      tags: [catalogue]
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          schema: {type: string}
+      responses:
+        '200':
+          description: the category
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Category'}
+
+components:
+
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    oauth2Auth:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://auth.shop.example.com/authorize
+          tokenUrl: https://auth.shop.example.com/token
+          scopes:
+            orders:read: read your orders
+            orders:write: place orders
+
+  schemas:
+
+    Product:
+      type: object
+      required: [id, name, price]
+      properties:
+        id: {type: string, format: uuid}
+        name: {type: string}
+        price: {type: number, format: double}
+        in_stock: {type: boolean}
+        category: {$ref: '#/components/schemas/Category'}
+
+    Category:
+      type: object
+      properties:
+        id: {type: string}
+        name: {type: string}
+        # circular on purpose: S0 must cut this and mark it truncated
+        parent: {$ref: '#/components/schemas/Category'}
+
+    Person:
+      type: object
+      required: [first_name, last_name]
+      properties:
+        first_name: {type: string}
+        last_name: {type: string}
+        date_of_birth: {type: string, format: date}
+
+    Customer:
+      # allOf composition: S0 must merge both branches into one property list
+      allOf:
+        - $ref: '#/components/schemas/Person'
+        - type: object
+          required: [id, email]
+          properties:
+            id: {type: string, format: uuid}
+            email: {type: string, format: email}
+            phone: {type: string}
+            ssn: {type: string, description: national identity number}
+            address:
+              type: object
+              properties:
+                line1: {type: string}
+                city: {type: string}
+                postal_code: {type: string}
+                country: {type: string}
+            saved_card: {$ref: '#/components/schemas/Card'}
+
+    Card:
+      type: object
+      properties:
+        brand: {type: string}
+        number: {type: string, description: full PAN, should never be returned}
+        expiry: {type: string}
+        balance: {type: number, format: double}
+
+    Order:
+      type: object
+      required: [customer_id, lines]
+      properties:
+        customer_id: {type: string, format: uuid}
+        lines:
+          type: array
+          items:
+            type: object
+            required: [product_id, quantity]
+            properties:
+              product_id: {type: string}
+              quantity: {type: integer, minimum: 1}
+        payment_card: {$ref: '#/components/schemas/Card'}
+        note: {type: string}

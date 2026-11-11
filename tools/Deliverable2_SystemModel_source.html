@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<style>
+@page { size: A4; margin: 18mm 17mm 16mm 17mm; }
+body { font-family: "Times New Roman","Liberation Serif",serif; font-size: 10pt; line-height: 1.34; color:#000; margin:0; text-align: justify; }
+h1.title { font-size: 14.5pt; font-weight: bold; text-align:center; margin:0 0 6pt 0; line-height:1.22; }
+p.authors { text-align:center; font-size:9.5pt; margin:0 0 2pt 0; }
+p.inst { text-align:center; font-size:9pt; font-style:italic; margin:0 0 1pt 0; }
+p.adv { text-align:center; font-size:9pt; font-style:italic; margin:0 0 8pt 0; }
+p.delivnote { text-align:center; font-size:8.5pt; margin:0 0 3pt 0; }
+p.switchnote { text-align:center; font-size:8pt; font-style:italic; color:#333; margin:0 0 12pt 0; border-top:0.5pt solid #999; border-bottom:0.5pt solid #999; padding:4pt 10pt; }
+h2 { font-size:10.5pt; font-weight:bold; margin:13pt 0 4pt 0; text-transform:uppercase; letter-spacing:0.2pt; page-break-after:avoid; }
+h3 { font-size:10pt; font-weight:bold; font-style:italic; margin:9pt 0 3pt 0; page-break-after:avoid; }
+p { margin:0 0 5pt 0; }
+ul,ol { margin:0 0 5pt 0; padding-left:16pt; }
+li { margin-bottom:2.5pt; }
+table { border-collapse:collapse; width:100%; font-size:8.8pt; margin:4pt 0 7pt 0; page-break-inside:avoid; }
+th,td { border:0.5pt solid #666; padding:2.6pt 4pt; text-align:left; vertical-align:top; }
+th { background:#eee; font-weight:bold; }
+.fig { text-align:center; margin:8pt 0 4pt 0; page-break-inside:avoid; }
+.fig img { width:100%; }
+.cap { font-size:8.6pt; text-align:center; margin:0 0 10pt 0; }
+.eq { text-align:center; font-size:10pt; margin:5pt 0 6pt 0; }
+var,.v { font-style:italic; }
+code,pre { font-family:"Liberation Mono","Courier New",monospace; font-size:8.4pt; }
+pre { background:#f4f4f4; border:0.5pt solid #bbb; padding:5pt 7pt; margin:4pt 0 7pt 0; white-space:pre; line-height:1.25; page-break-inside:avoid; text-align:left; }
+.refs { font-size:8.4pt; }
+.refs p { margin:0 0 3pt 0; text-indent:-14pt; padding-left:14pt; }
+.nb { font-weight:bold; }
+</style></head><body>
+
+<h1 class="title">APIGUARD: A Machine Learning-Assisted Framework for<br>Continuous API Security Assessment in DevSecOps Pipelines</h1>
+<p class="authors">Thornkasidej Fuangfoo (6622771234), Varit Mesri (6622771317)</p>
+<p class="inst">Sirindhorn International Institute of Technology (SIIT), Thammasat University</p>
+<p class="adv">Adviser: Somchart Fugkeaw</p>
+<p class="delivnote"><b>Deliverable 2 &mdash; System Model and Description</b> &middot; 7 September 2026</p>
+<p class="switchnote">This deliverable describes the system for the registered topic &ldquo;Continuous API Security Assessment in DevSecOps Pipelines.&rdquo; It replaces the Infrastructure-as-Code system presented in Deliverable 1, which was withdrawn because that topic had already been reserved by another group. The overall research design is unchanged; the target artefact is now the OpenAPI specification instead of Terraform code.</p>
+
+<h2>1. Introduction</h2>
+<p>Modern software is assembled out of HTTP APIs, and the OpenAPI specification is the first place where an API&rsquo;s security posture is written down: which endpoints require authentication, which scheme they use, what data comes back, and what limits apply. That makes the specification a cheap and early place to catch security design mistakes, long before a penetration test is run.</p>
+<p>Today this checking is done by rules only. A linter such as Spectral with the OWASP ruleset fires when a written rule matches. It cannot say which of its findings actually matter, it produces the same alert whether an endpoint returns a health-check string or a customer&rsquo;s date of birth, and it says nothing about a problem nobody wrote a rule for. Inside a CI/CD pipeline this causes two failures: developers stop reading the alerts, and the gate lets dangerous designs through.</p>
+<p>APIGUARD places a supervised model <i>after</i> the rule scanner. The scanner keeps finding what rules find; the model gives every endpoint a risk score, ranks the findings, and explains each score with SHAP. The pipeline gate then acts on a risk score instead of a raw alert count. This document specifies the system model: the entities involved, the notation used, every component and its inputs and outputs, the data flow of a single pipeline run, the trust assumptions, and the way the system is deployed.</p>
+
+<h2>2. System Overview</h2>
+<p>APIGUARD is organised into three lanes. Separating them is a design decision, not a drawing convenience: each lane runs at a different time, under different trust conditions, and at a different speed.</p>
+<ul>
+<li><b>The runtime lane</b> is what ships. It runs on every commit inside the CI/CD pipeline, must finish in seconds, and is fully automatic.</li>
+<li><b>The offline lane</b> builds the model. It runs rarely, on a workstation or a build server, and may take hours.</li>
+<li><b>The feedback lane</b> is how a human verdict re-enters the system. It is deliberately slow and never reaches the model directly.</li>
+</ul>
+<p>Figure 1 shows the three lanes and the two connections between them: the trained model artefact loaded by the runtime, and the shared code path that guarantees training and runtime compute features identically.</p>
+
+<div class="fig"><img src="architecture.png" alt="APIGUARD architecture"></div>
+<p class="cap"><b>Figure 1.</b> APIGUARD system model. Runtime (S0&ndash;S3) runs in the pipeline; the offline lane (T1&ndash;T4) produces <code>model.json</code>; the feedback lane returns human verdicts to the label store. Solid amber marks shared code and the model artefact; dashed teal marks the human-in-the-loop path. The unit of analysis is one endpoint.</p>
+
+<h2>3. Entities, Roles and Trust</h2>
+<p>Six entities take part in the system. Their roles and how far each is trusted are set out below.</p>
+<table>
+<tr><th style="width:20%">Entity</th><th style="width:44%">Role in the system</th><th style="width:36%">Trust assumption</th></tr>
+<tr><td><b>Developer</b></td><td>Writes or edits an OpenAPI specification and pushes it to the repository. Reads the gate output and fixes what it reports.</td><td>Not malicious, but assumed to make design mistakes. Cannot change the gate threshold.</td></tr>
+<tr><td><b>CI/CD runner</b></td><td>Checks out the repository, invokes the APIGUARD CLI, and acts on its exit code.</td><td>Trusted execution environment. Its configuration is under version control.</td></tr>
+<tr><td><b>APIGUARD CLI</b></td><td>The runtime lane, S0&ndash;S3. Reads a specification, produces a per-endpoint risk report and a pass/fail exit code.</td><td>The component under study. Must be deterministic for a fixed specification, ruleset version and model.</td></tr>
+<tr><td><b>Rule scanner</b></td><td>Third-party linter (Spectral with the OWASP ruleset). Supplies findings used both as a baseline and as model input.</td><td>Trusted but incomplete. Its version is pinned because a version change silently changes every label.</td></tr>
+<tr><td><b>Security analyst</b></td><td>Reviews a sample of gate verdicts and marks each as correct or incorrect. Owns the retraining decision.</td><td>Authoritative for labels. The only entity allowed to change what the model learns.</td></tr>
+<tr><td><b>Offline trainer</b></td><td>Builds the corpus, assembles labels, trains the model, and emits <code>model.json</code>.</td><td>Runs outside the pipeline. Never invoked automatically by a gate decision.</td></tr>
+</table>
+
+<h2>4. Notation and Definitions</h2>
+<p>The following notation is used throughout the project and in all later deliverables.</p>
+<table>
+<tr><th style="width:20%">Symbol</th><th>Meaning</th></tr>
+<tr><td><span class="v">S</span></td><td>An OpenAPI 3.x or Swagger 2.0 specification document, the input to one pipeline run.</td></tr>
+<tr><td><span class="v">e</span> = (<span class="v">p</span>, <span class="v">m</span>)</td><td>One <b>endpoint</b>: a path <span class="v">p</span> combined with an HTTP method <span class="v">m</span>. This is the unit of analysis.</td></tr>
+<tr><td><span class="v">E</span>(<span class="v">S</span>)</td><td>The set of all endpoints declared in <span class="v">S</span>, produced by the normaliser S0.</td></tr>
+<tr><td><span class="v">A</span>(<span class="v">e</span>)</td><td>The scanner findings attributed to endpoint <span class="v">e</span>, each carrying a rule identifier, a severity and an OWASP API Top 10 category.</td></tr>
+<tr><td><span class="v">x</span>(<span class="v">e</span>) &isin; &#8477;<sup><span class="v">d</span></sup></td><td>The feature vector of endpoint <span class="v">e</span>, produced by S2a from the normalised specification and from <span class="v">A</span>(<span class="v">e</span>).</td></tr>
+<tr><td><span class="v">y</span>(<span class="v">e</span>) &isin; {0,1}</td><td>The label of endpoint <span class="v">e</span>: 1 if the endpoint carries a security-relevant design issue, 0 otherwise.</td></tr>
+<tr><td><span class="v">f</span> : &#8477;<sup><span class="v">d</span></sup> &rarr; [0,1]</td><td>The trained classifier (XGBoost), loaded from <code>model.json</code> at CLI startup.</td></tr>
+<tr><td><span class="v">r</span>(<span class="v">e</span>)</td><td>The risk score of endpoint <span class="v">e</span>, defined as <span class="v">r</span>(<span class="v">e</span>) = <span class="v">f</span>(<span class="v">x</span>(<span class="v">e</span>)).</td></tr>
+<tr><td>&phi;(<span class="v">e</span>)</td><td>The SHAP attribution vector for <span class="v">e</span>: the contribution of each feature to <span class="v">r</span>(<span class="v">e</span>).</td></tr>
+<tr><td>&tau;, <span class="v">k</span></td><td>The gate threshold and the tolerated count of endpoints above it.</td></tr>
+<tr><td><span class="v">G</span>(<span class="v">S</span>)</td><td>The gate decision for the whole specification: 0 = pass, 1 = fail.</td></tr>
+</table>
+<p>The runtime lane computes, for one specification <span class="v">S</span>:</p>
+<p class="eq"><span class="v">R</span>(<span class="v">S</span>) = { (<span class="v">e</span>, <span class="v">r</span>(<span class="v">e</span>), &phi;(<span class="v">e</span>)) : <span class="v">e</span> &isin; <span class="v">E</span>(<span class="v">S</span>) }</p>
+<p>and the gate decision is</p>
+<p class="eq"><span class="v">G</span>(<span class="v">S</span>) = 1 &nbsp;if&nbsp; | { <span class="v">e</span> &isin; <span class="v">E</span>(<span class="v">S</span>) : <span class="v">r</span>(<span class="v">e</span>) &ge; &tau; } | &gt; <span class="v">k</span>, &nbsp;&nbsp; 0 otherwise.</p>
+<p>With the default policy <span class="v">k</span> = 0 the gate fails if any single endpoint scores at or above &tau;. A larger <span class="v">k</span> lets a team adopt the tool gradually on an existing API without blocking every build on day one. The value of &tau; is not chosen by hand: it is swept on a validation set and reported as a precision/recall trade-off curve (Experiment 3).</p>
+<p><b>Two properties the design must hold.</b> First, <span class="v">r</span>(<span class="v">e</span>) is defined for <i>every</i> endpoint, including endpoints on which no rule fired &mdash; for those, the scanner-derived features are simply zero. Second, for a fixed specification, ruleset version and model artefact, the whole runtime lane is deterministic; nothing in it samples randomly.</p>
+
+<h2>5. Runtime Lane: Components S0&ndash;S3</h2>
+
+<h3>5.1 S0 &mdash; Normaliser</h3>
+<p><b>Input:</b> a specification file in YAML or JSON, either OpenAPI 3.x or Swagger 2.0. <b>Output:</b> a list of normalised endpoint records, one per (path, method) pair.</p>
+<p>The normaliser resolves internal <code>$ref</code> pointers, expands the schema of every request body and response, and flattens the two specification versions into one internal form so that no component after S0 needs to know which version it came from. Path-level parameters are merged into each operation, and a global <code>security</code> block is propagated to operations that do not declare their own &mdash; recording, importantly, whether the operation <i>inherited</i> or <i>overrode</i> that requirement, because an operation that explicitly overrides global security with an empty requirement is a different risk from one that simply inherits it.</p>
+<p><b>Guarantees.</b> Every endpoint of a parsable specification appears exactly once in the output. A specification that cannot be parsed is not silently skipped: it is written to an error log with the reason, and the corpus statistics report the parse-failure rate. Circular references are cut at a fixed depth so that expansion always terminates.</p>
+
+<h3>5.2 S1 &mdash; Rule scanner</h3>
+<p><b>Input:</b> the original specification file. <b>Output:</b> the set <span class="v">A</span>(<span class="v">e</span>) of findings for each endpoint.</p>
+<p>S1 runs Spectral with <code>@stoplight/spectral-owasp-ruleset</code> v2.x, which implements the OWASP API Security Top 10, 2023 edition. Spectral reports findings against JSON paths inside the document; S1 maps each finding down to the endpoint it belongs to, so that a document-level finding is attributed to every endpoint and an operation-level finding only to its own. Optionally the 42Crunch audit score is collected as an additional signal.</p>
+<p>S1 output is used in three distinct ways, and keeping them apart matters for the evaluation: it is the <b>baseline</b> the model is compared against, it is the source of the <b>automatic labels</b> used for training, and it enters the model as <b>input features</b>. The scanner version and ruleset version are pinned and recorded in every report, because a ruleset upgrade changes both the baseline and the labels at once.</p>
+
+<h3>5.3 S2 &mdash; AI verifier</h3>
+<p>S2 is the core of the contribution and has three sub-components.</p>
+<p><b>S2a Feature builder.</b> Turns one normalised endpoint record, plus its scanner findings, into a fixed-length numeric vector <span class="v">x</span>(<span class="v">e</span>). The features fall into six groups:</p>
+<table>
+<tr><th style="width:16%">Group</th><th>Contents</th><th style="width:26%">Why it should carry signal</th></tr>
+<tr><td><b>A. Structural</b></td><td>Path depth; number of path parameters; whether a path parameter looks like an object identifier (<code>id</code>, <code>uuid</code>, <code>_id</code>); HTTP method; query and header parameter counts; request body present; response schema property count; declared status codes; whether 401/403 are declared; deprecated flag.</td><td>An object identifier in the path with no ownership check is the classic API1 Broken Object Level Authorization shape.</td></tr>
+<tr><td><b>B. Security scheme</b></td><td>Whether the endpoint has a security requirement; inherited versus overridden; scheme type (apiKey, http-basic, http-bearer, oauth2, openIdConnect); scope count; whether the server URL uses <code>http</code> rather than <code>https</code>.</td><td>This is the direct expression of authentication and authorisation design (API2, API5).</td></tr>
+<tr><td><b>C. Data sensitivity</b></td><td>Count of response property names matching a sensitive-term lexicon (password, token, secret, ssn, dob, phone, email, address, card, balance); maximum term weight; sensitive properties in response versus request; ratio of sensitive to total properties; the combination flag <i>no security requirement and sensitive response fields</i>.</td><td>This is what a rule cannot see: it separates a health-check endpoint from one returning customer data (API3).</td></tr>
+<tr><td><b>D. Documentation hygiene</b></td><td>Description and summary length; example present; readability index; version segment in the path; pagination parameters present; rate-limit headers documented.</td><td>Poorly specified endpoints correlate with weak design; rate-limit documentation relates to API4.</td></tr>
+<tr><td><b>E. Scanner-derived</b></td><td><code>flagged_by_spectral</code>, <code>rule_count</code>, <code>severity_max</code>, <code>owasp_categories_hit</code>, optional <code>42crunch_audit_score</code>. All zero when nothing fired.</td><td>Lets the model use the rules without depending on them. Kept as a separable group so the ablation can remove it entirely.</td></tr>
+<tr><td><b>F. Context</b></td><td>Endpoint count of the parent specification; OpenAPI 3 versus Swagger 2; provider or domain category.</td><td>Places the endpoint in its API rather than judging it in isolation.</td></tr>
+</table>
+<p>The feature builder is a tested module with no dependency on the training pipeline, which is what allows the same code to be imported by both S2a and T3.</p>
+<p><b>S2b Classifier.</b> An XGBoost gradient-boosted tree ensemble [6], loaded from <code>model.json</code> at startup and applied to every endpoint. Gradient boosting is chosen because the input is a table of mixed numeric, binary and categorical features, because it handles strong class imbalance with <code>scale_pos_weight</code>, and because tree ensembles remain traceable back to individual features. Simpler baselines &mdash; majority class, logistic regression, random forest &mdash; are trained on the identical feature table for comparison.</p>
+<p><b>S2c Explainer.</b> SHAP [7] produces &phi;(<span class="v">e</span>), attributing the score to individual features using Shapley values from cooperative game theory. Every finding APIGUARD reports carries the three to five features that pushed its score up. This is not decoration: it is how a developer checks whether the model reasoned about a security property or about something irrelevant, and it is how the team detects a model that has learned a shortcut.</p>
+
+<h3>5.4 S3 &mdash; Risk gate</h3>
+<p><b>Input:</b> <span class="v">R</span>(<span class="v">S</span>), the scored endpoint set. <b>Output:</b> a report and a process exit code.</p>
+<p>S3 applies the decision rule of Section 4 and emits the ranked findings in one of three formats: human-readable text for a terminal, JSON for further processing, and SARIF so that results appear as annotations in the code-review interface. The exit code is 0 on pass and 1 on fail, which is the only part of the system the CI runner needs to understand. The report always lists endpoints in descending risk order, and each entry carries the score, the SHAP reasons, and any scanner findings that fired.</p>
+
+<h2>6. Offline Lane: Components T1&ndash;T4</h2>
+
+<h3>6.1 T1 &mdash; Corpus</h3>
+<table>
+<tr><th style="width:26%">Source</th><th style="width:26%">Size</th><th>Use in the project</th></tr>
+<tr><td>APIs.guru directory [8]</td><td>2,529 APIs / 108,837 endpoints</td><td>Primary corpus. Curated, clean and version-stable.</td></tr>
+<tr><td>APIstic [1]</td><td>1,275,568 specifications</td><td>Scale-up if the schedule allows; also the reference for structural metrics.</td></tr>
+<tr><td>VAmPI [10]</td><td>1 API, vulnerable <i>and</i> secure mode</td><td>Ground truth. The same API in two configurations gives matched positive and negative examples.</td></tr>
+<tr><td>OWASP crAPI [11]</td><td>1 API, documented challenges</td><td>Second ground-truth target, independent of VAmPI.</td></tr>
+</table>
+<p>Each downloaded specification is stored with its source URL and a snapshot date, and is de-duplicated by normalised content hash before anything else happens. Public API specifications are heavily copied and templated between projects; near-duplicates left in the corpus would appear on both sides of a train/test split.</p>
+
+<h3>6.2 T2 &mdash; Label store</h3>
+<p>Three label sources are kept separate and never merged into one undifferentiated pile:</p>
+<ul>
+<li><b>L1 automatic.</b> Spectral OWASP findings mapped down to endpoints. Cheap and plentiful, and circular if used alone &mdash; a model trained only on L1 can at best reproduce the scanner.</li>
+<li><b>L2 manual.</b> A stratified sample of about 300 endpoints labelled independently by both team members, with disagreements resolved together and inter-rater agreement reported as Cohen&rsquo;s &kappa;. Small, but this is the label set that makes the false-positive claim credible.</li>
+<li><b>L3 ground truth.</b> VAmPI and crAPI endpoints with known, documented vulnerabilities.</li>
+</ul>
+
+<h3>6.3 T3 &mdash; Shared core</h3>
+<p>T3 is not a separate implementation. It is the S0 normaliser and the S2a feature builder <b>imported</b> by the training pipeline, not copied into it. This is a deliberate constraint: if training and runtime computed features from two code paths, any drift between them would show up as an unexplained drop in live accuracy that no experiment could diagnose. The amber path in Figure 1 marks this shared code.</p>
+
+<h3>6.4 T4 &mdash; Trainer</h3>
+<p>T4 takes the labelled feature table and produces <code>model.json</code>. Four rules govern it:</p>
+<ol>
+<li><b>Split by provider or repository, never at random.</b> A random split leaks near-identical endpoints across the boundary and produces impressive but meaningless scores. Grouped 5-fold cross-validation is used throughout.</li>
+<li><b>Report PR-AUC, F1 and MCC, not accuracy.</b> Insecure endpoints are a small minority; a model that predicts &ldquo;secure&rdquo; for everything would score high on accuracy alone.</li>
+<li><b>Fix every random seed and pin every dependency version.</b> The scanner version, ruleset version, corpus snapshot date and seed are written into the model artefact&rsquo;s metadata.</li>
+<li><b>Emit the artefact, not a live service.</b> <code>model.json</code> is a file under version control, so any reported result can be reproduced with the exact model that produced it.</li>
+</ol>
+
+<h2>7. Feedback Lane</h2>
+<p>When a developer or analyst disagrees with a verdict, the decision is appended to <code>feedback.jsonl</code> as one record per endpoint: the endpoint identity, the specification hash, the score it received, the human verdict, the reviewer, and a timestamp. The queue is an input to T2 at the <i>next deliberate retrain</i>, run by a person who has looked at what is in the queue.</p>
+<p>There is deliberately <b>no arrow from S3 back into S2b</b>. A model that consumes its own accepted predictions as training data reinforces its own mistakes and drifts away from the ground truth, with the drift hidden by the model&rsquo;s own agreement with itself. Human verdicts are treated as new labels, not as confirmation.</p>
+
+<h2>8. End-to-End Data Flow</h2>
+<p>One pipeline run, in order:</p>
+<ol>
+<li>A developer pushes a commit that touches <code>openapi.yaml</code>.</li>
+<li>The CI runner checks out the repository and invokes <code>apiguard scan openapi.yaml --threshold 0.7</code>.</li>
+<li><b>S0</b> parses the file, resolves references, and emits <span class="v">E</span>(<span class="v">S</span>) &mdash; say 48 endpoint records.</li>
+<li><b>S1</b> runs Spectral with the pinned OWASP ruleset and attributes each finding to an endpoint, giving <span class="v">A</span>(<span class="v">e</span>). Suppose 11 endpoints are flagged.</li>
+<li><b>S2a</b> builds <span class="v">x</span>(<span class="v">e</span>) for all 48 endpoints, not only the 11. For the other 37, group E features are zero.</li>
+<li><b>S2b</b> loads <code>model.json</code> once and scores all 48, producing <span class="v">r</span>(<span class="v">e</span>).</li>
+<li><b>S2c</b> computes &phi;(<span class="v">e</span>) and keeps the top contributing features per endpoint.</li>
+<li><b>S3</b> ranks by <span class="v">r</span>(<span class="v">e</span>), applies &tau; and <span class="v">k</span>, writes the report, and exits 0 or 1. An unflagged endpoint may appear at the top of the ranking &mdash; for example <code>GET /users/{id}</code> with no security requirement and a response containing <code>email</code> and <code>phone</code>.</li>
+<li>The runner fails the build on exit code 1 and surfaces the SARIF annotations in the pull request.</li>
+<li>The developer either fixes the specification or marks the finding as a false positive, which appends a record to <code>feedback.jsonl</code>.</li>
+<li>At the next retrain, an analyst reviews the queue, T2 updates the labels, T4 produces a new <code>model.json</code>, and the new artefact is committed.</li>
+</ol>
+
+<h2>9. Interfaces and Data Contracts</h2>
+<table>
+<tr><th style="width:15%">Component</th><th style="width:30%">Input</th><th style="width:30%">Output</th><th>Contract</th></tr>
+<tr><td>S0</td><td>Specification file (YAML/JSON)</td><td>Endpoint records</td><td>Every endpoint appears once; failures logged, never dropped silently</td></tr>
+<tr><td>S1</td><td>Specification file</td><td>Findings per endpoint</td><td>Ruleset version recorded in the output</td></tr>
+<tr><td>S2a</td><td>Endpoint record + findings</td><td>Fixed-length vector</td><td>Same length and order for every endpoint; no null values</td></tr>
+<tr><td>S2b</td><td>Feature vector</td><td>Score in [0,1]</td><td>Deterministic for a fixed model artefact</td></tr>
+<tr><td>S2c</td><td>Feature vector + model</td><td>SHAP attributions</td><td>Attributions sum to the score minus the base value</td></tr>
+<tr><td>S3</td><td>Scored endpoints</td><td>Report + exit code</td><td>Exit code 0 or 1 only; report always ranked</td></tr>
+<tr><td>T4</td><td>Labelled feature table</td><td><code>model.json</code></td><td>Carries seed, versions and corpus snapshot date in metadata</td></tr>
+</table>
+
+<h2>10. Assumptions and Threat Model</h2>
+<p><b>What is trusted.</b> The CI runner and the repository are trusted. The specification file is trusted as an <i>input</i>, not as a <i>claim</i>: APIGUARD reads what it says but does not assume it is true of the running service.</p>
+<p><b>Who the adversary is.</b> The adversary is an external attacker interacting with the deployed API through its public interface, looking for endpoints that expose data without adequate authentication or authorisation, that leak sensitive fields, or that lack rate limiting. APIGUARD does not model an insider who tampers with the pipeline configuration, and it is not a defence against a developer who deliberately weakens the specification and lowers &tau; at the same time.</p>
+<p><b>Assumptions.</b> (i) The specification is a reasonably faithful description of the implemented API; where it is not, APIGUARD&rsquo;s finding is still useful as a documentation defect. (ii) Endpoints can be judged largely independently of one another; cross-endpoint attack chains are out of scope. (iii) The corpus of public specifications is representative enough of real-world API design to train on, an assumption tested directly by Experiment 4.</p>
+<p><b>The central limitation, stated honestly.</b> A specification can be secure on paper while the implementation behind it is not. APIGUARD measures <i>design-level</i> risk. It is not a substitute for dynamic testing, and it is not claimed to be. Experiment 4 measures how far design-level scoring carries into two deliberately vulnerable applications, and that measurement &mdash; whatever it shows &mdash; is reported as part of the result.</p>
+<p><b>Out of scope.</b> Source-code analysis of API implementations; GraphQL, gRPC and SOAP; live traffic analysis and WAF-style blocking; and dynamic scanning at corpus scale. OWASP ZAP and Schemathesis are used only in Experiment 4, against two applications, and never across the corpus.</p>
+
+<h2>11. Design Justifications</h2>
+<p>Three decisions in Figure 1 will be challenged in review, and each has a reason.</p>
+<p><b>1. The model sits after the scanner, not instead of it.</b> Rules stay authoritative for what they cover, and the model adds ranking plus coverage of what rules miss. This is the same arrangement Flynn et al. used to prioritise alerts from multiple static analysis tools with classification models [5]. The alternative &mdash; replacing the linter with a model &mdash; would trade a deterministic, auditable check for a probabilistic one, which is the wrong trade for a build gate.</p>
+<p><b>2. S2 scores every endpoint, not only the flagged ones.</b> Scanner output enters as features that are zero when nothing fired, so an endpoint no rule touched can still score high. Scoring only flagged endpoints would cap the model&rsquo;s recall at the scanner&rsquo;s recall and make the generalisation research question unanswerable.</p>
+<p><b>3. Feedback never reaches the model directly.</b> As set out in Section 7, human verdicts enter through the label store at the next deliberate retrain.</p>
+<p>A fourth point concerns novelty. The related topic &ldquo;Automatic API Security Design Review for Microservices Using Threat Graph Analysis&rdquo; performs threat modelling once, at design time, over a service graph. APIGUARD runs continuously inside the pipeline on every commit, at endpoint granularity, and produces a numeric gate decision with a per-finding explanation. The nearest published work, Cheh and Chen [2], builds a graph model of sensitive-field exposure in OpenAPI documents but evaluates it on a single API; the contribution here is a learned, explained risk score evaluated at corpus scale.</p>
+
+<h2>12. Deployment View</h2>
+<p>APIGUARD ships as a command-line tool that reads a file and returns an exit code, so it fits any CI system without an integration. A GitHub Actions job is the reference deployment:</p>
+<pre>- name: API security gate
+  run: |
+    apiguard scan api/openapi.yaml \
+      --model models/model.json \
+      --threshold 0.70 \
+      --max-above 0 \
+      --format sarif --out apiguard.sarif
+- uses: github/codeql-action/upload-sarif@v3
+  with:
+    sarif_file: apiguard.sarif</pre>
+<p>The model artefact is committed to the repository alongside the pipeline definition, so a build is reproducible from the checkout alone. Target runtime is a few seconds for a specification of a few hundred endpoints: S1 dominates, since S2b is a single batched prediction over a feature table. The gate can be run in report-only mode by setting a large <span class="v">k</span>, which is the recommended way to introduce it to an existing API before it is allowed to block a build.</p>
+
+<h2>13. How the System Model Will Be Validated</h2>
+<p>The system model above defines what the next deliverable must measure. Each research question maps to a specific experiment.</p>
+<table>
+<tr><th style="width:30%">Research question</th><th style="width:22%">Experiment</th><th>What is measured</th></tr>
+<tr><td><b>RQ1 Feasibility.</b> Does the model predict endpoint-level security findings better than the scanner alone?</td><td>E1 &mdash; provider-grouped 5-fold cross-validation on APIs.guru</td><td>PR-AUC, F1, MCC against majority-class, scanner-severity and logistic-regression baselines</td></tr>
+<tr><td><b>RQ2 Generalisation.</b> With one OWASP category removed from training, does the model still detect it?</td><td>E2 &mdash; rule hold-out (the headline experiment)</td><td>Recall on exactly the held-out category&rsquo;s endpoints; above-chance recall means the model learned the design property, not the rule trigger</td></tr>
+<tr><td><b>RQ3 False positives.</b> Does risk ranking cut the reading effort before the real issues are reached?</td><td>E3 &mdash; analyst effort on the L2 hand-labelled sample</td><td>Precision@k and findings read to reach all true positives, versus scanner severity ordering; &tau; swept</td></tr>
+<tr><td>Supporting &mdash; external validity</td><td>E4 &mdash; VAmPI and crAPI</td><td>Whether known vulnerable endpoints rank above benign ones and VAmPI secure mode scores below vulnerable mode</td></tr>
+<tr><td>Supporting &mdash; which features carry the signal</td><td>E5 &mdash; ablation and SHAP</td><td>Performance with each feature group removed, especially group E; global SHAP importance</td></tr>
+</table>
+<p>E2 is the experiment that answers the obvious criticism of the whole design &mdash; that a model trained on scanner labels has only learned the scanner. It is protected in the schedule ahead of every optional component.</p>
+
+<h2>References</h2>
+<div class="refs">
+<p>[1] S. Serbout and C. Pautasso, &ldquo;APIstic: A Large Collection of OpenAPI Metrics,&rdquo; in <i>Proc. 21st Int. Conf. Mining Software Repositories (MSR)</i>, Lisbon, Portugal, 2024, pp. 265&ndash;277. doi: 10.1145/3643991.3644932</p>
+<p>[2] C. Cheh and B. Chen, &ldquo;Analyzing OpenAPI Specifications for Security Design Issues,&rdquo; in <i>Proc. 2021 IEEE Secure Development Conf. (SecDev)</i>, 2021, pp. 15&ndash;22. doi: 10.1109/SecDev51306.2021.00019</p>
+<p>[3] F. Tanveer, F. Iradat, W. Iqbal, and A. Ahmad, &ldquo;Towards Secure APIs: A Survey on RESTful API Vulnerability Detection,&rdquo; <i>Computers, Materials &amp; Continua</i>, vol. 84, no. 3, pp. 4223&ndash;4257, 2025. doi: 10.32604/cmc.2025.067536</p>
+<p>[4] A. Decrop, M. Vandeloise, P. Heymans, and G. Perrouin, &ldquo;OASQuali: Automated Quality Analysis of OpenAPI Specifications,&rdquo; in <i>Proc. Int. Conf. Web Engineering (ICWE)</i>, 2026, pp. 94&ndash;108. doi: 10.1007/978-3-032-29372-5_7</p>
+<p>[5] L. Flynn, W. Snavely, D. Svoboda, N. VanHoudnos, R. Qin, J. Burns, D. Zubrow, R. Stoddard, and G. Marce-Santurio, &ldquo;Prioritizing Alerts from Multiple Static Analysis Tools, Using Classification Models,&rdquo; in <i>Proc. 1st Int. Workshop on Software Qualities and Their Dependencies (SQUADE)</i>, Gothenburg, Sweden, 2018, pp. 13&ndash;20. doi: 10.1145/3194095.3194100</p>
+<p>[6] T. Chen and C. Guestrin, &ldquo;XGBoost: A Scalable Tree Boosting System,&rdquo; in <i>Proc. 22nd ACM SIGKDD Int. Conf. Knowledge Discovery and Data Mining</i>, San Francisco, CA, USA, 2016, pp. 785&ndash;794. doi: 10.1145/2939672.2939785</p>
+<p>[7] S. M. Lundberg and S.-I. Lee, &ldquo;A Unified Approach to Interpreting Model Predictions,&rdquo; in <i>Advances in Neural Information Processing Systems 30 (NeurIPS)</i>, Long Beach, CA, USA, 2017, pp. 4765&ndash;4774.</p>
+<p>[8] APIs.guru, &ldquo;OpenAPI Directory.&rdquo; [Online]. Available: https://apis.guru/</p>
+<p>[9] Stoplight, &ldquo;spectral-owasp-ruleset.&rdquo; [Online]. Available: https://github.com/stoplightio/spectral-owasp-ruleset</p>
+<p>[10] E. Gavrilov, &ldquo;VAmPI &mdash; Vulnerable REST API.&rdquo; [Online]. Available: https://github.com/erev0s/VAmPI</p>
+<p>[11] OWASP, &ldquo;crAPI &mdash; Completely Ridiculous API.&rdquo; [Online]. Available: https://github.com/OWASP/crAPI</p>
+<p>[12] OWASP, &ldquo;API Security Top 10 &mdash; 2023 Edition.&rdquo; [Online]. Available: https://owasp.org/API-Security/editions/2023/en/0x11-t10/</p>
+</div>
+
+</body></html>

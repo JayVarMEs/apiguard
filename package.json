@@ -1,0 +1,9 @@
+{
+  "name": "apiguard-s1",
+  "private": true,
+  "description": "Pinned Node dependencies for APIGUARD S1 (Spectral + OWASP ruleset). Run `npm install` once.",
+  "dependencies": {
+    "@stoplight/spectral-cli": "6.17.0",
+    "@stoplight/spectral-owasp-ruleset": "2.0.1"
+  }
+}

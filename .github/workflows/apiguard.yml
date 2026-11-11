@@ -1,0 +1,38 @@
+name: APIGUARD API security gate
+on:
+  pull_request:
+    paths: ['**/openapi*.y*ml', '**/openapi*.json', '**/swagger*.y*ml', '**/swagger*.json']
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  apiguard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: npm ci
+      - run: pip install -r requirements.txt
+      - name: Get base-branch spec (empty if the base branch has none)
+        id: base
+        run: |
+          if git show origin/${{ github.base_ref }}:openapi.yaml > base.yaml 2>/dev/null && [ -s base.yaml ]; then
+            echo "args=--base base.yaml" >> "$GITHUB_OUTPUT"
+          else
+            echo "args=" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Scan (gate on new/changed endpoints only; threshold = the model's own tau)
+        env: { PYTHONPATH: src }
+        run: |
+          python -m apiguard scan openapi.yaml ${{ steps.base.outputs.args }} \
+            --model models/model_l2plus.json --max-above 0 \
+            --format sarif --out apiguard.sarif
+      - uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with: { sarif_file: apiguard.sarif }

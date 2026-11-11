@@ -1,0 +1,9 @@
+﻿method,path,operation_id,security_source,security_schemes,scheme_type,n_path_params,n_parameters,n_body_props,n_response_props,status_codes,declares_401_403,deprecated,summary_len,description_len,tags,servers,endpoint_id,spec_id,source_version
+GET,/health,healthCheck,inherited,apiKeyAuth,apiKey,0,0,0,2,200,0,0,14,34,ops,https://api.shop.example.com/v1,69e896f325f45064,ShopAPI@1.2,openapi-3.x
+GET,/products,listProducts,inherited,apiKeyAuth,apiKey,0,2,0,10,200;401,1,0,13,44,catalogue,https://api.shop.example.com/v1,2cafe0a05ec25440,ShopAPI@1.2,openapi-3.x
+GET,/customers/{customerId},getCustomer,inherited,apiKeyAuth,apiKey,1,1,0,17,200;404,0,0,16,33,customers,https://api.shop.example.com/v1,8d29dc93788c6165,ShopAPI@1.2,openapi-3.x
+DELETE,/customers/{customerId},deleteCustomer,own,bearerAuth,http/bearer,1,1,0,0,204;401;403,1,0,17,50,customers,https://api.shop.example.com/v1,0bfb0a4457438970,ShopAPI@1.2,openapi-3.x
+PUT,/customers/{customerId}/password,resetPassword,inherited,apiKeyAuth,apiKey,1,1,1,0,204;400,0,1,25,49,customers,https://api.shop.example.com/v1,0f9d2a250578dd08,ShopAPI@1.2,openapi-3.x
+GET,/internal/dump-users,dumpUsers,override_none,,,0,0,0,6,200,0,0,18,26,internal,https://api.shop.example.com/v1,e5fb91659a00722f,ShopAPI@1.2,openapi-3.x
+POST,/orders,createOrder,own,oauth2Auth,oauth2,0,0,10,2,201;400;401,1,0,14,48,orders,https://api.shop.example.com/v1,975349d7ec31e034,ShopAPI@1.2,openapi-3.x
+GET,/categories/{categoryId},getCategory,inherited,apiKeyAuth,apiKey,1,1,0,3,200,0,0,14,62,catalogue,https://api.shop.example.com/v1,8a5eed8ddb6f0171,ShopAPI@1.2,openapi-3.x

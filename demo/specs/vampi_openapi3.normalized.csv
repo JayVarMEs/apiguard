@@ -1,0 +1,15 @@
+﻿method,path,operation_id,security_source,security_schemes,scheme_type,n_path_params,n_parameters,n_body_props,n_response_props,status_codes,declares_401_403,deprecated,summary_len,description_len,tags,servers,endpoint_id,spec_id,source_version
+GET,/createdb,api_views.main.populate_db,none,,,0,0,0,1,200,0,0,50,50,db-init,http://localhost:5000,165b71368c2e4f4d,VAmPI@0.1,openapi-3.x
+GET,/,api_views.main.basic,none,,,0,0,0,3,200,0,0,10,37,home,http://localhost:5000,9612376b222cc6ac,VAmPI@0.1,openapi-3.x
+GET,/users/v1,api_views.users.get_all_users,none,,,0,0,0,3,200,0,0,19,41,users,http://localhost:5000,990a887e3652af7b,VAmPI@0.1,openapi-3.x
+GET,/users/v1/_debug,api_views.users.debug,none,,,0,0,0,5,200,0,0,35,34,users,http://localhost:5000,5308c015a995ecb8,VAmPI@0.1,openapi-3.x
+POST,/users/v1/register,api_views.users.register_user,none,,,0,0,3,2,200;400,0,0,17,17,users,http://localhost:5000,e2b95f3d95dbcbcd,VAmPI@0.1,openapi-3.x
+POST,/users/v1/login,api_views.users.login_user,none,,,0,0,2,5,200;400,0,0,14,14,users,http://localhost:5000,a7aa63fc2bb5835c,VAmPI@0.1,openapi-3.x
+GET,/me,api_views.users.me,own,bearerAuth,http/bearer,0,0,0,7,200;401,1,0,34,59,users,http://localhost:5000,dd7e03b047062888,VAmPI@0.1,openapi-3.x
+GET,/users/v1/{username},api_views.users.get_by_username,none,,,1,1,0,4,200;404,0,0,26,25,users,http://localhost:5000,c8a09f770b6d6355,VAmPI@0.1,openapi-3.x
+DELETE,/users/v1/{username},api_views.users.delete_user,own,bearerAuth,http/bearer,1,1,0,6,200;401;404,1,0,38,38,users,http://localhost:5000,49e83e19d0768234,VAmPI@0.1,openapi-3.x
+PUT,/users/v1/{username}/email,api_views.users.update_email,own,bearerAuth,http/bearer,1,1,1,4,204;400;401,1,0,18,27,users,http://localhost:5000,077130e221c3070a,VAmPI@0.1,openapi-3.x
+PUT,/users/v1/{username}/password,api_views.users.update_password,own,bearerAuth,http/bearer,1,1,1,4,204;400;401,1,0,21,21,users,http://localhost:5000,a375967609dc53cf,VAmPI@0.1,openapi-3.x
+GET,/books/v1,api_views.books.get_all_books,none,,,0,0,0,3,200,0,0,19,19,books,http://localhost:5000,85e6b12e75f64fc0,VAmPI@0.1,openapi-3.x
+POST,/books/v1,api_views.books.add_new_book,own,bearerAuth,http/bearer,0,0,2,6,200;400;401,1,0,12,12,books,http://localhost:5000,547b3d1b1b484db2,VAmPI@0.1,openapi-3.x
+GET,/books/v1/{book_title},api_views.books.get_by_title,own,bearerAuth,http/bearer,1,1,0,8,200;401;404,1,0,41,73,books,http://localhost:5000,ee55e26178e6258c,VAmPI@0.1,openapi-3.x
