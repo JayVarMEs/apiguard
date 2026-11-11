@@ -1,0 +1,11 @@
+node_modules
+corpus
+data
+results
+results_*
+dist
+build
+overleaf
+.git
+experiments
+*.pdf

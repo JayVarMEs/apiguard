@@ -9,7 +9,10 @@ ROOT = Path(__file__).resolve().parent.parent
 UI = Path(__file__).resolve().parent / "index.html"
 SPECS = ROOT / "demo" / "specs"
 MODELS = {"l2plus": "models/model_l2plus.json", "scanner": "models/model.json", "l2only": "models/model_l2only.json"}
-PORT = 8765
+PORT = int(os.environ.get("PORT", 8765))
+HOST = os.environ.get("HOST", "127.0.0.1")   # set HOST=0.0.0.0 when deployed
+MAX_BYTES = 3_000_000                        # upload size cap
+SLOTS = threading.BoundedSemaphore(2)        # at most 2 scans at once
 
 
 def run_scan(body):
@@ -57,8 +60,16 @@ class H(BaseHTTPRequestHandler):
         if self.path != "/scan":
             return self._send(404, {"error": "not found"})
         try:
-            body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))))
-            self._send(200, run_scan(body))
+            n = int(self.headers.get("Content-Length", 0))
+            if n > MAX_BYTES:
+                return self._send(200, {"error": "file too large (limit 3 MB)"})
+            body = json.loads(self.rfile.read(n))
+            if not SLOTS.acquire(timeout=120):
+                return self._send(200, {"error": "server busy, try again in a minute"})
+            try:
+                self._send(200, run_scan(body))
+            finally:
+                SLOTS.release()
         except subprocess.TimeoutExpired:
             self._send(200, {"error": "scan timed out (10 min)"})
         except Exception as e:
@@ -69,9 +80,10 @@ class H(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    srv = ThreadingHTTPServer(("127.0.0.1", PORT), H)
-    print(f"APIGUARD demo UI: http://127.0.0.1:{PORT}   (Ctrl+C to stop)")
-    threading.Timer(1.0, lambda: webbrowser.open(f"http://127.0.0.1:{PORT}")).start()
+    srv = ThreadingHTTPServer((HOST, PORT), H)
+    print(f"APIGUARD demo UI: http://{HOST}:{PORT}   (Ctrl+C to stop)")
+    if HOST == "127.0.0.1":
+        threading.Timer(1.0, lambda: webbrowser.open(f"http://127.0.0.1:{PORT}")).start()
     try:
         srv.serve_forever()
     except KeyboardInterrupt:
