@@ -5,8 +5,14 @@ import json, os, subprocess, sys, tempfile, threading, webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
-UI = Path(__file__).resolve().parent / "index.html"
+FROZEN = getattr(sys, "frozen", False)
+if FROZEN:   # packaged exe: models, demo specs and node_modules sit next to the exe (or in its parent folder)
+    _d = Path(sys.executable).resolve().parent
+    ROOT = _d if (_d / "models").exists() else _d.parent
+    UI = Path(getattr(sys, "_MEIPASS", _d)) / "demo_ui" / "index.html"
+else:
+    ROOT = Path(__file__).resolve().parent.parent
+    UI = Path(__file__).resolve().parent / "index.html"
 SPECS = ROOT / "demo" / "specs"
 MODELS = {"l2plus": "models/model_l2plus.json", "scanner": "models/model.json", "l2only": "models/model_l2only.json"}
 PORT = int(os.environ.get("PORT", 8765))
@@ -21,7 +27,7 @@ def run_scan(body):
         spec = Path(td) / ("spec" + ext)
         spec.write_text(body["spec"], encoding="utf-8")
         out = Path(td) / "out.json"
-        cmd = [sys.executable, "-m", "apiguard", "scan", str(spec), "--format", "json", "--out", str(out),
+        cmd = ([sys.executable] if FROZEN else [sys.executable, "-m", "apiguard"]) + ["scan", str(spec), "--format", "json", "--out", str(out),
                "--model", MODELS.get(body.get("model", "l2plus"), MODELS["l2plus"]),
                "--max-above", str(int(body.get("k", 0)))]
         if body.get("base"):
@@ -79,7 +85,7 @@ class H(BaseHTTPRequestHandler):
         pass
 
 
-if __name__ == "__main__":
+def serve():
     srv = ThreadingHTTPServer((HOST, PORT), H)
     print(f"APIGUARD demo UI: http://{HOST}:{PORT}   (Ctrl+C to stop)")
     if HOST == "127.0.0.1":
@@ -88,3 +94,7 @@ if __name__ == "__main__":
         srv.serve_forever()
     except KeyboardInterrupt:
         pass
+
+
+if __name__ == "__main__":
+    serve()
