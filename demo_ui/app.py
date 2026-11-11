@@ -1,7 +1,7 @@
 """APIGUARD demo UI: upload an OpenAPI file, get the gate decision and ranked endpoints.
 Run:  python demo_ui/app.py   (then it opens http://127.0.0.1:8765)
 Uses only the Python standard library; the scan itself is `python -m apiguard scan`."""
-import json, os, subprocess, sys, tempfile, threading, webbrowser
+import json, os, shutil, subprocess, sys, tempfile, threading, time, webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
@@ -19,6 +19,22 @@ PORT = int(os.environ.get("PORT", 8765))
 HOST = os.environ.get("HOST", "127.0.0.1")   # set HOST=0.0.0.0 when deployed
 MAX_BYTES = 3_000_000                        # upload size cap
 SLOTS = threading.BoundedSemaphore(2)        # at most 2 scans at once
+LAST_PING = [0.0]                            # the page pings every 3 s; no ping for 20 s after the first = window closed
+
+
+def open_app_window(url):
+    """Open in a chromeless 'app' window (Edge or Chrome, no address bar or tabs). Falls back to the normal browser."""
+    pf = [os.environ.get("ProgramFiles", r"C:\Program Files"), os.environ.get("ProgramFiles(x86)", r"C:\Program Files (x86)"),
+          os.environ.get("LOCALAPPDATA", "")]
+    cands = [os.path.join(b, r"Microsoft\Edge\Application\msedge.exe") for b in pf] + \
+            [os.path.join(b, r"Google\Chrome\Application\chrome.exe") for b in pf] + \
+            [shutil.which("msedge") or "", shutil.which("google-chrome") or "", shutil.which("chromium") or ""]
+    for exe in cands:
+        if exe and os.path.exists(exe):
+            subprocess.Popen([exe, f"--app={url}", "--window-size=1280,860",
+                              "--user-data-dir=" + os.path.join(tempfile.gettempdir(), "apiguard_app_profile")])
+            return
+    webbrowser.open(url)
 
 
 def run_scan(body):
@@ -54,6 +70,9 @@ class H(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path in ("/", "/index.html"):
             return self._send(200, UI.read_bytes(), "text/html; charset=utf-8")
+        if self.path == "/ping":
+            LAST_PING[0] = time.time()
+            return self._send(200, {"ok": 1})
         if self.path == "/samples":
             return self._send(200, sorted(p.name for p in SPECS.glob("*") if p.suffix in (".yaml", ".yml", ".json") and "normalized" not in p.name and p.name != "test_api.yaml"))
         if self.path.startswith("/sample/"):
@@ -89,7 +108,16 @@ def serve():
     srv = ThreadingHTTPServer((HOST, PORT), H)
     print(f"APIGUARD demo UI: http://{HOST}:{PORT}   (Ctrl+C to stop)")
     if HOST == "127.0.0.1":
-        threading.Timer(1.0, lambda: webbrowser.open(f"http://127.0.0.1:{PORT}")).start()
+        threading.Timer(1.0, lambda: open_app_window(f"http://127.0.0.1:{PORT}")).start()
+
+        def watchdog():      # closing the app window stops the program
+            start = time.time()
+            while True:
+                time.sleep(3)
+                now = time.time()
+                if (LAST_PING[0] and now - LAST_PING[0] > 20) or (not LAST_PING[0] and now - start > 90):
+                    os._exit(0)
+        threading.Thread(target=watchdog, daemon=True).start()
     try:
         srv.serve_forever()
     except KeyboardInterrupt:

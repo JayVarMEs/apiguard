@@ -64,6 +64,7 @@ tr.ep{cursor:pointer}tr.ep:hover{background:rgba(127,127,127,.08)}
 <section id="out"><div class="card empty">Choose a file or a sample, then press <b>Scan</b>.<br><small>A scan takes a few seconds (Spectral rules, 66 features, model, SHAP).</small></div></section>
 </main>
 <script>
+setInterval(()=>fetch('/ping').catch(()=>{}),3000);fetch('/ping').catch(()=>{});
 const $=s=>document.querySelector(s);let spec=null,base=null,name='';
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function setSpec(t,n){spec=t;name=n;$('#fname').textContent='Loaded: '+n+' ('+t.length.toLocaleString()+' characters)';$('#go').disabled=false}
