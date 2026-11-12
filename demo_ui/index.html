@@ -42,6 +42,10 @@ tr.ep{cursor:pointer}tr.ep:hover{background:rgba(127,127,127,.08)}
 .tag{font-size:11px;padding:2px 7px;border-radius:9px;border:1px solid var(--line);color:var(--mut)}
 .tag.flag{border-color:var(--bad);color:var(--bad)}
 .why td{background:rgba(127,127,127,.06)}
+.why ul{list-style:none;padding:0 !important;margin-left:4px !important}
+.plus{width:22px;height:22px;padding:0;border-radius:50%;line-height:1;font-weight:700;color:var(--teal);border-color:var(--teal);margin-right:6px}
+.exp{margin:4px 0 8px 32px;padding:8px 10px;border-left:3px solid var(--teal);background:rgba(23,112,127,.07);border-radius:0 8px 8px 0;font-size:13px;color:var(--ink)}
+.why li{margin:5px 0}
 .why ul{margin:4px 0 8px 18px;padding:0}.why code{font-size:12px}
 .up{color:var(--bad)}.dn{color:var(--teal)}
 #err{color:var(--bad);white-space:pre-wrap;font-family:monospace;font-size:12px}
@@ -93,6 +97,83 @@ $('#go').onclick=async()=>{
   }catch(e){$('#out').innerHTML='<div class="card"><div id="err">'+esc(e)+'</div></div>'}
   b.disabled=false;b.textContent='Scan';
 };
+
+const RULES={
+'api1:2023-no-numeric-ids':'Object IDs are plain numbers (1, 2, 3). Attackers can guess the next ID and read someone else\'s data (broken object-level authorization). Fix: use random IDs such as UUIDs and check ownership on the server.',
+'api2:2023-auth-insecure-schemes':'The API uses a weak authentication scheme (for example Negotiate or an old OAuth flow). Fix: use bearer tokens (OAuth 2 / OIDC) over HTTPS.',
+'api2:2023-jwt-best-practices':'Security is described with JWT but the spec does not say the token follows best practice (signed, short-lived, RFC 8725). Fix: state the JWT rules in the spec and enforce them.',
+'api2:2023-no-api-keys-in-url':'An API key is sent in the URL. URLs are saved in logs and browser history, so the key leaks. Fix: send keys in a header.',
+'api2:2023-no-credentials-in-url':'A username, password or token is a URL parameter. It can leak through logs and referrers. Fix: send credentials in a header or body.',
+'api2:2023-no-http-basic':'HTTP Basic auth sends the password in every request with only base64 encoding. Fix: use token-based auth.',
+'api2:2023-read-restricted':'A read (GET) endpoint has no security requirement, so anyone can call it. Fix: add authentication, and authorization where the data is private.',
+'api2:2023-write-restricted':'A write endpoint (POST, PUT, PATCH, DELETE) has no security requirement, so anyone can change data. Fix: require authentication and check permissions.',
+'api2:2023-short-lived-access-tokens':'The spec does not say access tokens are short-lived. Long-lived tokens are more valuable if stolen. Fix: document short expiry and refresh tokens.',
+'api3:2023-constrained-additional':'An object accepts extra properties without limits, which can allow mass-assignment (a client sets fields it should not). Fix: list allowed properties and constrain the rest.',
+'api3:2023-constrained-unevaluated':'Same risk as above for unevaluated properties. Fix: constrain unevaluatedProperties or forbid them.',
+'api3:2023-no-additional':'The schema allows additional properties, so clients can send fields the server did not plan for. Fix: set additionalProperties to false.',
+'api3:2023-no-unevaluated':'The schema allows unevaluated properties. Fix: set unevaluatedProperties to false.',
+'api4:2023-array-limit':'An array has no maximum size, so a client can send or receive huge lists and exhaust the server. Fix: set maxItems.',
+'api4:2023-integer-format':'An integer has no format (int32 or int64), so very large values may overflow or be abused. Fix: add a format.',
+'api4:2023-integer-limit':'An integer has no minimum and maximum, so extreme values are accepted. Fix: set minimum and maximum.',
+'api4:2023-integer-limit-legacy':'Same as integer-limit, for the older exclusive-limit style. Fix: set minimum and maximum.',
+'api4:2023-rate-limit':'The spec shows no rate limit headers, so the API may allow unlimited requests (brute force, scraping, denial of service). Fix: add rate limiting and document it (RateLimit or X-RateLimit headers).',
+'api4:2023-rate-limit-responses-429':'The endpoint does not declare a 429 Too Many Requests response, so clients do not know the API limits them. Fix: add the 429 response.',
+'api4:2023-rate-limit-retry-after':'A 429 response has no Retry-After header, so clients cannot back off properly. Fix: add Retry-After.',
+'api4:2023-string-limit':'A string has no maximum length, so huge inputs are accepted. Fix: set maxLength (or an enum or format).',
+'api4:2023-string-restricted':'A string has no pattern, format or enum, so any content is accepted. Fix: add a pattern, format or enum.',
+'api5:2023-admin-security-unique':'Admin endpoints use the same security scheme as ordinary users, so a normal user token might reach admin functions. Fix: give admin operations their own scheme and scopes.',
+'api7:2023-concerning-url-parameter':'A URL parameter looks like it holds a web address (url, uri, redirect). That can lead to server-side request forgery (SSRF). Fix: validate and allow-list targets.',
+'api8:2023-define-cors-origin':'The API does not state which origins may call it (CORS), so access may be too open. Fix: define Access-Control-Allow-Origin with specific origins.',
+'api8:2023-define-error-responses-401':'No 401 Unauthorized response is described, so the failure behaviour is undefined. Fix: add 401 with a standard error body.',
+'api8:2023-define-error-responses-500':'No 500 error response is described, which risks leaking stack traces. Fix: add a safe, generic 500 response.',
+'api8:2023-define-error-validation':'No 400, 422 or 4XX response is described for invalid input. Fix: document validation errors.',
+'api8:2023-no-scheme-http':'A security scheme or call uses plain http, which is not encrypted. Fix: use https only.',
+'api8:2023-no-server-http':'A server URL starts with http://, so traffic can be read or changed in transit. Fix: use https://.',
+'api9:2023-inventory-access':'The spec does not say who may use the API (internal, partner, public), which makes the API inventory unclear. Fix: add an x-internal or access note.',
+'api9:2023-inventory-environment':'The server URLs do not say the environment (production, staging, dev), so test and live APIs can be confused. Fix: label environments in the servers list.'};
+const FEATS={
+has_security:'Whether the endpoint declares any security requirement. 0 means no auth is declared, a strong risk signal.',
+sens_resp_ratio:'Share of response fields that look sensitive (password, token, email, secret...). A high value means the endpoint returns a lot of private data.',
+sens_resp_count:'How many response fields look sensitive.',
+sens_resp_max_weight:'How sensitive the most sensitive response field looks (for example, a password scores higher than a name).',
+sens_req_count:'How many request fields look sensitive.',
+sens_req_max_weight:'How sensitive the most sensitive request field looks.',
+noauth_x_sens:'Flag: the endpoint has no auth and also handles sensitive data. A classic dangerous mix.',
+noauth_x_sens_weight:'Strength of the no-auth plus sensitive-data mix.',
+src_none:'The endpoint has no security of its own and none inherited from the spec top level, so nothing protects it.',
+src_own:'The endpoint declares its own security requirement.',
+src_inherited:'The endpoint gets its security from the global setting.',
+src_override_none:'The endpoint explicitly turns security off (security: []) even though a global setting exists.',
+src_own_none:'The endpoint declares an empty security list of its own.',
+declares_401:'The endpoint documents a 401 (unauthorized) response, a sign that it expects auth.',
+declares_403:'The endpoint documents a 403 (forbidden) response, a sign that it checks permissions.',
+id_like_path_param:'The path has an ID-like parameter (for example /users/{id}), which is where object-level access bugs usually happen.',
+n_path_params:'Number of parameters in the path. More parameters means more places for access-control mistakes.',
+path_depth:'How many path segments the URL has. Deeper paths are often more specific resources.',
+m_get:'The method is GET (a read).',m_post:'The method is POST (create or action).',m_put:'The method is PUT (replace data).',
+m_patch:'The method is PATCH (partial update).',m_delete:'The method is DELETE (remove data).',m_other:'An uncommon HTTP method.',
+n_query_params:'Number of query parameters.',n_header_params:'Number of header parameters.',
+has_request_body:'The endpoint accepts a request body.',req_prop_count:'Number of fields in the request body.',resp_prop_count:'Number of fields in the response.',
+n_status_codes:'How many response codes the endpoint documents.',deprecated:'The endpoint is marked deprecated.',
+scheme_apikey:'Uses API-key authentication.',scheme_http_basic:'Uses HTTP Basic authentication.',scheme_http_bearer:'Uses bearer-token authentication.',
+scheme_oauth2:'Uses OAuth 2.',scheme_oidc:'Uses OpenID Connect.',scope_count:'Number of OAuth scopes required.',
+apikey_in_query:'An API key is passed in the URL.',server_http_insecure:'The spec lists a server with plain http.',
+summary_len:'Length of the endpoint summary text (documentation quality).',description_len:'Length of the endpoint description text.',
+has_example:'The endpoint includes examples.',mean_param_desc_len:'Average length of parameter descriptions.',frac_params_with_desc:'Share of parameters that have a description.',
+frac_params_with_example:'Share of parameters that have an example.',mean_resp_desc_len:'Average length of response descriptions.',
+path_has_version:'The path contains an API version such as /v1/.',has_pagination:'The endpoint supports pagination (limit/offset or similar), which limits how much data one call returns.',
+has_ratelimit_header:'The responses document rate-limit headers.',n_tags:'Number of tags on the endpoint.',
+flagged_by_spectral:'The rule scanner (Spectral) raised at least one finding on this endpoint.',rule_count:'How many scanner rules fired on this endpoint.',
+severity_max:'The highest severity among the scanner findings.',n_owasp_categories:'How many different OWASP API Top 10 categories the scanner findings touch.',
+owasp_api1:'Scanner finding in OWASP API1 (broken object-level authorization).',owasp_api2:'Scanner finding in OWASP API2 (broken authentication).',
+owasp_api3:'Scanner finding in OWASP API3 (broken object property-level authorization).',owasp_api4:'Scanner finding in OWASP API4 (unrestricted resource consumption).',
+owasp_api5:'Scanner finding in OWASP API5 (broken function-level authorization).',owasp_api6:'Scanner finding in OWASP API6 (unrestricted access to sensitive business flows).',
+owasp_api7:'Scanner finding in OWASP API7 (server-side request forgery).',owasp_api8:'Scanner finding in OWASP API8 (security misconfiguration).',
+owasp_api9:'Scanner finding in OWASP API9 (improper inventory management).',owasp_api10:'Scanner finding in OWASP API10 (unsafe consumption of APIs).',
+spec_endpoint_count:'How many endpoints the whole spec has.',is_oas3:'The file is OpenAPI 3.x (1) rather than Swagger 2.0 (0).'};
+const explain=(map,key)=>map[key]||'No plain-language note yet for this item.';
+function li(label,extra,map,key){const id='x'+Math.random().toString(36).slice(2,8);
+ return `<li><button class="plus" data-t="${id}" aria-expanded="false" title="Explain">+</button> ${label}${extra||''}<div class="exp" id="${id}" hidden>${esc(explain(map,key))}</div></li>`}
 let REP=null;
 function render(d){
   if(d.error){$('#out').innerHTML='<div class="card"><h2>Scan failed</h2><div id="err">'+esc(d.error)+'</div></div>';return}
@@ -110,12 +191,13 @@ function render(d){
       <td><div class="bar"><i class="${flag?'hi':''}" style="width:${w}%"></i><u style="left:${tau*100}%"></u></div><small>${e.score.toFixed(3)}</small></td>
       <td>${flag?'<span class="tag flag">risky</span>':e.in_scope?'<span class="tag">in scope</span>':'<span class="tag">out of scope</span>'}</td></tr>
       <tr class="why" id="w${i}" hidden><td></td><td colspan="3"><b>Why the model scored it this way</b> <small>(SHAP; + raises the score)</small><ul>${
-        (e.reasons||[]).map(([f,c])=>`<li><code>${esc(f)}</code> = ${e.reason_values&&e.reason_values[f]!==undefined?e.reason_values[f]:'?'} <span class="${c>=0?'up':'dn'}">${c>=0?'+':''}${c.toFixed(3)}</span></li>`).join('')||'<li><small>No SHAP reasons for this endpoint (only the gate-counted endpoints and the top ten get them).</small></li>'}</ul>
-        <b>Scanner rules that fired</b><ul>${(e.scanner_rules||[]).map(r=>`<li><code>${esc(r)}</code></li>`).join('')||'<li><small>none</small></li>'}</ul></td></tr>`;
+        (e.reasons||[]).map(([f,c])=>li(`<code>${esc(f)}</code> = ${e.reason_values&&e.reason_values[f]!==undefined?(+e.reason_values[f]).toString().slice(0,6):'?'}`,` <span class="${c>=0?'up':'dn'}">${c>=0?'+':''}${c.toFixed(3)}</span>`,FEATS,f)).join('')||'<li><small>No SHAP reasons for this endpoint (only the gate-counted endpoints and the top ten get them).</small></li>'}</ul>
+        <b>Scanner rules that fired</b><ul>${(e.scanner_rules||[]).map(r=>li(`<code>${esc(r)}</code>`,'',RULES,r.replace('owasp:',''))).join('')||'<li><small>none</small></li>'}</ul></td></tr>`;
   });
   h+='</tbody></table><small>Amber line = threshold &tau;. Red bars are at or above it.</small></div>';
   $('#out').innerHTML=h;
   document.querySelectorAll('tr.ep').forEach(r=>r.onclick=()=>{const w=$('#w'+r.dataset.i);w.hidden=!w.hidden});
+  document.querySelectorAll('.plus').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const x=document.getElementById(b.dataset.t);x.hidden=!x.hidden;b.textContent=x.hidden?'+':'\u2212';b.setAttribute('aria-expanded',!x.hidden)});
   $('#dl').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(REP,null,2)],{type:'application/json'}));a.download='apiguard_report.json';a.click()};
 }
 </script></body></html>
