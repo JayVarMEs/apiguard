@@ -75,7 +75,7 @@ $('#file').onchange=e=>{const f=e.target.files[0];if(f)readFile(f,t=>setSpec(t,f
 ['dragleave','drop'].forEach(ev=>$('#drop').addEventListener(ev,e=>{e.preventDefault();$('#drop').classList.remove('on')}));
 $('#drop').addEventListener('drop',e=>{const f=e.dataTransfer.files[0];if(f)readFile(f,t=>setSpec(t,f.name))});
 $('#basefile').onchange=e=>{const f=e.target.files[0];if(f)readFile(f,t=>base=t);else base=null};
-fetch('/samples').then(r=>r.json()).then(l=>{$('#samples').innerHTML=l.map(n=>`<button data-n="${esc(n)}">${esc(n.replace(/_openapi3|\.yaml|\.json/g,''))}</button>`).join('');
+fetch('/samples').then(r=>r.json()).then(l=>{$('#samples').innerHTML=l.map(n=>`<button data-n="${esc(n)}">${esc(n.replace(/_openapi3|\.yaml|\.json/g,'').replace('real/','real: '))}</button>`).join('');
  document.querySelectorAll('#samples button').forEach(b=>b.onclick=()=>fetch('/sample/'+b.dataset.n).then(r=>r.text()).then(t=>setSpec(t,b.dataset.n)))});
 $('#go').onclick=async()=>{
   const b=$('#go');b.disabled=true;b.innerHTML='<span class="spin"></span>Scanning...';

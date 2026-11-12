@@ -74,10 +74,12 @@ class H(BaseHTTPRequestHandler):
             LAST_PING[0] = time.time()
             return self._send(200, {"ok": 1})
         if self.path == "/samples":
-            return self._send(200, sorted(p.name for p in SPECS.glob("*") if p.suffix in (".yaml", ".yml", ".json") and "normalized" not in p.name and p.name != "test_api.yaml"))
+            ok = lambda p: p.suffix in (".yaml", ".yml", ".json") and "normalized" not in p.name and p.name != "test_api.yaml"
+            return self._send(200, sorted(p.relative_to(SPECS).as_posix() for p in list(SPECS.glob("*")) + list((SPECS / "real").glob("*")) if p.is_file() and ok(p)))
         if self.path.startswith("/sample/"):
-            f = SPECS / Path(self.path[8:]).name
-            if f.exists():
+            from urllib.parse import unquote
+            f = (SPECS / unquote(self.path[8:])).resolve()
+            if SPECS.resolve() in f.parents and f.is_file():
                 return self._send(200, f.read_bytes(), "text/plain; charset=utf-8")
         self._send(404, {"error": "not found"})
 
