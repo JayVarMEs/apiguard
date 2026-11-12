@@ -50,6 +50,9 @@ tr.ep{cursor:pointer}tr.ep:hover{background:rgba(127,127,127,.08)}
 .up{color:var(--bad)}.dn{color:var(--teal)}
 #err{color:var(--bad);white-space:pre-wrap;font-family:monospace;font-size:12px}
 .empty{color:var(--mut);text-align:center;padding:60px 0}
+.steps{list-style:none;margin:0;padding:0}.steps li{display:flex;gap:10px;padding:9px 4px;border-bottom:1px solid var(--line);align-items:flex-start}
+.steps .ic{width:22px;text-align:center;font-weight:700}.steps .run .ic{color:var(--amber)}.steps .ok .ic{color:var(--ok)}.steps .wait{opacity:.45}
+.steps b{display:block}.steps small{display:block}.steps .tm{margin-left:auto;color:var(--mut);font-variant-numeric:tabular-nums;white-space:nowrap}
 .spin{display:inline-block;width:14px;height:14px;border:2px solid #fff6;border-top-color:#fff;border-radius:50%;animation:r 1s linear infinite;vertical-align:-2px;margin-right:8px}
 @keyframes r{to{transform:rotate(360deg)}}
 </style></head><body>
@@ -67,6 +70,7 @@ tr.ep{cursor:pointer}tr.ep:hover{background:rgba(127,127,127,.08)}
   <label>Threshold &tau; <small>(empty = model's own)</small><input id="tau" type="number" step="0.01" min="0" max="1" placeholder="e.g. 0.53"></label>
   <label>Tolerated endpoints at or above &tau; (k)<input id="k" type="number" min="0" value="0"></label>
   <label>Base spec <small>(optional: only new or changed endpoints count)</small><input type="file" id="basefile" accept=".yaml,.yml,.json"></label>
+  <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:14px"><input type="checkbox" id="live" checked style="width:auto;margin:0"> Show what the scan is doing</label>
   <button class="primary" id="go" disabled>Scan</button>
 </section>
 <section id="out"><div class="card empty">Choose a file or a sample, then press <b>Scan</b>.<br><small>A scan takes a few seconds (Spectral rules, 66 features, model, SHAP).</small></div></section>
@@ -88,12 +92,30 @@ $('#drop').addEventListener('drop',e=>{const f=e.dataTransfer.files[0];if(f)read
 $('#basefile').onchange=e=>{const f=e.target.files[0];if(f)readFile(f,t=>base=t);else base=null};
 fetch('/samples').then(r=>r.json()).then(l=>{$('#samples').innerHTML=l.map(n=>`<button data-n="${esc(n)}">${esc(n.replace(/_openapi3|\.yaml|\.json/g,'').replace('real/','real: '))}</button>`).join('');
  document.querySelectorAll('#samples button').forEach(b=>b.onclick=()=>fetch('/sample/'+b.dataset.n).then(r=>r.text()).then(t=>setSpec(t,b.dataset.n,b.dataset.n)))});
+const STAGES=[['SCAN','Start the scan engine'],['LOAD','Load the risk model'],['S0','S0 · Read and normalise the file'],['S1','S1 · Rule scan (Spectral + OWASP)'],['S2a','S2a · Build features'],['S2b','S2b · Score with the model'],['S2c','S2c · Explain with SHAP'],['S3','S3 · Apply the gate']];
+function stepsHTML(st,showTimes){return '<ul class="steps">'+STAGES.map(([k,title])=>{const s=st[k]||{};const cls=s.done?'ok':s.start!==undefined?'run':'wait';
+  const ic=s.done?'✓':s.start!==undefined?'<span class="spin" style="border-color:#c9a05f66;border-top-color:var(--amber);margin:0"></span>':'·';
+  const tm=s.done&&showTimes?(s.done-(s.start||0)).toFixed(1)+' s':'';
+  return `<li class="${cls}"><span class="ic">${ic}</span><div><b>${esc(title)}</b><small>${esc(s.text||'')}</small></div><span class="tm">${tm}</span></li>`}).join('')+'</ul>'}
+function applyLog(st,items){for(const it of items){const [k,state,...rest]=it.m.split('|');const text=rest.join('|');st[k]=st[k]||{};
+  if(state==='start'){st[k].start=it.t;st[k].text=text}else{st[k].done=it.t;st[k].text=text}}}
+let LASTSTEPS='';
 $('#go').onclick=async()=>{
   const b=$('#go');b.disabled=true;b.innerHTML='<span class="spin"></span>Scanning...';
-  $('#out').innerHTML='<div class="card empty">Scanning '+esc(name)+'...</div>';
+  const live=$('#live').checked,st={};LASTSTEPS='';
+  $('#out').innerHTML='<div class="card"><h2>Scanning '+esc(name)+'</h2>'+(live?stepsHTML(st,true):'<div class="empty">Working...</div>')+'</div>';
   try{
-    const r=await fetch('/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({spec,filename:name,base,model:$('#model').value,tau:$('#tau').value,k:$('#k').value||0})});
-    render(await r.json());
+    const r=await (await fetch('/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({spec,filename:name,base,model:$('#model').value,tau:$('#tau').value,k:$('#k').value||0})})).json();
+    if(r.error){render(r);b.disabled=false;b.textContent='Scan';return}
+    let from=0,res=null;
+    while(!res){
+      const j=await (await fetch('/job/'+r.job+'?from='+from)).json();
+      if(j.error){render(j);break}
+      from=j.next;if(j.log.length&&live){applyLog(st,j.log);$('#out').innerHTML='<div class="card"><h2>Scanning '+esc(name)+'</h2>'+stepsHTML(st,true)+'</div>'}else if(j.log.length)applyLog(st,j.log);
+      if(j.done){res=j.result;break}
+      await new Promise(z=>setTimeout(z,250));
+    }
+    if(res){LASTSTEPS=live?stepsHTML(st,true):'';render(res)}
   }catch(e){$('#out').innerHTML='<div class="card"><div id="err">'+esc(e)+'</div></div>'}
   b.disabled=false;b.textContent='Scan';
 };
@@ -195,6 +217,7 @@ function render(d){
         <b>Scanner rules that fired</b><ul>${(e.scanner_rules||[]).map(r=>li(`<code>${esc(r)}</code>`,'',RULES,r.replace('owasp:',''))).join('')||'<li><small>none</small></li>'}</ul></td></tr>`;
   });
   h+='</tbody></table><small>Amber line = threshold &tau;. Red bars are at or above it.</small></div>';
+  if(LASTSTEPS)h+='<details class="card" style="margin-top:16px"><summary style="cursor:pointer"><b>What the scan did</b> <small>('+(d.seconds||'?')+' s in total)</small></summary>'+LASTSTEPS+'</details>';
   $('#out').innerHTML=h;
   document.querySelectorAll('tr.ep').forEach(r=>r.onclick=()=>{const w=$('#w'+r.dataset.i);w.hidden=!w.hidden});
   document.querySelectorAll('.plus').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const x=document.getElementById(b.dataset.t);x.hidden=!x.hidden;b.textContent=x.hidden?'+':'\u2212';b.setAttribute('aria-expanded',!x.hidden)});

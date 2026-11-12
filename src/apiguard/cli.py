@@ -27,28 +27,42 @@ from .core import normalise_file
 
 
 def scan(spec: str, model_path: str, base: Optional[str] = None, threshold: Optional[float] = None, max_above: int = 0,
-         do_scan: bool = True, top_shap: int = 10, timings: Optional[dict] = None) -> Dict:
+         do_scan: bool = True, top_shap: int = 10, timings: Optional[dict] = None, progress=None) -> Dict:
+    P = progress or (lambda *a: None)
     t = {}
     c = time.perf_counter()
+    P("LOAD|start|Loading the risk model")
     mdl = M.load(model_path)
+    P("LOAD|done|Model loaded (%d features)" % len(mdl.names))
+    P("S0|start|Reading the OpenAPI file and turning every operation into a normalised endpoint")
     tau = float(threshold) if threshold is not None else mdl.tau
     ns = normalise_file(spec); eps = [e.to_dict() for e in ns.endpoints]
     head_records = ns.endpoints
     base_eps = [e for e in normalise_file(base).endpoints] if base else None
     t["s0"] = time.perf_counter() - c; c = time.perf_counter()
+    P("S0|done|%d endpoints found" % len(eps))
     needs_scan = any(n.startswith(("flagged_", "rule_count", "severity_max", "n_owasp", "owasp_")) for n in mdl.names)
     if needs_scan and not do_scan:
         raise SystemExit("This model uses scanner features (group E); --no-scan is only valid for a model trained with --no-group-e.")
     keys = [(e["method"], e["path"]) for e in eps]
+    P("S1|start|Running Spectral with the OWASP API Top 10 rules")
     attributed = scanner.scan_file(Path(spec), keys) if (do_scan and needs_scan) else {k: [] for k in keys}
+    P("S1|done|%d rule findings on %d endpoints" % (sum(len(v) for v in attributed.values()), sum(1 for v in attributed.values() if v)))
     t["s1"] = time.perf_counter() - c; c = time.perf_counter()
+    P("S2a|start|Building %d features for each endpoint (auth, sensitive data, methods, scanner results...)" % F.N_FEATURES)
     X = np.array([F.build_features(e, attributed.get((e["method"], e["path"]), []), len(eps)) for e in eps]) if eps else np.zeros((0, F.N_FEATURES))
     t["s2a"] = time.perf_counter() - c; c = time.perf_counter()
+    P("S2a|done|%d x %d feature table ready" % (len(eps), F.N_FEATURES))
+    P("S2b|start|Scoring every endpoint with the XGBoost model")
     r = mdl.score(X) if len(eps) else np.zeros(0)
+    P("S2b|done|scores from %.2f to %.2f" % ((float(r.min()), float(r.max())) if len(eps) else (0, 0)))
     t["s2b"] = time.perf_counter() - c; c = time.perf_counter()
     order = np.argsort(-r)
+    P("S2c|start|Explaining the %d highest scores with SHAP" % min(top_shap, len(eps)))
     why = mdl.explain(X, [int(i) for i in order[:top_shap]]) if len(eps) else {}
     t["s2c"] = time.perf_counter() - c; c = time.perf_counter()
+    P("S2c|done|reasons found for the top endpoints")
+    P("S3|start|Applying the gate: threshold %.2f, tolerated endpoints k=%d%s" % (tau, max_above, " (only new or changed endpoints)" if base else ""))
     scores = {keys[i]: float(r[i]) for i in range(len(eps))}
     scope = G.changed_endpoints(base_eps, head_records) if base else None
     decision = G.gate_decision(scores, tau, max_above, scope)
@@ -59,6 +73,7 @@ def scan(spec: str, model_path: str, base: Optional[str] = None, threshold: Opti
         row["reason_values"] = {n: float(X[i][F.FEATURE_NAMES.index(n)]) for n, _ in row["reasons"]}
         row["scanner_rules"] = sorted({f["rule"] for f in attributed.get((row["method"], row["path"]), [])})[:5]
     t["s3"] = time.perf_counter() - c
+    P("S3|done|%d endpoint(s) at or above the threshold -> %s" % (sum(1 for x in rows if x["above_tau"] and x["in_scope"]), "BLOCKED" if decision else "ALLOWED"))
     if timings is not None:
         timings.update(t)
     return {"tool": "apiguard", "version": __version__, "spec": str(spec), "base": str(base) if base else None,
@@ -112,10 +127,11 @@ def main(argv=None) -> int:
     s.add_argument("--model", default="models/model.json"); s.add_argument("--threshold", type=float, help="tau (default: the model's own)")
     s.add_argument("--max-above", type=int, default=0, help="k: tolerated number of endpoints at or above tau (default 0)")
     s.add_argument("--format", choices=["text", "json", "sarif"], default="text"); s.add_argument("--out", help="write the report here")
-    s.add_argument("--no-scan", action="store_true"); s.add_argument("--top-shap", type=int, default=10)
+    s.add_argument("--no-scan", action="store_true"); s.add_argument("--progress", action="store_true", help="print stage lines (@@...) on stderr, used by the demo UI"); s.add_argument("--top-shap", type=int, default=10)
     a = ap.parse_args(argv)
     try:
-        rep = scan(a.spec, a.model, a.base, a.threshold, a.max_above, not a.no_scan, a.top_shap)
+        rep = scan(a.spec, a.model, a.base, a.threshold, a.max_above, not a.no_scan, a.top_shap,
+                   progress=(lambda m: print("@@" + m, file=sys.stderr, flush=True)) if a.progress else None)
     except (FileNotFoundError, scanner.ScannerUnavailable) as ex:
         print("apiguard: error: %s" % ex, file=sys.stderr); return 2
     except Exception as ex:                                     # noqa: BLE001 - normaliser errors have plain-English messages
