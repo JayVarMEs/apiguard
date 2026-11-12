@@ -16,6 +16,10 @@ h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut)
 .row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
 button,select,input{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:7px 10px}
 button{cursor:pointer}button:hover{border-color:var(--teal)}
+button.sel{border:2px solid var(--teal);background:rgba(23,112,127,.14);font-weight:600;box-shadow:0 0 0 3px rgba(23,112,127,.18)}
+button.sel::before{content:"\2713 ";color:var(--teal)}
+.drop.loaded{border:2px solid var(--teal);border-style:solid;background:rgba(23,112,127,.08);color:var(--ink)}
+.drop .fn{font-weight:600;word-break:break-all}
 button.primary{background:var(--teal);color:#fff;border-color:var(--teal);width:100%;padding:11px;font-weight:600;margin-top:12px}
 button.primary:disabled{opacity:.5}
 label{display:block;font-size:13px;color:var(--mut);margin-top:10px}
@@ -67,7 +71,10 @@ tr.ep{cursor:pointer}tr.ep:hover{background:rgba(127,127,127,.08)}
 setInterval(()=>fetch('/ping').catch(()=>{}),3000);fetch('/ping').catch(()=>{});
 const $=s=>document.querySelector(s);let spec=null,base=null,name='';
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function setSpec(t,n){spec=t;name=n;$('#fname').textContent='Loaded: '+n+' ('+t.length.toLocaleString()+' characters)';$('#go').disabled=false}
+function mark(sampleName){document.querySelectorAll('#samples button').forEach(b=>b.classList.toggle('sel',b.dataset.n===sampleName))}
+function setSpec(t,n,sample){spec=t;name=n;mark(sample||null);
+  const d=$('#drop');d.classList.add('loaded');d.innerHTML='<span class="fn">\u2713 '+esc(n)+'</span><br><small>'+t.length.toLocaleString()+' characters loaded. Click or drop to change.</small>';
+  $('#fname').textContent='';$('#go').disabled=false}
 function readFile(f,cb){const r=new FileReader();r.onload=()=>cb(r.result);r.readAsText(f)}
 $('#drop').onclick=()=>$('#file').click();
 $('#file').onchange=e=>{const f=e.target.files[0];if(f)readFile(f,t=>setSpec(t,f.name))};
@@ -76,7 +83,7 @@ $('#file').onchange=e=>{const f=e.target.files[0];if(f)readFile(f,t=>setSpec(t,f
 $('#drop').addEventListener('drop',e=>{const f=e.dataTransfer.files[0];if(f)readFile(f,t=>setSpec(t,f.name))});
 $('#basefile').onchange=e=>{const f=e.target.files[0];if(f)readFile(f,t=>base=t);else base=null};
 fetch('/samples').then(r=>r.json()).then(l=>{$('#samples').innerHTML=l.map(n=>`<button data-n="${esc(n)}">${esc(n.replace(/_openapi3|\.yaml|\.json/g,'').replace('real/','real: '))}</button>`).join('');
- document.querySelectorAll('#samples button').forEach(b=>b.onclick=()=>fetch('/sample/'+b.dataset.n).then(r=>r.text()).then(t=>setSpec(t,b.dataset.n)))});
+ document.querySelectorAll('#samples button').forEach(b=>b.onclick=()=>fetch('/sample/'+b.dataset.n).then(r=>r.text()).then(t=>setSpec(t,b.dataset.n,b.dataset.n)))});
 $('#go').onclick=async()=>{
   const b=$('#go');b.disabled=true;b.innerHTML='<span class="spin"></span>Scanning...';
   $('#out').innerHTML='<div class="card empty">Scanning '+esc(name)+'...</div>';
