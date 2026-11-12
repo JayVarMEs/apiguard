@@ -100,15 +100,15 @@ function render(d){
   const eps=[...d.endpoints].sort((a,b)=>b.score-a.score);
   const flagged=eps.filter(e=>e.in_scope&&e.above_tau);
   const top=eps[0]?eps[0].score:0;
-  let h=`<div id="banner" class="${pass?'pass':'fail'}"><b>${pass?'PASS':'FAIL'}</b><div>${pass?'No in-scope endpoint reaches the threshold.':`${d.n_above_in_scope} in-scope endpoint(s) at or above &tau; = ${tau.toFixed(2)}; the gate tolerates ${d.max_above}. Merge blocked.`}<br><small>${esc(name)}${d.base?' compared with a base spec':''} &middot; APIGUARD ${esc(d.version)}</small></div>
+  let h=`<div id="banner" class="${pass?'pass':'fail'}"><b>${pass?'ALLOWED':'BLOCKED'}</b><div>${pass?'Safe to merge: no endpoint reaches the risk threshold.':`Merge blocked: ${d.n_above_in_scope} endpoint(s) look risky (score at or above &tau; = ${tau.toFixed(2)}; the gate tolerates ${d.max_above}).`}<br><small>BLOCKED means the pull request is held for review. It does not mean the scan failed.</small><br><small>${esc(name)}${d.base?' compared with a base spec':''} &middot; APIGUARD ${esc(d.version)}</small></div>
    <div style="margin-left:auto"><button id="dl">Download JSON</button></div></div>
-   <div class="stats"><div class="stat"><b>${d.n_endpoints}</b><small>endpoints</small></div><div class="stat"><b>${d.n_in_scope}</b><small>in gate scope</small></div><div class="stat"><b>${d.n_above_in_scope}</b><small>at or above &tau;</small></div><div class="stat"><b>${tau.toFixed(2)}</b><small>threshold &tau; (k = ${d.max_above})</small></div></div>
+   <div class="stats"><div class="stat"><b>${d.n_endpoints}</b><small>endpoints</small></div><div class="stat"><b>${d.n_in_scope}</b><small>in gate scope</small></div><div class="stat"><b>${d.n_above_in_scope}</b><small>risky endpoints (score &ge; &tau;)</small></div><div class="stat"><b>${tau.toFixed(2)}</b><small>threshold &tau; (k = ${d.max_above})</small></div></div>
    <div class="card"><h2>Endpoints ranked by risk score <small>(click a row to see why)</small></h2><table><thead><tr><th>#</th><th>Endpoint</th><th style="width:200px">Risk score</th><th>Gate</th></tr></thead><tbody>`;
   eps.forEach((e,i)=>{
     const w=Math.min(100,e.score*100);const flag=e.in_scope&&e.above_tau;
     h+=`<tr class="ep" data-i="${i}"><td>${i+1}</td><td><span class="m">${esc(e.method.toUpperCase())}</span> <span class="path">${esc(e.path)}</span></td>
       <td><div class="bar"><i class="${flag?'hi':''}" style="width:${w}%"></i><u style="left:${tau*100}%"></u></div><small>${e.score.toFixed(3)}</small></td>
-      <td>${flag?'<span class="tag flag">at/above &tau;</span>':e.in_scope?'<span class="tag">in scope</span>':'<span class="tag">out of scope</span>'}</td></tr>
+      <td>${flag?'<span class="tag flag">risky</span>':e.in_scope?'<span class="tag">in scope</span>':'<span class="tag">out of scope</span>'}</td></tr>
       <tr class="why" id="w${i}" hidden><td></td><td colspan="3"><b>Why the model scored it this way</b> <small>(SHAP; + raises the score)</small><ul>${
         (e.reasons||[]).map(([f,c])=>`<li><code>${esc(f)}</code> = ${e.reason_values&&e.reason_values[f]!==undefined?e.reason_values[f]:'?'} <span class="${c>=0?'up':'dn'}">${c>=0?'+':''}${c.toFixed(3)}</span></li>`).join('')||'<li><small>No SHAP reasons for this endpoint (only the gate-counted endpoints and the top ten get them).</small></li>'}</ul>
         <b>Scanner rules that fired</b><ul>${(e.scanner_rules||[]).map(r=>`<li><code>${esc(r)}</code></li>`).join('')||'<li><small>none</small></li>'}</ul></td></tr>`;
