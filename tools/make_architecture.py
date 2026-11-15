@@ -139,7 +139,7 @@ arrow(215, 460, 241, 460)
 arrow(420, 460, 446, 460)
 arrow(660, 460, 686, 460)
 arrow(855, 460, 881, 460)
-text(690, 536, "retraining is run deliberately, never automatically", size=11.5, fill=AMBER)
+text(690, 536, "retraining is scheduled; model kept only if not worse", size=11.5, fill=AMBER)
 
 # model.json -> S2b (loaded at startup)
 path("M 960 414 L 960 330 L 820 330 L 820 258", colour=AMBER, marker="arrowAmber")
@@ -151,9 +151,9 @@ path("M 500 414 L 500 336 L 312 336 L 312 256", colour=AMBER, dash="6 5",
 text(456, 326, "identical code path", size=11.5, fill=AMBER)
 
 # ---------------------------------------------------------------- feedback lane
-band(30, 600, W - 60, 200, BAND3, "FEEDBACK  ·  human review", TEAL)
+band(30, 600, W - 60, 200, BAND3, "FEEDBACK  ·  automatic, no human", TEAL)
 
-box(880, 660, 220, 92, ["Developer / analyst", "reviews the verdict"], stroke=TEAL)
+box(880, 660, 220, 92, ["Automatic checker", "3 LLM passes must agree"], stroke=TEAL)
 box(520, 660, 250, 92, ["Feedback queue", "feedback.jsonl"], stroke=TEAL)
 
 path("M 1102 252 L 1102 656", colour=TEAL, dash="7 5", marker="arrowTeal")
@@ -170,7 +170,7 @@ parts.append(f'<line x1="50" y1="836" x2="86" y2="836" stroke="{AMBER}" stroke-w
 text(96, 841, "shared code and model artefact (dashed = identical code path)", size=12, fill=MUTED, anchor="start")
 parts.append(f'<line x1="514" y1="836" x2="550" y2="836" stroke="{TEAL}" '
              f'stroke-width="2.4" stroke-dasharray="7 5"/>')
-text(560, 841, "human-in-the-loop path", size=12, fill=MUTED, anchor="start")
+text(560, 841, "automatic feedback path", size=12, fill=MUTED, anchor="start")
 text(W - 50, 841, "Unit of analysis: one endpoint (path + method)", size=12,
      fill=MUTED, anchor="end")
 

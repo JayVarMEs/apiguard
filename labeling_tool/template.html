@@ -1,0 +1,97 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>APIGUARD Label Tool</title>
+<style>
+:root{--bg:#f6f4ef;--card:#fff;--ink:#1d2327;--mut:#6b7478;--line:#e1ddd3;--yes:#c2410c;--yesbg:#fff1e8;--no:#0f766e;--nobg:#e6f6f3;--acc:#0f766e}
+@media(prefers-color-scheme:dark){:root{--bg:#14181a;--card:#1e2427;--ink:#eceae4;--mut:#98a2a6;--line:#2f393d;--yes:#fb923c;--yesbg:#33231a;--no:#2dd4bf;--nobg:#12302c;--acc:#2dd4bf}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,Segoe UI,sans-serif}
+.wrap{max-width:820px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:8px 0}.mut{color:var(--mut)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin:12px 0}
+button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:10px 16px}
+button:hover{border-color:var(--acc)}
+.big{font-size:20px;font-weight:700;padding:18px;width:100%}
+.yes{background:var(--yesbg);color:var(--yes);border:2px solid var(--yes)}.no{background:var(--nobg);color:var(--no);border:2px solid var(--no)}
+.sel.yes{background:var(--yes);color:#fff}.sel.no{background:var(--no);color:#fff}
+.row{display:flex;gap:12px;flex-wrap:wrap}.row>*{flex:1;min-width:140px}
+.bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--acc)}
+.ep{font:700 20px/1.3 ui-monospace,Consolas,monospace;word-break:break-all}
+.m{display:inline-block;padding:2px 10px;border-radius:6px;background:var(--line);margin-right:8px}
+.k{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-top:12px}
+.v{word-break:break-word}
+.login{display:inline-block;padding:4px 12px;border-radius:20px;font-weight:700;background:var(--nobg);color:var(--no)}
+.login.none{background:var(--yesbg);color:var(--yes)}
+.chip{display:inline-block;margin:3px;padding:6px 10px;border-radius:20px;font-size:14px}.chip.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+select,input,textarea{font:inherit;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);width:100%}
+details{margin:8px 0}summary{cursor:pointer;font-weight:600}
+ul{margin:6px 0;padding-left:20px}.hide{display:none}
+.sm{font-size:14px}
+</style></head><body><div class="wrap" id="app"></div>
+<script>
+const DATA=/*DATA*/null;
+const CATS=[['API1','Anyone can read another user\'s data'],['API2','Weak or missing login'],['API3','Too much private data returned'],['API4','No limits (can overload)'],['API5','Admin action open to normal user'],['API8','Bad setup / old or test endpoint'],['API9','Old or leftover endpoint'],['API6','Other'],['API7','Other'],['API10','Other']].slice(0,7);
+const $=s=>document.querySelector(s);
+const esc=t=>(t==null?'':String(t)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let S={who:null,set:null,i:0,ans:{}}; // ans[sample_id]={l,c:[],n}
+const key=()=>'apiguard_labels_'+S.who+'_'+S.set;
+function save(){try{localStorage.setItem(key(),JSON.stringify({i:S.i,ans:S.ans}))}catch(e){}}
+function load(){try{const d=JSON.parse(localStorage.getItem(key())||'null');if(d){S.i=d.i||0;S.ans=d.ans||{}}}catch(e){}}
+const rows=()=>DATA.sets[S.set];
+const done=()=>rows().filter(r=>S.ans[r.sample_id]&&S.ans[r.sample_id].l!==undefined).length;
+function start(){
+ $('#app').innerHTML=`<h1>APIGUARD label tool</h1>
+ <p class="mut">You decide, one endpoint at a time: <b>is there a security problem you can see?</b> Answer YES or NO. Your answers save by themselves in this browser.</p>
+ <div class="card"><div class="k">1. Who are you?</div><div class="row"><button class="big" id="wa">Person A</button><button class="big" id="wb">Person B</button></div>
+ <div class="k">2. Which sheet?</div><div class="row"><button class="big" id="sp">Pilot (32 rows) — do this first</button><button class="big" id="sm">Main (304 rows)</button></div>
+ <p class="sm mut">Rules: work alone. Judge only from what you see on the screen. Do not search the API online. Do not open any file with KEY in its name.</p></div>
+ <div class="card sm"><b>How to use</b><ul><li>Press <b>Y</b> for YES, <b>N</b> for NO, <b>←</b> to go back.</li><li>If YES, you may tick the type of problem. Then press <b>Enter</b> for the next one.</li><li>Click <b>Download CSV</b> any time. Send the file back to Varit when finished.</li></ul></div>`;
+ const pick=(id,fn)=>$(id).onclick=()=>{fn();$(id).classList.add('sel');upd()};
+ const upd=()=>{if(S.who&&S.set){load();render()}};
+ $('#wa').onclick=()=>{S.who='A';mark();upd()};$('#wb').onclick=()=>{S.who='B';mark();upd()};
+ $('#sp').onclick=()=>{S.set='pilot';mark();upd()};$('#sm').onclick=()=>{S.set='main';mark();upd()};
+ function mark(){$('#wa').classList.toggle('sel',S.who==='A');$('#wb').classList.toggle('sel',S.who==='B');$('#sp').classList.toggle('sel',S.set==='pilot');$('#sm').classList.toggle('sel',S.set==='main')}
+}
+const FULL=[];function showAll(el,i){el.parentNode.textContent=FULL[i];return false}
+function field(k,v,max){if(!v||v==='-')return '';v=String(v);const long=v.length>(max||260);
+ return `<div class="k">${k}</div><div class="v sm">${long?`<span>${esc(v.slice(0,max||260))}…</span> <a href="#" onclick="return showAll(this,${FULL.push(v)-1})">show all</a>`:esc(v)}</div>`}
+function render(){
+ FULL.length=0;const R=rows(),r=R[S.i],n=R.length,a=S.ans[r.sample_id]||{};
+ const sec=r.security_requirement||'';const none=/^NONE/i.test(sec);
+ $('#app').innerHTML=`
+ <div class="row" style="align-items:center"><div><b>Person ${S.who} · ${S.set}</b> <span class="mut">· ${S.i+1} of ${n} · done ${done()}</span></div>
+ <div style="text-align:right"><button id="dl">Download CSV</button> <button id="home">Menu</button></div></div>
+ <div class="bar"><i style="width:${done()/n*100}%"></i></div>
+ <div class="card"><div class="ep"><span class="m">${esc(r.method)}</span>${esc(r.path)}</div>
+ <div class="mut sm" style="margin-top:4px">${esc(r.api)} · ${esc(r.spec_version)}</div>
+ <div class="k">Login (security)</div><span class="login ${none?'none':''}">${none?'NO LOGIN — ':''}${esc(sec)||'unknown'}</span>
+ ${field('Summary',r.summary)}${field('Description',r.description)}${field('Inputs (parameters)',r.parameters)}${field('Sends in body',r.request_body_fields)}${field('Returns',r.responses_and_fields,300)}</div>
+ <div class="card"><div style="font-weight:700;margin-bottom:10px">Can you see a security problem from this row alone?</div>
+ <div class="row"><button class="big yes ${a.l==='1'?'sel':''}" id="y">YES, risky (Y)</button><button class="big no ${a.l==='0'?'sel':''}" id="n">NO, looks fine (N)</button></div>
+ <div id="cats" class="${a.l==='1'?'':'hide'}"><div class="k">What kind of problem? (optional)</div>${CATS.map(([c,t])=>`<button class="chip ${(a.c||[]).includes(c)?'on':''}" data-c="${c}">${c}: ${t}</button>`).join('')}</div>
+ <div class="k">Not sure? Take your best guess and write why (optional)</div><input id="note" value="${esc(a.n||'')}" placeholder="a few words">
+ <div class="row" style="margin-top:12px"><button id="back">← Back</button><button id="next"><b>Next → (Enter)</b></button></div></div>
+ <details class="card"><summary>Quick rules (open if unsure)</summary>
+ <p><b>Choose YES when you see:</b></p><ul class="sm"><li>NO LOGIN on a write (POST, PUT, PATCH, DELETE): anyone can change or delete data.</li><li>NO LOGIN on a read that returns private data (emails, users, payments, medical).</li><li>The only credential is a secret in the URL (api_key or token in query) and nothing else.</li><li>The response shows passwords, tokens, or many personal fields.</li><li>A path like /users/{id} with nothing that checks who you are.</li><li>An admin action (suspend user, delete team) a normal user could call.</li><li>A big list with no limit or paging.</li><li>Old or test endpoints left open, or a plain http server.</li></ul>
+ <p><b>Choose NO when:</b></p><ul class="sm"><li>It has a login (apiKey, oauth2, basic or bearer) and nothing else looks wrong.</li><li>An optional access_token (query) next to oauth2: normal, do not count it.</li><li>The data is clearly public (weather, bus times, a public catalogue).</li><li>You cannot tell: guess and write why.</li></ul></details>`;
+ const setL=l=>{const x=S.ans[r.sample_id]||(S.ans[r.sample_id]={});x.l=l;if(l==='0')x.c=[];save();if(l==='0')go(1);else render()};
+ $('#y').onclick=()=>setL('1');$('#n').onclick=()=>setL('0');
+ document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{const x=S.ans[r.sample_id];x.c=x.c||[];const c=b.dataset.c;x.c=x.c.includes(c)?x.c.filter(z=>z!==c):[...x.c,c];save();b.classList.toggle('on')});
+ $('#note').oninput=e=>{const x=S.ans[r.sample_id]||(S.ans[r.sample_id]={});x.n=e.target.value;save()};
+ $('#next').onclick=()=>go(1);$('#back').onclick=()=>go(-1);$('#dl').onclick=dl;$('#home').onclick=()=>{S={who:null,set:null,i:0,ans:{}};start()};
+}
+function go(d){S.i=Math.max(0,Math.min(rows().length-1,S.i+d));save();if(d>0&&done()===rows().length&&S.i===rows().length-1&&!window._fin){window._fin=1;finish();return}render()}
+function finish(){const R=rows();const y=R.filter(r=>(S.ans[r.sample_id]||{}).l==='1').length;
+ $('#app').innerHTML=`<h1>All done 🎉</h1><div class="card"><p>You answered all ${R.length} rows: <b>${y}</b> YES, <b>${R.length-y}</b> NO.</p><p>Download your file and send it to Varit.</p><div class="row"><button class="big yes" id="dl">Download CSV</button><button class="big" id="rev">Review answers</button></div></div>`;
+ $('#dl').onclick=dl;$('#rev').onclick=()=>{window._fin=0;S.i=0;render()}}
+function csvCell(v){v=v==null?'':String(v);return /[",\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}
+function dl(){const W=S.who,H=DATA.header;const out=[H.map(csvCell).join(',')];
+ for(const r of rows()){const a=S.ans[r.sample_id]||{};const row={...r};
+  row['label_'+W+'_0or1']=a.l===undefined?'':a.l;row['category_'+W]=(a.c||[]).join(';');if(a.n)row.notes=a.n;
+  out.push(H.map(h=>csvCell(row[h])).join(','))}
+ const blob=new Blob(['﻿'+out.join('\r\n')],{type:'text/csv;charset=utf-8'});const u=URL.createObjectURL(blob);const l=document.createElement('a');
+ l.href=u;l.download='L2_'+S.set+'_'+W+'.csv';document.body.appendChild(l);l.click();l.remove()}
+document.addEventListener('keydown',e=>{if(!S.who||!S.set||e.target.tagName==='INPUT')return;
+ const r=rows()[S.i];if(!r)return;
+ if(e.key==='y'||e.key==='Y'){$('#y')&&$('#y').click()}else if(e.key==='n'||e.key==='N'){$('#n')&&$('#n').click()}
+ else if(e.key==='Enter'){$('#next')&&$('#next').click()}else if(e.key==='ArrowLeft'){go(-1)}else if(e.key==='ArrowRight'){go(1)}});
+start();
+</script></body></html>

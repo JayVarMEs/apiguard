@@ -1,4 +1,4 @@
-"""APIGUARD demo UI: upload an OpenAPI file, get the gate decision and ranked endpoints.
+"""APIGUARD demo UI: upload an OpenAPI file, convert it to APIGUARD format (S0), then continue to the scan (gate decision and ranked endpoints).
 Run:  python demo_ui/app.py   (then it opens http://127.0.0.1:8765)
 Uses only the Python standard library; the scan itself is `python -m apiguard scan`."""
 import json, os, shutil, subprocess, sys, tempfile, threading, time, webbrowser
@@ -35,6 +35,35 @@ def open_app_window(url):
                               "--user-data-dir=" + os.path.join(tempfile.gettempdir(), "apiguard_app_profile")])
             return
     webbrowser.open(url)
+
+
+def normalise_upload(body):
+    """S0 only: convert the uploaded OpenAPI / Swagger file into APIGUARD's own format (one record per endpoint).
+    Same document as normalize_api.py writes; the scan then continues from the same file."""
+    if not FROZEN and str(ROOT / "src") not in sys.path:
+        sys.path.insert(0, str(ROOT / "src"))
+    from apiguard.core.normalizer import SpecParseError, normalise_text
+    name = os.path.basename(body.get("filename") or "spec.yaml")
+    t0 = time.time()
+    try:
+        ns = normalise_text(body["spec"], source_file=name)
+    except SpecParseError as e:
+        return {"error": "Could not convert this file: %s\nAPIGUARD reads OpenAPI 3.x and Swagger 2.0 files (.yaml, .yml, .json)." % e}
+    rows = []
+    for e in ns.endpoints:
+        rows.append({
+            "method": e.method.upper(), "path": e.path, "operation_id": e.operation_id or "",
+            "security_source": e.security_source,
+            "security_schemes": ";".join(x.scheme_name for x in e.security),
+            "scheme_type": ";".join((x.scheme_type + "/" + x.scheme_subtype) if x.scheme_subtype else x.scheme_type for x in e.security),
+            "n_parameters": len(e.parameters),
+            "n_body_props": len(e.request_body.properties) if e.request_body else 0,
+            "n_response_props": sum(len(r.properties) for r in e.responses),
+            "status_codes": ";".join(r.status_code for r in e.responses),
+            "deprecated": int(e.deprecated), "endpoint_id": e.endpoint_id})
+    doc = {"spec_id": ns.spec_id, "spec_hash": ns.spec_hash, "source_file": name, "source_version": ns.source_version,
+           "endpoint_count": ns.endpoint_count, "warnings": ns.warnings, "endpoints": [e.to_dict() for e in ns.endpoints]}
+    return {"document": doc, "rows": rows, "seconds": round(time.time() - t0, 2)}
 
 
 JOBS = {}
@@ -136,13 +165,15 @@ class H(BaseHTTPRequestHandler):
         self._send(404, {"error": "not found"})
 
     def do_POST(self):
-        if self.path != "/scan":
+        if self.path not in ("/scan", "/normalize"):
             return self._send(404, {"error": "not found"})
         try:
             n = int(self.headers.get("Content-Length", 0))
             if n > MAX_BYTES:
                 return self._send(200, {"error": "file too large (limit 3 MB)"})
             body = json.loads(self.rfile.read(n))
+            if self.path == "/normalize":
+                return self._send(200, normalise_upload(body))
             self._send(200, start_job(body))
         except subprocess.TimeoutExpired:
             self._send(200, {"error": "scan timed out (10 min)"})

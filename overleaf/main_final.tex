@@ -128,8 +128,8 @@ contract now states that attributions sum to the raw margin, not to the score; (
 that a developer cannot change the threshold now names the mechanism that enforces it;
 (iv)~the evaluation no longer scores the model against the scanner labels it trained on;
 (v)~a text-inflation test was added; (vi)~the feature table now
-matches the implemented feature builder; and (vii)~the gate counts only new or changed
-endpoints.
+matches the implemented feature builder; (vii)~the gate counts only new or changed
+endpoints; and (viii)~the human reviewer of the feedback lane is replaced by an automatic checker and a promotion test, so that no person is in the loop.
 
 %==============================================================
 \section{Related Work}
@@ -173,8 +173,8 @@ and at a different speed.
 pipeline, must finish in seconds, and is fully automatic.
 \item The \textbf{offline lane} builds the model. It runs rarely, on a workstation or build
 server, and may take hours.
-\item The \textbf{feedback lane} is how a human verdict re-enters the system. It is
-deliberately slow and never reaches the model directly.
+\item The \textbf{feedback lane} is how a corrected verdict re-enters the system. It is
+automatic, with no person in the loop, deliberately slow, and never reaches the model directly.
 \end{itemize}
 
 Fig.~\ref{fig:arch} shows the three lanes and the two connections between them: the trained
@@ -185,9 +185,9 @@ runtime compute features identically.
 \centering
 \includegraphics[width=\textwidth]{architecture.pdf}
 \caption{APIGUARD system model. The runtime lane (S0--S3) runs inside the pipeline; the
-offline lane (T1--T4) produces \texttt{model.json}; the feedback lane returns human verdicts
+offline lane (T1--T4) produces \texttt{model.json}; the feedback lane returns the verdicts of an automatic checker
 to the label store. Amber marks shared code and the model artefact; dashed teal marks
-the human-in-the-loop path. The unit of analysis is one endpoint.}
+the automatic feedback path. The unit of analysis is one endpoint.}
 \label{fig:arch}
 \end{figure*}
 
@@ -217,9 +217,7 @@ for a fixed specification, ruleset version and model.\\
 Rule scanner & Third-party linter (Spectral with the OWASP ruleset). Supplies findings used
 as a baseline and as model input. & Trusted but incomplete. Version is pinned, because a
 version change silently changes every label.\\
-Security analyst (a role of the design, not exercised in this study) & Reviews a sample of gate verdicts, marks each correct or incorrect, and
-owns the retraining decision. & Authoritative for labels in deployment. In this study the reference labels came from language
-models (Section~\ref{sec:method}); no person acted in this role.\\
+Automatic checker (replaces the human analyst of Deliverable~2) & Re-labels the endpoints whose verdict is in doubt with three independent language-model passes, and keeps a label only when all three agree. & Trusted only when unanimous; split votes are dropped. It reuses the three-pass protocol that produced the L2 reference labels (Section~\ref{sec:method}); as a running feedback loop it is a role of the design and was not exercised in this study.\\
 Offline trainer & Builds the corpus, assembles labels, trains the model and emits
 \texttt{model.json}. & Runs outside the pipeline. Never invoked automatically by a gate
 decision.\\
@@ -296,7 +294,7 @@ runtime lane is deterministic --- nothing in it samples randomly.
 
 The normaliser resolves internal \texttt{\$ref} pointers, expands the schema of every request
 body and response, and flattens the two specification versions into one internal form, so
-that no component after S0 needs to know which version the document came from. Path-level
+that the rest of the pipeline reads one record format. The version is kept only as the feature \texttt{is\_oas3} and for per-version reporting. Path-level
 parameters are merged into each operation, and a global \texttt{security} block is propagated
 to operations that do not declare their own --- recording, importantly, whether the operation
 \emph{inherited} or \emph{overrode} that requirement. An operation that explicitly overrides
@@ -376,8 +374,7 @@ parameters with a description or example; version segment in the path; paginatio
 documented. & Poorly specified endpoints correlate with weak design; rate-limit documentation
 relates to API4.\\
 E. Scanner-derived & \texttt{flagged\_by\_spectral}, \texttt{rule\_count},
-\texttt{severity\_max}, the number of OWASP categories hit and one flag per category. All zero when nothing fired. & Lets the model use the rules
-without depending on them. Kept separable so the ablation can remove the group entirely.\\
+\texttt{severity\_max}, the number of OWASP categories hit and one flag per category. All zero when nothing fired. & Lets the model use the rules' output as evidence. The model may come to copy this group; it is kept separable so the ablation (E5) and the rule hold-out (E2) can test for that.\\
 F. Context & Endpoint count of the parent specification; whether the file is OpenAPI 3.x
 or Swagger 2.0. Provider identity is deliberately excluded and used only to group the splits. & Places the endpoint inside its API rather than judging it in
 isolation.\\
@@ -469,16 +466,43 @@ it.
 
 %==============================================================
 \section{Feedback Lane}
-When a developer or analyst disagrees with a verdict, the decision is appended to
-\texttt{feedback.jsonl} as one record per endpoint: the endpoint identity, the specification
-hash, the score it received, the human verdict, the reviewer and a timestamp. The queue is an
-input to T2 at the \emph{next deliberate retrain}, run by a person who has looked at what is
-in the queue. This lane is part of the design only: the queue format is specified, but no tool writes it yet and it was not exercised in this study.
+The feedback lane has no person in it. The human reviewer of Deliverable~2 is replaced by an
+automatic checker, so that the lane can run unattended.
+
+\textbf{Selection.} After a pipeline run, the endpoints whose verdict is in doubt are
+selected: those whose score $r(e)$ lies close to $\tau$, and those on which the model and the
+scanner disagree (flagged by S1 but scored low, or not flagged but scored high).
+
+\textbf{Automatic checker.} Each selected endpoint is labelled by three independent
+language-model passes that follow the codebook of Section~\ref{sec:method} and see neither
+the scanner output nor the model score. A label is accepted only when all three passes agree;
+split votes are discarded. Where the API can be run in a test environment, a failure that a
+dynamic tester finds on an endpoint is also accepted as a positive label. A clean dynamic run
+is not evidence of safety and is never accepted as a negative label. Each accepted label is
+appended to \texttt{feedback.jsonl} as one record per endpoint: the endpoint identity, the
+specification hash, the score it received, the checker verdict, the source of the verdict and
+a timestamp.
+
+\textbf{Retraining and promotion.} The queue is an input to T2 at the \emph{next scheduled
+retrain}. T4 then trains a candidate model, and the candidate is scored on a frozen test set
+of reference labels that never receives feedback records. The candidate replaces
+\texttt{model.json} only if it scores at least as well as the current model on that set;
+otherwise the current model is kept and the rejection is logged. Retraining runs on a
+schedule and is never triggered by a gate decision.
 
 There is deliberately \textbf{no arrow from S3 back into S2b}. A model that consumes its own
 accepted predictions as training data reinforces its own mistakes and drifts away from the
-ground truth, with the drift hidden by the model's own agreement with itself. Human verdicts
-are therefore treated as new labels, not as confirmation.
+ground truth, with the drift hidden by the model's own agreement with itself. The checker
+verdicts are therefore new labels from a source that does not see the model's score, not a
+confirmation of that score, and the frozen test set limits the damage that a noisy checker
+can do.
+
+\textbf{Status.} This lane is part of the design only. The checker reuses the three-pass
+protocol that produced the L2 reference labels of this study, with a stricter agreement rule,
+but the queue writer, the scheduled retrain and the promotion test were not implemented, and
+the loop was not exercised. Removing the person also removes a safeguard: the three passes
+agreed only moderately on the L2 sample (Fleiss' $\kappa=0.54$), so the unanimity rule and
+the promotion test are the only protection against label noise in this lane.
 
 %==============================================================
 \section{End-to-End Data Flow}
@@ -502,10 +526,12 @@ group~E features are zero.
 \texttt{email} and \texttt{phone}.
 \item The runner fails the build on exit code~1 and surfaces the SARIF annotations in the
 pull request.
-\item The developer either fixes the specification or marks the finding as a false positive,
-which appends a record to \texttt{feedback.jsonl}.
-\item At the next retrain, an analyst reviews the queue, T2 updates the labels, T4 produces a
-new \texttt{model.json}, and the new artefact is committed.
+\item The developer fixes the specification and pushes again. No person reviews the verdict.
+\item The automatic checker labels the endpoints whose verdict is in doubt and appends the
+labels on which all three passes agree to \texttt{feedback.jsonl}.
+\item At the next scheduled retrain, T2 adds the queued labels, T4 trains a candidate model,
+and the candidate replaces \texttt{model.json} only if it scores at least as well as the
+current model on the frozen test set.
 \end{enumerate}
 
 %==============================================================
@@ -558,8 +584,7 @@ writing longer prose, so Experiment~E5 includes a text-inflation test (Section~\
 implemented API; where it is not, APIGUARD's finding is still useful as a documentation
 defect. (ii)~Endpoints can be judged largely independently of one another; cross-endpoint
 attack chains are out of scope. (iii)~The corpus of public specifications is representative
-enough of real-world API design to train on --- an assumption tested directly by
-Experiment~E4.
+enough of real-world API design to train on. This is only partly checked: E4 scores two applications that are vulnerable by design and does not show that the corpus is representative.
 
 \textbf{The central limitation, stated honestly.} A specification can be secure on paper while
 the implementation behind it is not. APIGUARD measures \emph{design-level} risk. It is not a
@@ -589,8 +614,8 @@ features that are zero when nothing fired, so an endpoint no rule touched can st
 high. Scoring only flagged endpoints would cap the model's recall at the scanner's recall and
 make the generalisation research question unanswerable.
 
-\textbf{3) Feedback never reaches the model directly.} Human verdicts enter through the label
-store at the next deliberate retrain, for the reason given above.
+\textbf{3) Feedback never reaches the model directly.} Checker verdicts enter through the label
+store at the next scheduled retrain, and a retrained model is promoted only if it is not worse on a frozen test set, for the reason given above.
 
 \textbf{4) A tree ensemble rather than a language model.} A committed \texttt{model.json}
 gives the same score for the same input on every run, while a hosted language model can change
@@ -622,8 +647,8 @@ been attempted. That is the gap this project addresses.
 the scanner alone? & E1 --- provider-grouped 5-fold cross-validation, scored against reference labels (L2, L3) & PR-AUC, F1
 and MCC against majority-class, scanner, logistic-regression and random-forest baselines.\\[2pt]
 \textbf{RQ2 Generalisation.} With one OWASP category removed from training, does the model
-still detect it? & E2 --- rule hold-out (the headline experiment) & Recall on the held-out
-category's endpoints; above-chance recall means the model learned the design property, not the
+still detect it? & E2 --- rule hold-out (the headline experiment) & PR-AUC minus prevalence on the held-out
+category (recall at $\tau$ is also reported); above-chance PR-AUC means the model learned the design property, not the
 rule trigger.\\[2pt]
 \textbf{RQ3 False positives.} Does ranking reduce reading effort before the real issues? & E3
 --- analyst effort on the L2 reference-labelled sample & Precision@$k$ and findings read to reach
@@ -884,7 +909,7 @@ All results use the same grouped folds, five seeds, and a provider-level bootstr
 resamples for 95\% intervals. Two methods are compared on the same resamples.
 
 \textbf{E1, accuracy against reference labels.} Algorithm~\ref{alg:train} is run and every model
-is scored on the L2 and L3 endpoints of its test folds. The scanner is scored against the
+is scored on the L2 endpoints of its test folds and on the L3 endpoints (VAmPI, crAPI), which are never in any training fold. The scanner is scored against the
 same reference labels, so the comparison with the model is fair. Per-version results (OpenAPI~3.x
 and Swagger~2.0) are reported separately.
 
@@ -902,7 +927,7 @@ The reference for chance is the prevalence of $c$, and the reference for the bes
 model trained with $c$ included. A category counts as \emph{generalised} when the lower end of
 the 95\% interval of (PR-AUC minus prevalence) is above zero. The answer to RQ2 is the number
 of categories that generalise out of $|\mathcal{C}|$, reported with its intervals. This
-criterion is fixed here, before any result exists.
+criterion is fixed here, before any result exists. Step~1 removes scanner findings only; L2 training endpoints whose reference label includes $c$ are not removed, so the held-out category is not fully unseen. This is a stated limitation of E2.
 
 \textbf{E3, analyst effort and speed.} On the L2 sample, report precision at $k=5,10,20$ and the
 number of findings read before all true positives are found, for the model ranking against the
@@ -1173,7 +1198,7 @@ treat RQ2 as unresolved at this sample size.
 This deliverable has specified the APIGUARD system model: three lanes separated by when they
 run and how far they are trusted, a runtime path of four components from specification to CI
 exit code, an offline path that produces the model artefact those components load, and a
-feedback path that returns human verdicts to the label store without ever closing a loop into
+feedback path that returns the verdicts of an automatic checker to the label store without ever closing a loop into
 the model. The notation and the gate rule in~\eqref{eq:scored} and~\eqref{eq:gate} fix what
 the implementation must compute, and the interface contracts fix what each component must
 guarantee. Section~\ref{sec:method} turns this model into the proposed methodology and algorithm: the label

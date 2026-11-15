@@ -56,7 +56,7 @@ tr.ep{cursor:pointer}tr.ep:hover{background:rgba(127,127,127,.08)}
 .spin{display:inline-block;width:14px;height:14px;border:2px solid #fff6;border-top-color:#fff;border-radius:50%;animation:r 1s linear infinite;vertical-align:-2px;margin-right:8px}
 @keyframes r{to{transform:rotate(360deg)}}
 </style></head><body>
-<header><h1>APIGUARD</h1><span>Continuous API security gate for CI/CD: upload an OpenAPI file, get a pass/fail decision and a ranked list of risky endpoints.</span></header>
+<header><h1>APIGUARD</h1><span>Continuous API security gate for CI/CD: upload an OpenAPI file, convert it to APIGUARD format, then get a pass/fail decision and a ranked list of risky endpoints.</span></header>
 <main>
 <section class="card" style="align-self:start">
   <h2>1. OpenAPI file</h2>
@@ -71,18 +71,21 @@ tr.ep{cursor:pointer}tr.ep:hover{background:rgba(127,127,127,.08)}
   <label>Tolerated endpoints at or above &tau; (k)<input id="k" type="number" min="0" value="0"></label>
   <label>Base spec <small>(optional: only new or changed endpoints count)</small><input type="file" id="basefile" accept=".yaml,.yml,.json"></label>
   <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:14px"><input type="checkbox" id="live" checked style="width:auto;margin:0"> Show what the scan is doing</label>
-  <button class="primary" id="go" disabled>Scan</button>
+  <button class="primary" id="conv" disabled>1 &middot; Convert to APIGUARD format</button>
+  <button class="primary" id="go" disabled>2 &middot; Continue: scan</button>
+  <small id="hint">Step 1 turns the file into our format (S0). Step 2 runs the rules, the model and the gate.</small>
 </section>
-<section id="out"><div class="card empty">Choose a file or a sample, then press <b>Scan</b>.<br><small>A scan takes a few seconds (Spectral rules, 66 features, model, SHAP).</small></div></section>
+<section id="out"><div class="card empty">Choose any OpenAPI 3 or Swagger 2 file (or a sample), then press <b>1 &middot; Convert</b>.<br><small>You get the file in APIGUARD format, then press <b>2 &middot; Continue: scan</b> (Spectral rules, 66 features, model, SHAP).</small></div></section>
 </main>
 <script>
 setInterval(()=>fetch('/ping').catch(()=>{}),3000);fetch('/ping').catch(()=>{});
-const $=s=>document.querySelector(s);let spec=null,base=null,name='';
+const $=s=>document.querySelector(s);let spec=null,base=null,name='',NORM=null;const GO='2 \u00b7 Continue: scan';
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function mark(sampleName){document.querySelectorAll('#samples button').forEach(b=>b.classList.toggle('sel',b.dataset.n===sampleName))}
 function setSpec(t,n,sample){spec=t;name=n;mark(sample||null);
   const d=$('#drop');d.classList.add('loaded');d.innerHTML='<span class="fn">\u2713 '+esc(n)+'</span><br><small>'+t.length.toLocaleString()+' characters loaded. Click or drop to change.</small>';
-  $('#fname').textContent='';$('#go').disabled=false}
+  $('#fname').textContent='';NORM=null;$('#conv').disabled=false;$('#go').disabled=true;
+  $('#out').innerHTML='<div class="card empty">File loaded: <b>'+esc(n)+'</b>.<br>Press <b>1 &middot; Convert to APIGUARD format</b>.</div>'}
 function readFile(f,cb){const r=new FileReader();r.onload=()=>cb(r.result);r.readAsText(f)}
 $('#drop').onclick=()=>$('#file').click();
 $('#file').onchange=e=>{const f=e.target.files[0];if(f)readFile(f,t=>setSpec(t,f.name))};
@@ -99,6 +102,36 @@ function stepsHTML(st,showTimes){return '<ul class="steps">'+STAGES.map(([k,titl
   return `<li class="${cls}"><span class="ic">${ic}</span><div><b>${esc(title)}</b><small>${esc(s.text||'')}</small></div><span class="tm">${tm}</span></li>`}).join('')+'</ul>'}
 function applyLog(st,items){for(const it of items){const [k,state,...rest]=it.m.split('|');const text=rest.join('|');st[k]=st[k]||{};
   if(state==='start'){st[k].start=it.t;st[k].text=text}else{st[k].done=it.t;st[k].text=text}}}
+
+function dl(text,fn,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=fn;a.click()}
+function csvOf(rows){if(!rows.length)return '';const k=Object.keys(rows[0]);const q=v=>'"'+String(v).replace(/"/g,'""')+'"';
+  return '﻿'+k.join(',')+'\n'+rows.map(r=>k.map(x=>q(r[x])).join(',')).join('\n')}
+function renderNorm(d){
+  const doc=d.document,rows=d.rows,stem=name.split('/').pop().replace(/\.(ya?ml|json)$/i,'');
+  const noauth=rows.filter(r=>!r.security_schemes).length,SHOW=300;
+  let h=`<div id="banner" class="pass" style="border-color:var(--teal);background:rgba(23,112,127,.08)"><b style="color:var(--teal);font-size:24px">STEP 1 DONE</b><div>The file is now in APIGUARD format: one record per endpoint (S0 normaliser, ${d.seconds} s).<br><small>${esc(name)} &middot; ${esc(doc.source_version)} &middot; ${esc(doc.spec_id)}</small></div>
+   <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap"><button id="dlj">Download our format (.json)</button><button id="dlc">Download table (.csv)</button></div></div>
+   <div class="stats"><div class="stat"><b>${doc.endpoint_count}</b><small>endpoints</small></div><div class="stat"><b>${esc(doc.source_version.replace('openapi-','OpenAPI ').replace('swagger-','Swagger '))}</b><small>input format</small></div><div class="stat"><b>${rows.length-noauth}</b><small>need a login</small></div><div class="stat"><b>${noauth}</b><small>need no login</small></div></div>
+   <div class="card" style="margin-bottom:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap"><div><b>Next: step 2</b><br><small>Run the rule scanner, the model, SHAP and the gate on these ${doc.endpoint_count} endpoints.</small></div><button class="primary" id="go2" style="width:auto;margin:0 0 0 auto;padding:11px 22px">Continue: scan &rarr;</button></div>
+   <div class="card"><h2>Normalised endpoints <small>(what the next steps read)</small></h2><table><thead><tr><th>#</th><th>Endpoint</th><th>Login</th><th>Login rule from</th><th>Params</th><th>Body fields</th><th>Response fields</th></tr></thead><tbody>`;
+  rows.slice(0,SHOW).forEach((r,i)=>{h+=`<tr><td>${i+1}</td><td><span class="m">${esc(r.method)}</span> <span class="path">${esc(r.path)}</span></td>
+    <td>${r.security_schemes?esc(r.scheme_type||r.security_schemes):'<span class="tag flag">none</span>'}</td><td><span class="tag">${esc(r.security_source)}</span></td><td>${r.n_parameters}</td><td>${r.n_body_props}</td><td>${r.n_response_props}</td></tr>`});
+  h+='</tbody></table>'+(rows.length>SHOW?`<small>Showing the first ${SHOW} of ${rows.length} endpoints. The downloads have all of them.</small>`:'')+
+     (doc.warnings&&doc.warnings.length?`<br><small>${doc.warnings.length} warning(s) from the normaliser are in the JSON file.</small>`:'')+'</div>';
+  $('#out').innerHTML=h;
+  $('#dlj').onclick=()=>dl(JSON.stringify(doc,null,2),stem+'.normalized.json','application/json');
+  $('#dlc').onclick=()=>dl(csvOf(rows),stem+'.normalized.csv','text/csv');
+  $('#go2').onclick=()=>$('#go').click();
+}
+$('#conv').onclick=async()=>{
+  const b=$('#conv');b.disabled=true;b.innerHTML='<span class="spin"></span>Converting...';
+  try{
+    const d=await (await fetch('/normalize',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({spec,filename:name})})).json();
+    if(d.error){NORM=null;$('#go').disabled=true;$('#out').innerHTML='<div class="card"><h2>Convert failed</h2><div id="err">'+esc(d.error)+'</div></div>'}
+    else{NORM=d;renderNorm(d);$('#go').disabled=false}
+  }catch(e){$('#out').innerHTML='<div class="card"><div id="err">'+esc(e)+'</div></div>'}
+  b.disabled=false;b.innerHTML='1 &middot; Convert to APIGUARD format';
+};
 let LASTSTEPS='';
 $('#go').onclick=async()=>{
   const b=$('#go');b.disabled=true;b.innerHTML='<span class="spin"></span>Scanning...';
@@ -106,7 +139,7 @@ $('#go').onclick=async()=>{
   $('#out').innerHTML='<div class="card"><h2>Scanning '+esc(name)+'</h2>'+(live?stepsHTML(st,true):'<div class="empty">Working...</div>')+'</div>';
   try{
     const r=await (await fetch('/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({spec,filename:name,base,model:$('#model').value,tau:$('#tau').value,k:$('#k').value||0})})).json();
-    if(r.error){render(r);b.disabled=false;b.textContent='Scan';return}
+    if(r.error){render(r);b.disabled=false;b.textContent=GO;return}
     let from=0,res=null;
     while(!res){
       const j=await (await fetch('/job/'+r.job+'?from='+from)).json();
@@ -117,7 +150,7 @@ $('#go').onclick=async()=>{
     }
     if(res){LASTSTEPS=live?stepsHTML(st,true):'';render(res)}
   }catch(e){$('#out').innerHTML='<div class="card"><div id="err">'+esc(e)+'</div></div>'}
-  b.disabled=false;b.textContent='Scan';
+  b.disabled=false;b.textContent=GO;
 };
 
 const RULES={
