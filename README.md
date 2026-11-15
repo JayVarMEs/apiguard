@@ -14,3 +14,22 @@ python demo_ui/app.py            # web demo at http://127.0.0.1:8765
 Windows helpers: `RUN_DEMO.bat`, `RUN_DEMO_CLI.bat`, `RUN_UI.bat`, `RUN_ALL.bat` (all experiments). Details: `README_RUN.md`. Paper source: `overleaf/`.
 
 Labels for the reference sample (L2) and external ground truth (L3) were produced by language models against the OWASP checklist; no human labelling was used.
+
+## Install (summary)
+- Python 3.11+ and Node.js 20+.
+- `pip install -r requirements.txt` then `npm install` (Spectral 6.17.0 + OWASP ruleset 2.0.1).
+- Linux/macOS: `export PYTHONPATH=src`. Windows PowerShell: `$env:PYTHONPATH="src"`.
+
+## Test
+```
+python tests/test_components.py      # expected: 7/7 passed
+python tests/test_normalizer.py
+python tests/test_features_gate.py
+```
+Then scan the sample API (the command in Quick start). It prints a ranked risk list and a pass/fail gate; the exit code is 0 for pass and 1 for fail.
+
+## Executable demo (Windows)
+`APIGUARD.exe` is too large for GitHub (410 MB). Download it from: **LINK_TO_BE_ADDED** (GitHub Release or Google Drive). Double-click it, load an API file, convert it to the APIGUARD format (S0), then click to continue the scan.
+
+## Paper
+The final report source is `overleaf/main_final.tex` (IEEEtran; compile with pdfLaTeX, two runs).
