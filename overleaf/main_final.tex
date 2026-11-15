@@ -113,8 +113,9 @@ The contributions are:
 \begin{itemize}
 \item A system model in which a classifier scores \emph{every} endpoint after the rule scanner,
 so that the gate acts on a ranked, explained risk score instead of an alert count.
-\item A label protocol that keeps scanner labels for training only and measures every result
-against independently produced labels (L2 and L3), which removes the circularity of training and testing on scanner output.
+\item A label protocol that keeps scanner labels for training only and measures every reported
+result against independently produced labels (L2 and L3), which removes from the evaluation the circularity of testing on
+scanner output.
 \item A rule hold-out protocol (E2) that tests whether the model learned a design property
 rather than a rule trigger.
 \item A gate that judges only new or changed endpoints, so that existing APIs can adopt it.
@@ -151,8 +152,9 @@ APIGUARD applies this idea at endpoint level to API specifications, and addition
 endpoints on which no rule fired.
 
 \subsection{Weak Labels and Explanation}
-Training on automatically produced labels is the weak-supervision setting of
-Snorkel~\cite{snorkel}. Because such labels are noisy, we use them for training only.
+Training on automatically produced labels falls in the weak-supervision setting described
+for Snorkel~\cite{snorkel}. We do not fit Snorkel's label model; scanner output is used
+directly as noisy labels, and because such labels are noisy, we use them for training only.
 Gradient-boosted trees~\cite{xgboost} are explained with SHAP~\cite{shap} and its exact
 tree algorithm~\cite{treeshap}. Leakage between training and test data is a documented cause of
 over-optimistic results~\cite{kapoor}, which is why every split here is grouped by provider.
@@ -183,7 +185,7 @@ runtime compute features identically.
 
 \begin{figure*}[!t]
 \centering
-\includegraphics[width=\textwidth]{architecture.pdf}
+\includegraphics[width=\textwidth]{architecture_v3.pdf}
 \caption{APIGUARD system model. The runtime lane (S0--S3) runs inside the pipeline; the
 offline lane (T1--T4) produces \texttt{model.json}; the feedback lane returns the verdicts of an automatic checker
 to the label store. Amber marks shared code and the model artefact; dashed teal marks
@@ -207,8 +209,13 @@ how far it is trusted.
 \midrule
 Developer & Writes or edits an OpenAPI specification and pushes it to the repository; reads
 the gate output and fixes what it reports. & Not malicious, but assumed to make design
-mistakes. Cannot change the gate threshold on a protected branch: the workflow file is guarded
-by branch protection or an organisation-level reusable workflow.\\
+mistakes. Cannot change the gate threshold, the tolerance or the model artefact used on a
+protected branch: the gate runs from an organisation-level required workflow or a repository
+ruleset rather than from a workflow file in the pull request, the workflow files and the
+\texttt{models/} directory are covered by CODEOWNERS, and the required workflow checks the
+SHA-256 hash of \texttt{model.json} against a value pinned outside the repository. Branch
+protection alone is not sufficient, because it blocks merging but not running a modified
+workflow.\\
 CI/CD runner & Checks out the repository, invokes the APIGUARD CLI, and acts on its exit
 code. & Trusted execution environment; its configuration is under version control.\\
 APIGUARD CLI & The runtime lane, S0--S3. Reads a specification and produces a per-endpoint
@@ -255,6 +262,8 @@ $\phi(e)$ & The SHAP attribution vector for $e$: the contribution of each featur
 (log-odds) from which $r(e)$ is computed.\\
 $\tau,\;k$ & The gate threshold and the tolerated count of endpoints at or above it.\\
 $G(S)$ & The gate decision for the whole specification: $0$ = pass, $1$ = fail.\\
+$\mathrm{P@}n$ & Precision among the $n$ highest-ranked findings (Experiment~E3). Written with
+$n$ so that it is not confused with the gate tolerance $k$.\\
 \bottomrule
 \end{tabularx}
 \end{table*}
@@ -274,11 +283,16 @@ G(S)=
 \label{eq:gate}
 \end{equation}
 
+Equation~\eqref{eq:gate} is the full-scan form of the gate. The deployed gate, defined
+in~\eqref{eq:gatedelta} of Section~\ref{sec:m-gate}, applies the same rule only to endpoints
+that are new or changed relative to the base branch; \eqref{eq:gate} is the special case in
+which no base specification exists, so that every endpoint counts as new.
+
 With the default policy $k=0$ the gate fails if any single endpoint scores at or above
 $\tau$. A larger $k$ lets a team adopt the tool gradually on an existing API without
 blocking every build on the first day. The value of $\tau$ is not chosen by hand: it is
-swept on a validation set and reported as a precision/recall trade-off curve
-(Experiment~E3).
+selected on validation folds (Section~\ref{sec:m-gate}), stored in the metadata of
+\texttt{model.json}, and its precision/recall trade-off is reported in Experiment~E3.
 
 Two properties the design must hold. First, $r(e)$ is defined for \emph{every} endpoint,
 including endpoints on which no rule fired; for those, the scanner-derived features are
@@ -340,10 +354,12 @@ majority class, logistic regression and random forest --- are trained on the ide
 feature table for comparison.
 
 \textbf{S2c Explainer.} SHAP~\cite{shap} produces $\phi(e)$, attributing the score to
-individual features using Shapley values from cooperative game theory, computed exactly for tree ensembles by TreeSHAP~\cite{treeshap}. Each of the ten
-highest-scoring endpoints in a report carries up to three features that pushed its score up. This is not decoration:
-it is how a developer checks whether the model reasoned about a security property or about
-something irrelevant, and it is how the team detects a model that has learned a shortcut.
+individual features using Shapley values from cooperative game theory, computed exactly for
+tree ensembles by TreeSHAP~\cite{treeshap}. Every endpoint that counts toward the gate
+decision, and each of the ten highest-scoring endpoints, carries up to three features
+that pushed its score up (Algorithm~\ref{alg:scan}). This is not decoration: it is how a
+developer checks whether the model reasoned about a security property or about something
+irrelevant, and it is how the team detects a model that has learned a shortcut.
 
 \begin{table*}[!t]
 \caption{Feature Groups Computed by S2a From One Normalised Endpoint}
@@ -386,12 +402,14 @@ isolation.\\
 \textbf{Input:} $R(S)$, the scored endpoint set. \textbf{Output:} a report and a process exit
 code.
 
-S3 applies the decision rule of~\eqref{eq:gate} and emits the ranked findings in one of three
-formats: human-readable text for a terminal, JSON for further processing, and SARIF so that
-results appear as annotations in the code-review interface. The exit code is 0 on pass and 1
-on fail, which is the only part of the system the CI runner needs to understand. The report
-always lists endpoints in descending risk order, and each entry carries the score, the SHAP
-reasons, and any scanner findings that fired.
+S3 applies the decision rule of~\eqref{eq:gatedelta}, which reduces to~\eqref{eq:gate} when no
+base specification is given, and emits the ranked findings in one of three formats:
+human-readable text for a terminal, JSON for further processing, and SARIF so that results
+appear as annotations in the code-review interface. The exit code is 0 on pass and 1 on fail,
+which is the only part of the system the CI runner needs to understand. The report always
+lists endpoints in descending risk order. Each entry carries the score and any scanner
+findings that fired; entries that count toward the gate decision or are among the ten highest
+scores also carry their SHAP reasons.
 
 %==============================================================
 \section{Offline Lane: Components T1--T4}
@@ -457,8 +475,8 @@ Grouped 5-fold cross-validation is used throughout.
 minority; a model that predicted ``secure'' for everything would score high on accuracy
 alone.
 \item \textbf{Fix every random seed and record every dependency version.} The scanner version,
-ruleset version, corpus statistics and seed are written into the model artefact's
-metadata; the snapshot date is kept in the corpus manifest.
+ruleset version, corpus statistics, seed and the selected threshold $\tau$ are written
+into the model artefact's metadata; the snapshot date is kept in the corpus manifest.
 \item \textbf{Emit an artefact, not a live service.} \texttt{model.json} is a file under
 version control, so any reported result can be reproduced with the exact model that produced
 it.
@@ -511,7 +529,10 @@ One pipeline run, in order:
 \begin{enumerate}
 \item A developer pushes a commit that touches \texttt{openapi.yaml}.
 \item The CI runner checks out the repository and invokes
-\texttt{apiguard scan openapi.yaml}, which uses the model's own threshold.
+\texttt{apiguard scan openapi.yaml}\linebreak[1]
+\texttt{-{}-model models/model.json}\linebreak[1] \texttt{-{}-threshold 0.70}. The value
+0.70 is a placeholder used in this example; the deployed value of $\tau$ is the one selected
+in Section~\ref{sec:m-gate} and stored in the metadata of \texttt{model.json}.
 \item \textbf{S0} parses the file, resolves references and emits $E(S)$ --- say 48 endpoint
 records.
 \item \textbf{S1} runs Spectral with the pinned OWASP ruleset and attributes each finding to
@@ -519,9 +540,11 @@ an endpoint, giving $A(e)$. Suppose 11 endpoints are flagged.
 \item \textbf{S2a} builds $x(e)$ for all 48 endpoints, not only the 11. For the other 37,
 group~E features are zero.
 \item \textbf{S2b} loads \texttt{model.json} once and scores all 48, producing $r(e)$.
-\item \textbf{S2c} computes $\phi(e)$ and keeps the top contributing features per endpoint.
-\item \textbf{S3} ranks by $r(e)$, applies $\tau$ and $k$, writes the report and exits 0 or
-1. An unflagged endpoint may appear at the top of the ranking --- for example
+\item \textbf{S2c} computes $\phi(e)$ for the endpoints that count toward the gate and for the
+ten highest scores, and keeps the top contributing features of each.
+\item \textbf{S3} ranks by $r(e)$, applies $\tau$ and $k$ to the endpoints that are new or
+changed relative to the base branch (all of them if there is no base), writes the report and
+exits 0 or 1. An unflagged endpoint may appear at the top of the ranking --- for example
 \texttt{GET /users/\{id\}} with no security requirement and a response containing
 \texttt{email} and \texttt{phone}.
 \item The runner fails the build on exit code~1 and surfaces the SARIF annotations in the
@@ -560,8 +583,8 @@ S2c & Feature vector and model & SHAP attributions & Attributions sum to the raw
 $r(e)$ is the logistic transform of that margin.\\
 S3 & Scored endpoint set & Report and exit code & Exit code is 0 (pass) or 1 (fail), and 2 means a tool error; the report is
 always ranked by score.\\
-T4 & Labelled feature table & \texttt{model.json} & Carries seed, tool versions and corpus
-snapshot date in its metadata.\\
+T4 & Labelled feature table & \texttt{model.json} & Carries seed, tool versions, corpus
+snapshot date and the selected $\tau$ in its metadata.\\
 \bottomrule
 \end{tabularx}
 \end{table*}
@@ -579,6 +602,14 @@ limiting. APIGUARD does not model an insider who tampers with the pipeline confi
 it is not a defence against a developer who deliberately weakens the specification and lowers
 $\tau$ at the same time. The model can also be gamed: group~D features can be inflated by
 writing longer prose, so Experiment~E5 includes a text-inflation test (Section~\ref{sec:method}).
+
+\textbf{Integrity of the gate configuration.} A pull request can change any file in the
+checkout, including \texttt{model.json}; it could, for example, replace the model with one
+that scores every endpoint at zero. This case is covered: the required workflow verifies the
+SHA-256 hash of the artefact against a value pinned outside the repository before the scan
+runs (Section~\ref{sec:deploy}), and the workflow files and \texttt{models/} directory are
+covered by CODEOWNERS. A change to the required workflow itself is outside a developer's
+permissions and is treated as the insider case above, which is out of scope.
 
 \textbf{Assumptions.} (i)~The specification is a reasonably faithful description of the
 implemented API; where it is not, APIGUARD's finding is still useful as a documentation
@@ -599,7 +630,7 @@ the corpus.
 
 %==============================================================
 \section{Design Justifications}
-Three decisions visible in Fig.~\ref{fig:arch} will be challenged in review, and each has a
+Four decisions visible in Fig.~\ref{fig:arch} will be challenged in review, and each has a
 reason.
 
 \textbf{1) The model sits after the scanner, not instead of it.} Rules stay authoritative for
@@ -631,8 +662,8 @@ commit, at endpoint granularity, and produces a numeric gate decision with a per
 explanation. The nearest published work, Cheh and Chen~\cite{cheh}, builds a graph model of
 sensitive-field exposure in OpenAPI documents but evaluates it on a single API; recent surveys
 of RESTful API vulnerability detection~\cite{tanveer} and of OpenAPI quality
-analysis~\cite{oasquali} confirm that learned, explained risk scoring at corpus scale has not
-been attempted. That is the gap this project addresses.
+analysis~\cite{oasquali} report no prior work on learned, explained risk scoring at corpus
+scale. That is the gap this project addresses.
 
 \begin{table}[!t]
 \caption{Research Questions Mapped to Experiments}
@@ -643,15 +674,14 @@ been attempted. That is the gap this project addresses.
 \toprule
 \textbf{Research question} & \textbf{Experiment} & \textbf{What is measured}\\
 \midrule
-\textbf{RQ1 Feasibility.} Does the model predict endpoint-level findings more accurately than
-the scanner alone? & E1 --- provider-grouped 5-fold cross-validation, scored against reference labels (L2, L3) & PR-AUC, F1
+\textbf{RQ1 Feasibility.} Does the model identify endpoint-level security design issues more accurately than the scanner alone? & E1 --- provider-grouped 5-fold cross-validation, scored against reference labels (L2, L3) & PR-AUC, F1
 and MCC against majority-class, scanner, logistic-regression and random-forest baselines.\\[2pt]
 \textbf{RQ2 Generalisation.} With one OWASP category removed from training, does the model
 still detect it? & E2 --- rule hold-out (the headline experiment) & PR-AUC minus prevalence on the held-out
 category (recall at $\tau$ is also reported); above-chance PR-AUC means the model learned the design property, not the
 rule trigger.\\[2pt]
 \textbf{RQ3 False positives.} Does ranking reduce reading effort before the real issues? & E3
---- analyst effort on the L2 reference-labelled sample & Precision@$k$ and findings read to reach
+--- analyst effort on the L2 reference-labelled sample & P@$n$ and findings read to reach
 all true positives, versus scanner severity ordering; $\tau$ swept.\\[2pt]
 Supporting --- external validity & E4 --- VAmPI and crAPI & Whether known vulnerable endpoints
 rank above benign ones.\\[2pt]
@@ -665,11 +695,16 @@ each feature group removed, especially group~E; global SHAP importance.\\
 
 %==============================================================
 \section{Deployment View}
+\label{sec:deploy}
 APIGUARD ships as a command-line tool that reads a file and returns an exit code, so it fits
-any CI system without a dedicated integration. A GitHub Actions job is the reference
-deployment:
+any CI system without a dedicated integration. A GitHub Actions job, run from an
+organisation-level required workflow, is the reference deployment:
 
 \begin{lstlisting}[language=bash]
+- name: Verify model artefact
+  run: |
+    echo "<pinned-sha256>  models/model.json" \
+      | sha256sum --check --strict
 - name: API security gate
   run: |
     apiguard scan api/openapi.yaml \
@@ -680,6 +715,11 @@ deployment:
   with:
     sarif_file: apiguard.sarif
 \end{lstlisting}
+
+The pinned hash lives in the required workflow, not in the repository, so a pull request
+cannot change it together with the artefact; the scan does not run if the check fails. The
+value 0.70 is again a placeholder for the $\tau$ selected in Section~\ref{sec:m-gate}.
+Without a base specification the gate counts every endpoint, as in~\eqref{eq:gate}.
 
 The model artefact is committed to the repository alongside the pipeline definition, so a
 build is reproducible from the checkout alone. Target runtime is a few seconds for a
@@ -705,11 +745,11 @@ This section turns the system model into a procedure that can be run and checked
 what a label means, how labels are produced and kept honest, how features are computed, how
 the model is trained and tuned, how the gate judges a change, and how each experiment is
 carried out. Fig.~\ref{fig:method} shows the order of the steps. One rule runs through all of
-them: \emph{no result is ever measured against the scanner labels the model was trained on.}
+them: \emph{no reported result is ever measured against the scanner labels the model was trained on.}
 
 \begin{figure*}[!t]
 \centering
-\includegraphics[width=0.92\textwidth]{methodology_final.pdf}
+\includegraphics[width=0.92\textwidth]{methodology_v3.png}
 \caption{Methodology in eight steps. The top row builds the dataset; the bottom row, read
 right to left, labels it, trains the model and evaluates it. Amber marks shared code and the
 model artefact; the dashed teal box marks the reference labels (L2, L3).}
@@ -719,8 +759,10 @@ model artefact; the dashed teal box marks the reference labels (L2, L3).}
 \subsection{Problem Statement and Label Definition}
 \label{sec:m-prob}
 Given an endpoint $e$ and its feature vector $x(e)\in\mathbb{R}^{d}$, learn a function $f$
-whose output $r(e)=f(x(e))$ ranks endpoints by the chance that they carry a security-relevant
-\emph{design} issue. The label $y(e)=1$ when the specification gives evidence of at least one
+whose output $r(e)=f(x(e))$ ranks endpoints by their relative risk of carrying a
+security-relevant \emph{design} issue. The score is not calibrated
+(Section~\ref{sec:m-gate}), so it orders endpoints but is not a probability. The label
+$y(e)=1$ when the specification gives evidence of at least one
 issue in an OWASP API Top 10 category that a specification can show~\cite{owasptop10}:
 API1 (object-level authorisation), API2 (authentication), API3 (property-level exposure),
 API4 (resource consumption), API5 (function-level authorisation), API8 (misconfiguration)
@@ -768,8 +810,9 @@ L3 & Documented flaws & No & Yes\\
 \textbf{L1, weak labels.} $y_1(e)=1$ when the scanner reports at least one finding of
 severity \texttt{error} or \texttt{warn} on $e$, ignoring rules that fire on more than 15\% of all
 endpoints (a pilot scan showed that, without this, over 85\% of endpoints are flagged and the label carries no signal;
-the ignored rules are listed in the dataset statistics file). These labels are cheap and noisy. They are
-weak supervision in the sense of Ratner \emph{et al.}~\cite{snorkel}, and they are used for
+the ignored rules are listed in the dataset statistics file). These labels are cheap and noisy.
+They fall in the weak-supervision setting described by Ratner \emph{et al.}~\cite{snorkel};
+no label model is fitted, and the scanner output is used directly as noisy labels, for
 training only.
 
 \textbf{L2, reference labels.} A sample of 304 endpoints (plus a pilot of 32 that is
@@ -827,6 +870,11 @@ so the positive-class weight is set from the training fold,
 and models are compared with PR-AUC~\cite{saito}, F1 and the Matthews correlation
 coefficient~\cite{chicco}, never accuracy.
 
+The inner validation in Algorithm~\ref{alg:train} (line~7) uses the same labels as training:
+$y_2$ where it exists and $y_1$ otherwise. Hyperparameter selection and early stopping are
+therefore partly driven by scanner labels. This affects which model is chosen, not how it is
+reported: every reported result is computed on test folds against the independently produced L2 and L3 labels only.
+
 \begin{algorithm}[!t]
 \caption{Grouped training and tuning (T4)}
 \label{alg:train}
@@ -847,7 +895,7 @@ coefficient~\cite{chicco}, never accuracy.
   \STATE score the test set; for L2 and L3 endpoints keep the score and the reference label
 \ENDFOR
 \STATE repeat with 5 random seeds; report mean and interval over the seeds and folds
-\STATE fit the final model on all groups and write \texttt{model.json} with seed, tool versions, schema versions and corpus date
+\STATE fit the final model on all groups and write \texttt{model.json} with seed, tool versions, schema versions, corpus date and selected $\tau$
 \end{algorithmic}
 \end{algorithm}
 
@@ -856,9 +904,12 @@ B0 the majority class; B1 the scanner itself (flagged is 1, optionally ordered b
 B2 logistic regression on standardised features; B3 random forest. A fifth baseline, B4, would ask a large language model for a risk score of each L2 endpoint at temperature~0. It is implemented (\texttt{e1\_llm\_baseline.py}) but was \textbf{not run}, so no language-model result is reported.
 
 \subsection{Threshold and Gate Algorithm (S3)}
-The threshold $\tau$ is chosen on validation folds, never on test folds. Three operating
-points are reported: the $\tau$ that maximises F1 (the default), the smallest $\tau$ with
-precision at least 0.9, and the largest $\tau$ with recall at least 0.9. No post-hoc
+\label{sec:m-gate}
+The threshold $\tau$ is chosen on validation folds, never on test folds. Validation labels
+follow the same rule as in Algorithm~\ref{alg:train}: $y_2$ where it exists, $y_1$ otherwise.
+Three operating points are reported: the $\tau$ that maximises F1 (the default), the smallest
+$\tau$ with precision at least 0.9, and the largest $\tau$ with recall at least 0.9. The
+default is written into the metadata of \texttt{model.json}. No post-hoc
 calibration is applied, so that the score stays the logistic transform of the margin that SHAP
 explains; a calibration curve is reported as a diagnostic.
 
@@ -870,6 +921,7 @@ of the normalised record without file-identity fields. Then
 \begin{multline}
 \Delta(S_h,S_b)=\bigl\{\,e\in E(S_h)\;:\;\nexists\,e'\in E(S_b),\\
 \mathrm{key}(e')=\mathrm{key}(e)\wedge h(e')=h(e)\,\bigr\},
+\label{eq:delta}
 \end{multline}
 \begin{equation}
 G_{\Delta}(S_h,S_b)=
@@ -880,7 +932,7 @@ G_{\Delta}(S_h,S_b)=
 \label{eq:gatedelta}
 \end{equation}
 The report still lists every endpoint in risk order and marks which ones were in scope. If no
-base exists, every endpoint is new. A renamed path counts as a new endpoint. The endpoint
+base exists, every endpoint is new and~\eqref{eq:gatedelta} reduces to~\eqref{eq:gate}. A renamed path counts as a new endpoint. The endpoint
 identifier of S0 cannot be used for matching, because it contains the specification hash and
 changes whenever any line of the file changes. Matching costs $O(n)$ in the number of
 endpoints.
@@ -899,7 +951,7 @@ endpoints.
 \ENDFOR
 \STATE $\Delta\leftarrow$ endpoints of $E_h$ that are new or changed relative to $E_b$ (all if $S_b$ is absent)
 \STATE $n\leftarrow|\{e\in\Delta : r(e)\ge\tau\}|$
-\STATE compute SHAP for the 10 highest-scoring endpoints; write the report ranked by $r(e)$, marking $\Delta$
+\STATE compute SHAP for every $e\in\Delta$ with $r(e)\ge\tau$ and for the 10 highest-scoring endpoints overall; write the report ranked by $r(e)$, marking $\Delta$
 \RETURN $1$ if $n>k$, else $0$
 \end{algorithmic}
 \end{algorithm}
@@ -929,7 +981,7 @@ the 95\% interval of (PR-AUC minus prevalence) is above zero. The answer to RQ2 
 of categories that generalise out of $|\mathcal{C}|$, reported with its intervals. This
 criterion is fixed here, before any result exists. Step~1 removes scanner findings only; L2 training endpoints whose reference label includes $c$ are not removed, so the held-out category is not fully unseen. This is a stated limitation of E2.
 
-\textbf{E3, analyst effort and speed.} On the L2 sample, report precision at $k=5,10,20$ and the
+\textbf{E3, analyst effort and speed.} On the L2 sample, report P@$n$ for $n=5,10,20$ and the
 number of findings read before all true positives are found, for the model ranking against the
 scanner severity ranking, with $\tau$ swept over 0.1 to 0.9. Wall-clock time of S0 to S3 is
 measured per component, 10 runs per specification, on specifications of 10 to 500 endpoints,
@@ -964,7 +1016,7 @@ feature table does not need a GPU. Runtime in E3 is measured on a GitHub-hosted 
 which is the reference deployment, and on the team's laptop, 10 runs per specification, with
 the median and the range reported. Network time is excluded.
 
-\textbf{Metrics.} PR-AUC, F1 and MCC for classification; precision at $k$ and findings read
+\textbf{Metrics.} PR-AUC, F1 and MCC for classification; P@$n$ and findings read
 for analyst effort; milliseconds per specification for speed; mean absolute SHAP value for
 explanation. All intervals are 95\% provider-level bootstrap intervals.
 
@@ -973,6 +1025,10 @@ one project folder, and the model file used for each reported table is committed
 
 \subsection{Threats to Validity}
 \textbf{Label noise.} L1 contains scanner errors; this is why it is never used for evaluation.
+\textbf{Scanner shortcut.} Group~E features are derived from the same scanner output as the
+L1 labels, so a model trained mostly on L1 can fit its training labels by copying group~E and
+add little beyond the scanner. E5 measures this directly by removing group~E, and E2 tests it
+category by category; if the shortcut dominates, that is reported as a finding.
 \textbf{Small, model-labelled sample.} 304 endpoints give wide intervals, and the labels come from three language-model passes with Fleiss' $\kappa=0.54$ and no human check; intervals are reported rather
 than hidden, and L3, whose flaws are documented by the VAmPI authors, is the external anchor (the flaw-to-endpoint mapping was done by a language model reading the handler source). \textbf{Specification versus implementation.} Design-level scores cannot see
 implementation flaws; E4 measures the gap. \textbf{Corpus bias.} APIs.guru is dominated by
@@ -1199,9 +1255,9 @@ This deliverable has specified the APIGUARD system model: three lanes separated 
 run and how far they are trusted, a runtime path of four components from specification to CI
 exit code, an offline path that produces the model artefact those components load, and a
 feedback path that returns the verdicts of an automatic checker to the label store without ever closing a loop into
-the model. The notation and the gate rule in~\eqref{eq:scored} and~\eqref{eq:gate} fix what
-the implementation must compute, and the interface contracts fix what each component must
-guarantee. Section~\ref{sec:method} turns this model into the proposed methodology and algorithm: the label
+the model. The notation and the gate rules in~\eqref{eq:scored}, \eqref{eq:gate}
+and~\eqref{eq:gatedelta} fix what the implementation must compute, and the interface contracts
+fix what each component must guarantee. Section~\ref{sec:method} turns this model into the proposed methodology and algorithm: the label
 protocol that keeps scanner labels out of every evaluation, the feature extraction, the grouped
 training procedure, a gate that judges only new or changed endpoints, and the protocol for the
 rule hold-out experiment that the whole design rests on. The experiments of Section~\ref{sec:results} show that, trained on scanner labels, the model matches but does not beat the scanner and generalises in the rule hold-out for one of three testable categories. Trained on language-model reference labels it ranks better by ROC-AUC, and combined with the scanner it ranks better on PR-AUC and ROC-AUC, but it does not reliably rank the flaws of crAPI. All reference labels were produced by language models, so these results measure agreement with those labels, and a human-labelled sample is the main next step.
@@ -1299,6 +1355,7 @@ art.~e0118432, 2015, doi: 10.1371/journal.pone.0118432.
 D.~Chicco and G.~Jurman, ``The advantages of the {Matthews} correlation coefficient ({MCC}) over
 {F1} score and accuracy in binary classification evaluation,'' \emph{BMC Genomics}, vol.~21,
 art.~6, 2020, doi: 10.1186/s12864-019-6413-7.
+
 
 \end{thebibliography}
 
