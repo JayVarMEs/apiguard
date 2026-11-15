@@ -29,7 +29,7 @@ python tests/test_features_gate.py
 Then scan the sample API (the command in Quick start). It prints a ranked risk list and a pass/fail gate; the exit code is 0 for pass and 1 for fail.
 
 ## Executable demo (Windows)
-`APIGUARD.exe` is too large for GitHub (410 MB). Download it from: **LINK_TO_BE_ADDED** (GitHub Release or Google Drive). Double-click it, load an API file, convert it to the APIGUARD format (S0), then click to continue the scan.
+`APIGUARD.exe` is too large for GitHub (410 MB). Download it from the GitHub Release: https://github.com/JayVarMEs/apiguard/releases/download/v1.0/APIGUARD.exe (release page: https://github.com/JayVarMEs/apiguard/releases/tag/v1.0). Double-click it, load an API file, convert it to the APIGUARD format (S0), then click to continue the scan.
 
 ## Paper
 The final report source is `overleaf/main_final.tex` (IEEEtran; compile with pdfLaTeX, two runs).
