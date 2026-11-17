@@ -66,16 +66,17 @@ tr.ep{cursor:pointer}tr.ep:hover{background:rgba(127,127,127,.08)}
   <small id="fname">No file chosen.</small>
   <h2 style="margin-top:16px">2. Settings</h2>
   <label>Model
-    <select id="model"><option value="l2plus">Reference-label model (E7, default)</option><option value="scanner">Scanner-trained model (E1 to E4)</option><option value="l2only">L2-only model (E6)</option></select></label>
-  <label>Threshold &tau; <small>(empty = model's own)</small><input id="tau" type="number" step="0.01" min="0" max="1" placeholder="e.g. 0.53"></label>
+    <select id="model"><option value="v3" selected>Model v3 (E15, final, default)</option><option value="l2plus">Reference-label model (E7)</option><option value="scanner">Scanner-trained model (E1 to E4)</option><option value="l2only">L2-only model (E6)</option></select></label>
+  <label>Threshold &tau; <small>(empty = model's own)</small><input id="tau" type="number" step="0.01" min="0" max="1" placeholder="e.g. 0.60"></label>
   <label>Tolerated endpoints at or above &tau; (k)<input id="k" type="number" min="0" value="0"></label>
   <label>Base spec <small>(optional: only new or changed endpoints count)</small><input type="file" id="basefile" accept=".yaml,.yml,.json"></label>
   <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:14px"><input type="checkbox" id="live" checked style="width:auto;margin:0"> Show what the scan is doing</label>
+  <button class="primary" id="all" disabled>&#9654; Run the whole loop (convert + scan + gate)</button>
   <button class="primary" id="conv" disabled>1 &middot; Convert to APIGUARD format</button>
   <button class="primary" id="go" disabled>2 &middot; Continue: scan</button>
   <small id="hint">Step 1 turns the file into our format (S0). Step 2 runs the rules, the model and the gate.</small>
 </section>
-<section id="out"><div class="card empty">Choose any OpenAPI 3 or Swagger 2 file (or a sample), then press <b>1 &middot; Convert</b>.<br><small>You get the file in APIGUARD format, then press <b>2 &middot; Continue: scan</b> (Spectral rules, 66 features, model, SHAP).</small></div></section>
+<section id="out"><div class="card empty">Choose any OpenAPI 3 or Swagger 2 file (or a sample), then press <b>1 &middot; Convert</b>.<br><small>You get the file in APIGUARD format, then press <b>2 &middot; Continue: scan</b> (Spectral rules, 78 features incl. flaw patterns, model v3, SHAP).</small></div></section>
 </main>
 <script>
 setInterval(()=>fetch('/ping').catch(()=>{}),3000);fetch('/ping').catch(()=>{});
@@ -84,7 +85,7 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 function mark(sampleName){document.querySelectorAll('#samples button').forEach(b=>b.classList.toggle('sel',b.dataset.n===sampleName))}
 function setSpec(t,n,sample){spec=t;name=n;mark(sample||null);
   const d=$('#drop');d.classList.add('loaded');d.innerHTML='<span class="fn">\u2713 '+esc(n)+'</span><br><small>'+t.length.toLocaleString()+' characters loaded. Click or drop to change.</small>';
-  $('#fname').textContent='';NORM=null;$('#conv').disabled=false;$('#go').disabled=true;
+  $('#fname').textContent='';NORM=null;$('#conv').disabled=false;$('#all').disabled=false;$('#go').disabled=true;
   $('#out').innerHTML='<div class="card empty">File loaded: <b>'+esc(n)+'</b>.<br>Press <b>1 &middot; Convert to APIGUARD format</b>.</div>'}
 function readFile(f,cb){const r=new FileReader();r.onload=()=>cb(r.result);r.readAsText(f)}
 $('#drop').onclick=()=>$('#file').click();
@@ -109,26 +110,31 @@ function csvOf(rows){if(!rows.length)return '';const k=Object.keys(rows[0]);cons
 function renderNorm(d){
   const doc=d.document,rows=d.rows,stem=name.split('/').pop().replace(/\.(ya?ml|json)$/i,'');
   const noauth=rows.filter(r=>!r.security_schemes).length,SHOW=300;
-  let h=`<div id="banner" class="pass" style="border-color:var(--teal);background:rgba(23,112,127,.08)"><b style="color:var(--teal);font-size:24px">STEP 1 DONE</b><div>The file is now in APIGUARD format: one record per endpoint (S0 normaliser, ${d.seconds} s).<br><small>${esc(name)} &middot; ${esc(doc.source_version)} &middot; ${esc(doc.spec_id)}</small></div>
+  let h=`<div id="banner" class="pass" style="border-color:var(--teal);background:rgba(23,112,127,.08)"><b style="color:var(--teal);font-size:24px">STEP 1 DONE</b><div>The file is now in APIGUARD format: one record per endpoint (S0 normaliser, ${d.seconds} s).<br><small>${esc(name)} &middot; ${esc(doc.source_version)} &middot; ${esc(doc.spec_id)}</small>${d.saved_to?'<br><small>Also saved in: '+esc(d.saved_to)+'</small>':''}</div>
    <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap"><button id="dlj">Download our format (.json)</button><button id="dlc">Download table (.csv)</button></div></div>
    <div class="stats"><div class="stat"><b>${doc.endpoint_count}</b><small>endpoints</small></div><div class="stat"><b>${esc(doc.source_version.replace('openapi-','OpenAPI ').replace('swagger-','Swagger '))}</b><small>input format</small></div><div class="stat"><b>${rows.length-noauth}</b><small>need a login</small></div><div class="stat"><b>${noauth}</b><small>need no login</small></div></div>
    <div class="card" style="margin-bottom:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap"><div><b>Next: step 2</b><br><small>Run the rule scanner, the model, SHAP and the gate on these ${doc.endpoint_count} endpoints.</small></div><button class="primary" id="go2" style="width:auto;margin:0 0 0 auto;padding:11px 22px">Continue: scan &rarr;</button></div>
    <div class="card"><h2>Normalised endpoints <small>(what the next steps read)</small></h2><table><thead><tr><th>#</th><th>Endpoint</th><th>Login</th><th>Login rule from</th><th>Params</th><th>Body fields</th><th>Response fields</th></tr></thead><tbody>`;
-  rows.slice(0,SHOW).forEach((r,i)=>{h+=`<tr><td>${i+1}</td><td><span class="m">${esc(r.method)}</span> <span class="path">${esc(r.path)}</span></td>
-    <td>${r.security_schemes?esc(r.scheme_type||r.security_schemes):'<span class="tag flag">none</span>'}</td><td><span class="tag">${esc(r.security_source)}</span></td><td>${r.n_parameters}</td><td>${r.n_body_props}</td><td>${r.n_response_props}</td></tr>`});
+  rows.slice(0,SHOW).forEach((r,i)=>{h+=`<tr><td><button class="plus nplus" data-n="${i}" aria-expanded="false" title="Show this endpoint's normalised record">+</button>${i+1}</td><td><span class="m">${esc(r.method)}</span> <span class="path">${esc(r.path)}</span></td>
+    <td>${r.security_schemes?esc(r.scheme_type||r.security_schemes):'<span class="tag flag">none</span>'}</td><td><span class="tag">${esc(r.security_source)}</span></td><td>${r.n_parameters}</td><td>${r.n_body_props}</td><td>${r.n_response_props}</td></tr><tr class="nrec" id="nr${i}" hidden><td></td><td colspan="6"><small>This is the normalised record for this endpoint (same as in the .json file):</small><pre style="max-height:340px;overflow:auto;margin:6px 0 0;padding:10px;background:#fff;border:1px solid #d9dfe3;border-radius:8px;font-size:12px;white-space:pre-wrap"></pre></td></tr>`});
   h+='</tbody></table>'+(rows.length>SHOW?`<small>Showing the first ${SHOW} of ${rows.length} endpoints. The downloads have all of them.</small>`:'')+
      (doc.warnings&&doc.warnings.length?`<br><small>${doc.warnings.length} warning(s) from the normaliser are in the JSON file.</small>`:'')+'</div>';
+  h+='<details class="card" style="margin-top:16px"><summary style="cursor:pointer"><b>Show the whole normalised file</b> <small>(click to open, no download needed)</small></summary><pre id="wholenorm" style="max-height:420px;overflow:auto;margin:8px 0 0;padding:10px;background:#fff;border:1px solid #d9dfe3;border-radius:8px;font-size:12px"></pre></details>';
   $('#out').innerHTML=h;
+  document.querySelectorAll('.nplus').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const i=+b.dataset.n,r=document.getElementById('nr'+i),pre=r.querySelector('pre');if(!pre.textContent)pre.textContent=JSON.stringify(doc.endpoints[i],null,2);r.hidden=!r.hidden;b.textContent=r.hidden?'+':'\u2212';b.setAttribute('aria-expanded',!r.hidden)});
+  const wd=$('#wholenorm');if(wd)wd.parentElement.addEventListener('toggle',e=>{if(e.target.open&&!wd.textContent)wd.textContent=JSON.stringify(doc,null,2)});
   $('#dlj').onclick=()=>dl(JSON.stringify(doc,null,2),stem+'.normalized.json','application/json');
   $('#dlc').onclick=()=>dl(csvOf(rows),stem+'.normalized.csv','text/csv');
   $('#go2').onclick=()=>$('#go').click();
 }
+let AUTO=false;
+$('#all').onclick=()=>{AUTO=true;$('#conv').click()};
 $('#conv').onclick=async()=>{
   const b=$('#conv');b.disabled=true;b.innerHTML='<span class="spin"></span>Converting...';
   try{
     const d=await (await fetch('/normalize',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({spec,filename:name})})).json();
-    if(d.error){NORM=null;$('#go').disabled=true;$('#out').innerHTML='<div class="card"><h2>Convert failed</h2><div id="err">'+esc(d.error)+'</div></div>'}
-    else{NORM=d;renderNorm(d);$('#go').disabled=false}
+    if(d.error){AUTO=false;NORM=null;$('#go').disabled=true;$('#out').innerHTML='<div class="card"><h2>Convert failed</h2><div id="err">'+esc(d.error)+'</div></div>'}
+    else{NORM=d;renderNorm(d);$('#go').disabled=false;if(AUTO){AUTO=false;$('#go').click()}}
   }catch(e){$('#out').innerHTML='<div class="card"><div id="err">'+esc(e)+'</div></div>'}
   b.disabled=false;b.innerHTML='1 &middot; Convert to APIGUARD format';
 };
@@ -247,13 +253,20 @@ function render(d){
       <td>${flag?'<span class="tag flag">risky</span>':e.in_scope?'<span class="tag">in scope</span>':'<span class="tag">out of scope</span>'}</td></tr>
       <tr class="why" id="w${i}" hidden><td></td><td colspan="3"><b>Why the model scored it this way</b> <small>(SHAP; + raises the score)</small><ul>${
         (e.reasons||[]).map(([f,c])=>li(`<code>${esc(f)}</code> = ${e.reason_values&&e.reason_values[f]!==undefined?(+e.reason_values[f]).toString().slice(0,6):'?'}`,` <span class="${c>=0?'up':'dn'}">${c>=0?'+':''}${c.toFixed(3)}</span>`,FEATS,f)).join('')||'<li><small>No SHAP reasons for this endpoint (only the gate-counted endpoints and the top ten get them).</small></li>'}</ul>
+        <div class="fb" style="margin:8px 0"><b>Teach the system</b> <small>(goes to the learn queue)</small> <button class="fbb" data-i="${i}" data-v="risk">Real risk</button> <button class="fbb" data-i="${i}" data-v="false_alarm">False alarm</button> <small class="fbm" id="fbm${i}"></small></div>
         <b>Scanner rules that fired</b><ul>${(e.scanner_rules||[]).map(r=>li(`<code>${esc(r)}</code>`,'',RULES,r.replace('owasp:',''))).join('')||'<li><small>none</small></li>'}</ul></td></tr>`;
   });
   h+='</tbody></table><small>Amber line = threshold &tau;. Red bars are at or above it.</small></div>';
+  h+=`<div class="card" style="margin-top:16px"><h2>Learn loop <small>(how the system gets better)</small></h2>
+   <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span class="tag">1 &middot; Scan</span>&rarr;<span class="tag">2 &middot; Person marks <b>Real risk</b> / <b>False alarm</b></span>&rarr;<span class="tag flag">3 &middot; Feedback queue <b id="fbq">0</b></span>&rarr;<span class="tag">4 &middot; Scheduled retrain (labels added)</span>&rarr;<span class="tag">5 &middot; New model kept only if not worse on a frozen test set</span></div>
+   <small>Open a row above and press a verdict. It is saved to <code>learn\\feedback.jsonl</code> next to the app. The model never changes from feedback by itself. Steps 4 and 5 are design only and are not run in this demo.</small></div>`;
   if(LASTSTEPS)h+='<details class="card" style="margin-top:16px"><summary style="cursor:pointer"><b>What the scan did</b> <small>('+(d.seconds||'?')+' s in total)</small></summary>'+LASTSTEPS+'</details>';
   $('#out').innerHTML=h;
   document.querySelectorAll('tr.ep').forEach(r=>r.onclick=()=>{const w=$('#w'+r.dataset.i);w.hidden=!w.hidden});
   document.querySelectorAll('.plus').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const x=document.getElementById(b.dataset.t);x.hidden=!x.hidden;b.textContent=x.hidden?'+':'\u2212';b.setAttribute('aria-expanded',!x.hidden)});
+  document.querySelectorAll('.fbb').forEach(b=>b.onclick=async ev=>{ev.stopPropagation();const e=eps[+b.dataset.i];
+    try{const r=await (await fetch('/feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({spec:name,endpoint_id:e.endpoint_id||'',method:e.method,path:e.path,score:e.score,verdict:b.dataset.v})})).json();
+      $('#fbm'+b.dataset.i).textContent=r.error?r.error:'Saved ('+(b.dataset.v==='risk'?'real risk':'false alarm')+').';if(r.queued)$('#fbq').textContent=r.queued}catch(x){$('#fbm'+b.dataset.i).textContent='Could not save.'}});
   $('#dl').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(REP,null,2)],{type:'application/json'}));a.download='apiguard_report.json';a.click()};
 }
 </script></body></html>

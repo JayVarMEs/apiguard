@@ -22,6 +22,7 @@ import xgboost as xgb
 
 from . import evaluation as E
 from .core import features as F
+from .core import features_v3 as F3
 
 META_ATTR = "apiguard_meta"
 
@@ -31,14 +32,17 @@ class Model:
         self.booster, self.meta = booster, meta
         self.names: List[str] = meta["feature_names"]
         self.tau: float = float(meta["tau_default"])
-        self._idx = [F.FEATURE_NAMES.index(n) for n in self.names]
+        self.schema: str = meta["feature_schema"]
+        self.is_v3: bool = self.schema == F3.FEATURE_SCHEMA_VERSION
+        self.all_names: List[str] = F3.FEATURE_NAMES if self.is_v3 else F.FEATURE_NAMES   # columns of the full feature matrix
+        self._idx = [self.all_names.index(n) for n in self.names]
         self._explainer = None
 
     def select(self, X_full: np.ndarray) -> np.ndarray:
         return np.asarray(X_full, dtype=np.float64)[:, self._idx]
 
     def score(self, X_full) -> np.ndarray:
-        """r(e) = f(x(e)) for every row of the FULL 66-column feature matrix."""
+        """r(e) = f(x(e)) for every row of the FULL feature matrix (66 columns for v1, 78 for v3)."""
         X = self.select(X_full)
         n = int(self.meta["n_rounds"])
         return self.booster.predict(xgb.DMatrix(X, feature_names=None), iteration_range=(0, n))
@@ -106,8 +110,8 @@ def load(path: str) -> Model:
     if not raw:
         raise SystemExit("%s has no APIGUARD metadata; was it produced by `python -m apiguard.model train`?" % path)
     meta = json.loads(raw)
-    if meta["feature_schema"] != F.FEATURE_SCHEMA_VERSION:
-        raise SystemExit("Model feature schema %s does not match code schema %s. Retrain." % (meta["feature_schema"], F.FEATURE_SCHEMA_VERSION))
+    if meta["feature_schema"] not in (F.FEATURE_SCHEMA_VERSION, F3.FEATURE_SCHEMA_VERSION):
+        raise SystemExit("Model feature schema %s is not supported by this code (%s or %s). Retrain." % (meta["feature_schema"], F.FEATURE_SCHEMA_VERSION, F3.FEATURE_SCHEMA_VERSION))
     return Model(b, meta)
 
 

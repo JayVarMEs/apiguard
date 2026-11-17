@@ -14,7 +14,7 @@ else:
     ROOT = Path(__file__).resolve().parent.parent
     UI = Path(__file__).resolve().parent / "index.html"
 SPECS = ROOT / "demo" / "specs"
-MODELS = {"l2plus": "models/model_l2plus.json", "scanner": "models/model.json", "l2only": "models/model_l2only.json"}
+MODELS = {"v3": "models/model_v3.json", "l2plus": "models/model_l2plus.json", "scanner": "models/model.json", "l2only": "models/model_l2only.json"}
 PORT = int(os.environ.get("PORT", 8765))
 HOST = os.environ.get("HOST", "127.0.0.1")   # set HOST=0.0.0.0 when deployed
 MAX_BYTES = 3_000_000                        # upload size cap
@@ -63,7 +63,37 @@ def normalise_upload(body):
             "deprecated": int(e.deprecated), "endpoint_id": e.endpoint_id})
     doc = {"spec_id": ns.spec_id, "spec_hash": ns.spec_hash, "source_file": name, "source_version": ns.source_version,
            "endpoint_count": ns.endpoint_count, "warnings": ns.warnings, "endpoints": [e.to_dict() for e in ns.endpoints]}
-    return {"document": doc, "rows": rows, "seconds": round(time.time() - t0, 2)}
+    saved = ""
+    try:   # also keep the files on disk, so they can be opened from the Demo folder (S0\\input and S0\\normalizedOutput)
+        import csv
+        stem = Path(name).stem
+        s0 = ROOT / "S0"
+        (s0 / "input").mkdir(parents=True, exist_ok=True)
+        (s0 / "normalizedOutput").mkdir(parents=True, exist_ok=True)
+        (s0 / "input" / name).write_text(body["spec"], encoding="utf-8")
+        (s0 / "normalizedOutput" / (stem + ".normalized.json")).write_text(json.dumps(doc, indent=2), encoding="utf-8")
+        with open(s0 / "normalizedOutput" / (stem + ".normalized.csv"), "w", newline="", encoding="utf-8-sig") as f:
+            w = csv.DictWriter(f, fieldnames=list(rows[0].keys()) if rows else ["method", "path"])
+            w.writeheader(); w.writerows(rows)
+        saved = str(s0 / "normalizedOutput")
+    except Exception:
+        pass
+    return {"document": doc, "rows": rows, "seconds": round(time.time() - t0, 2), "saved_to": saved}
+
+
+def save_feedback(body):
+    """Learn loop, first half: a person's verdict on one endpoint goes into a queue file (learn/feedback.jsonl).
+    The queue is NOT used by the model now; it is read only by a scheduled retrain (not run in this demo)."""
+    f = ROOT / "learn" / "feedback.jsonl"
+    f.parent.mkdir(parents=True, exist_ok=True)
+    if body.get("verdict") not in ("risk", "false_alarm"):
+        return {"error": "bad verdict"}
+    rec = {"time": time.strftime("%Y-%m-%d %H:%M:%S"), "spec": str(body.get("spec", ""))[:200], "endpoint_id": str(body.get("endpoint_id", ""))[:64],
+           "method": str(body.get("method", ""))[:10], "path": str(body.get("path", ""))[:300], "score": body.get("score"), "verdict": body["verdict"]}
+    with open(f, "a", encoding="utf-8") as fh:
+        fh.write(json.dumps(rec) + "\n")
+    n = sum(1 for _ in open(f, encoding="utf-8"))
+    return {"ok": 1, "queued": n, "file": str(f)}
 
 
 JOBS = {}
@@ -79,7 +109,7 @@ def run_job(body, job):
             spec.write_text(body["spec"], encoding="utf-8")
             out = Path(td) / "out.json"
             cmd = ([sys.executable] if FROZEN else [sys.executable, "-m", "apiguard"]) + ["scan", str(spec), "--format", "json", "--out", str(out),
-                   "--progress", "--model", MODELS.get(body.get("model", "l2plus"), MODELS["l2plus"]),
+                   "--progress", "--model", MODELS.get(body.get("model", "v3"), MODELS["v3"]),
                    "--max-above", str(int(body.get("k", 0)))]
             if body.get("base"):
                 base = Path(td) / ("base" + ext)
@@ -165,13 +195,15 @@ class H(BaseHTTPRequestHandler):
         self._send(404, {"error": "not found"})
 
     def do_POST(self):
-        if self.path not in ("/scan", "/normalize"):
+        if self.path not in ("/scan", "/normalize", "/feedback"):
             return self._send(404, {"error": "not found"})
         try:
             n = int(self.headers.get("Content-Length", 0))
             if n > MAX_BYTES:
                 return self._send(200, {"error": "file too large (limit 3 MB)"})
             body = json.loads(self.rfile.read(n))
+            if self.path == "/feedback":
+                return self._send(200, save_feedback(body))
             if self.path == "/normalize":
                 return self._send(200, normalise_upload(body))
             self._send(200, start_job(body))

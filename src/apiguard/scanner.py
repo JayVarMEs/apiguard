@@ -148,6 +148,37 @@ def attribute(located: Sequence[Tuple[List[Any], Finding]],
     return out
 
 
+def attribute_split(located: Sequence[Tuple[List[Any], Finding]],
+                    endpoint_keys: Iterable[EndpointKey]) -> Tuple[Dict[EndpointKey, List[Finding]], List[Finding]]:
+    """Model v3 (feature schema s2a-3.0): keep document-level findings apart.
+    Returns ({endpoint: findings on its own operation or path item}, document-level findings).
+    Both are de-duplicated on (rule, severity), exactly as in the v3 training data."""
+    keys = set(endpoint_keys)
+    op: Dict[EndpointKey, Dict[Tuple[str, int], Finding]] = {k: {} for k in keys}
+    doc: Dict[Tuple[str, int], Finding] = {}
+    for path, f in located:
+        k2 = (f["rule"], f["severity"])
+        if len(path) >= 2 and path[0] == "paths":
+            p = str(path[1])
+            if len(path) >= 3 and str(path[2]).lower() in HTTP_METHODS:
+                k = (str(path[2]).lower(), p)
+                if k in op:
+                    op[k][k2] = f
+                continue
+            for m in HTTP_METHODS:
+                if (m, p) in op:
+                    op[(m, p)][k2] = f
+        else:
+            doc[k2] = f
+    return {k: list(v.values()) for k, v in op.items()}, list(doc.values())
+
+
+def scan_file_split(path: Path, endpoint_keys: Iterable[EndpointKey]) -> Tuple[Dict[EndpointKey, List[Finding]], List[Finding]]:
+    """Scan one specification for a v3 model: per-endpoint findings plus document-level findings."""
+    by_file = to_findings(run_spectral([Path(path)]))
+    return attribute_split(by_file.get(_norm(str(path)), []), endpoint_keys)
+
+
 def scan_file(path: Path, endpoint_keys: Iterable[EndpointKey]) -> Dict[EndpointKey, List[Finding]]:
     """Scan one specification and attribute its findings (used by the CLI)."""
     by_file = to_findings(run_spectral([Path(path)]))

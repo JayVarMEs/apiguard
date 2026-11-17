@@ -8,7 +8,7 @@ APIGUARD reads an OpenAPI/Swagger file, runs a Spectral + OWASP API Top 10 rules
 ```
 pip install -r requirements.txt
 npm install                      # Spectral (the scanner step)
-python -m apiguard scan demo/specs/vampi_openapi3.yaml --model models/model_l2plus.json --format text
+python -m apiguard scan demo/specs/vampi_openapi3.yaml --model models/model_v3.json --format text
 python demo_ui/app.py            # web demo at http://127.0.0.1:8765
 ```
 Windows helpers: `RUN_DEMO.bat`, `RUN_DEMO_CLI.bat`, `RUN_UI.bat`, `RUN_ALL.bat` (all experiments). Details: `README_RUN.md`. Paper source: `overleaf/`.
@@ -45,7 +45,11 @@ Expected key line with xgboost 3.4.1 (the version used for the paper; `pip insta
 - Write-up, results and the new labelling codebook: `experiments/v3/README.md`, `experiments/v3/v3_results.json`, `experiments/v3/CODEBOOK_v3.md`
 - To rebuild `data/v3_rows.jsonl` from the full corpus: `experiments/v3/export_rows.py` (needs the scan cache) then `experiments/v3/build_rows.py`.
 
-Note: the packaged demo (`APIGUARD.exe`, `demo_ui/app.py`) still uses the v1 model (`models/model_l2plus.json`).
+The demo (`demo_ui/app.py`, and `APIGUARD.exe` once rebuilt with `RUN_BUILD_UI_EXE.bat`) and `python -m apiguard scan` now use `models/model_v3.json` by default; the older models stay selectable in the demo. Quick check:
+```
+python -m apiguard scan demo/specs/vampi_openapi3.yaml --model models/model_v3.json
+```
+Expected: 4 endpoints above tau = 0.60 (`POST /users/v1/login`, `POST /users/v1/register`, `GET /users/v1/{username}`, `GET /users/v1/_debug`, all documented VAmPI flaws) and `GATE: FAIL (exit 1)`.
 
 ## Paper
 The final report is `overleaf/main_final.pdf` (18 pages); its source is `overleaf/main_final.tex` (IEEEtran; compile with pdfLaTeX, two runs, with `architecture_v4.pdf`, `methodology_v3.png` and `results_a.png` in the same folder).

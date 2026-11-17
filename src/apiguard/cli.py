@@ -22,6 +22,7 @@ from . import __version__
 from . import model as M
 from . import scanner
 from .core import features as F
+from .core import features_v3 as F3
 from .core import gate as G
 from .core import normalise_file
 
@@ -46,13 +47,22 @@ def scan(spec: str, model_path: str, base: Optional[str] = None, threshold: Opti
         raise SystemExit("This model uses scanner features (group E); --no-scan is only valid for a model trained with --no-group-e.")
     keys = [(e["method"], e["path"]) for e in eps]
     P("S1|start|Running Spectral with the OWASP API Top 10 rules")
-    attributed = scanner.scan_file(Path(spec), keys) if (do_scan and needs_scan) else {k: [] for k in keys}
-    P("S1|done|%d rule findings on %d endpoints" % (sum(len(v) for v in attributed.values()), sum(1 for v in attributed.values() if v)))
+    doc_findings: list = []
+    if do_scan and needs_scan and mdl.is_v3:          # v3: each endpoint keeps only its own findings; document-level ones apart
+        attributed, doc_findings = scanner.scan_file_split(Path(spec), keys)
+    else:
+        attributed = scanner.scan_file(Path(spec), keys) if (do_scan and needs_scan) else {k: [] for k in keys}
+    P("S1|done|%d rule findings on %d endpoints%s" % (sum(len(v) for v in attributed.values()), sum(1 for v in attributed.values() if v),
+                                                        (" (+%d document-level rules)" % len(doc_findings)) if mdl.is_v3 else ""))
     t["s1"] = time.perf_counter() - c; c = time.perf_counter()
-    P("S2a|start|Building %d features for each endpoint (auth, sensitive data, methods, scanner results...)" % F.N_FEATURES)
-    X = np.array([F.build_features(e, attributed.get((e["method"], e["path"]), []), len(eps)) for e in eps]) if eps else np.zeros((0, F.N_FEATURES))
+    nf = len(mdl.all_names)
+    P("S2a|start|Building %d features for each endpoint (auth, sensitive data, flaw patterns, scanner results...)" % nf)
+    if mdl.is_v3:
+        X = np.array([F3.build_features(e, attributed.get((e["method"], e["path"]), []), doc_findings) for e in eps]) if eps else np.zeros((0, nf))
+    else:
+        X = np.array([F.build_features(e, attributed.get((e["method"], e["path"]), []), len(eps)) for e in eps]) if eps else np.zeros((0, nf))
     t["s2a"] = time.perf_counter() - c; c = time.perf_counter()
-    P("S2a|done|%d x %d feature table ready" % (len(eps), F.N_FEATURES))
+    P("S2a|done|%d x %d feature table ready" % (len(eps), nf))
     P("S2b|start|Scoring every endpoint with the XGBoost model")
     r = mdl.score(X) if len(eps) else np.zeros(0)
     P("S2b|done|scores from %.2f to %.2f" % ((float(r.min()), float(r.max())) if len(eps) else (0, 0)))
@@ -70,7 +80,7 @@ def scan(spec: str, model_path: str, base: Optional[str] = None, threshold: Opti
     for row in rows:
         i = keys.index((row["method"], row["path"]))
         row["reasons"] = why.get(i, [])
-        row["reason_values"] = {n: float(X[i][F.FEATURE_NAMES.index(n)]) for n, _ in row["reasons"]}
+        row["reason_values"] = {n: float(X[i][mdl.all_names.index(n)]) for n, _ in row["reasons"]}
         row["scanner_rules"] = sorted({f["rule"] for f in attributed.get((row["method"], row["path"]), [])})[:5]
     t["s3"] = time.perf_counter() - c
     P("S3|done|%d endpoint(s) at or above the threshold -> %s" % (sum(1 for x in rows if x["above_tau"] and x["in_scope"]), "BLOCKED" if decision else "ALLOWED"))
@@ -124,7 +134,7 @@ def main(argv=None) -> int:
     sub = ap.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("scan", help="score every endpoint of an OpenAPI/Swagger file and decide the gate")
     s.add_argument("spec"); s.add_argument("--base", help="spec on the base branch: only new/changed endpoints count for the gate")
-    s.add_argument("--model", default="models/model.json"); s.add_argument("--threshold", type=float, help="tau (default: the model's own)")
+    s.add_argument("--model", default="models/model_v3.json"); s.add_argument("--threshold", type=float, help="tau (default: the model's own)")
     s.add_argument("--max-above", type=int, default=0, help="k: tolerated number of endpoints at or above tau (default 0)")
     s.add_argument("--format", choices=["text", "json", "sarif"], default="text"); s.add_argument("--out", help="write the report here")
     s.add_argument("--no-scan", action="store_true"); s.add_argument("--progress", action="store_true", help="print stage lines (@@...) on stderr, used by the demo UI"); s.add_argument("--top-shap", type=int, default=10)
