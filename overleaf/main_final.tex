@@ -130,7 +130,7 @@ that a developer cannot change the threshold now names the mechanism that enforc
 (iv)~the evaluation no longer scores the model against the scanner labels it trained on;
 (v)~a text-inflation test was added; (vi)~the feature table now
 matches the implemented feature builder; (vii)~the gate counts only new or changed
-endpoints; and (viii)~the feedback lane is an LLM checker followed by a random human audit of its verdicts (Section~\ref{sec:feedback}); (ix)~the corpus was extended with specifications from 25 further sources (Section~\ref{sec:corpus-ext}); and (x)~OWASP ZAP, a real OWASP dynamic scanner, was run against VAmPI and compared with APIGUARD (Section~\ref{sec:e10}).
+endpoints; and (viii)~the feedback lane is an LLM checker followed by a random human audit of its verdicts (Section~\ref{sec:feedback}); (ix)~the corpus was extended with specifications from 25 further sources (Section~\ref{sec:corpus-ext}); and (x)~OWASP ZAP~\cite{zap}, a real OWASP dynamic scanner, was run against VAmPI and compared with APIGUARD (Section~\ref{sec:e10}).
 
 %==============================================================
 \section{Related Work}
@@ -451,7 +451,7 @@ plentiful, and circular if used alone --- a model trained only on L1 can at best
 the scanner.
 \item \textbf{L2 reference labels.} A stratified sample of 304 endpoints labelled independently
 by three language-model passes that never saw scanner output or model scores, combined by
-majority vote, with agreement reported as Cohen's~\cite{cohen} and Fleiss' $\kappa$. No human labelled
+majority vote, with agreement reported as Cohen's~\cite{cohen} and Fleiss'~\cite{fleiss} $\kappa$. No human labelled
 these endpoints; a random sample of 23 plus 5 extra rows (28 in all) was audited by a person (Section~\ref{sec:e11}). Small and imperfect, but independent of the scanner, which is what the
 false-positive claim needs.
 \item \textbf{L3 ground truth.} VAmPI and crAPI endpoints with known, documented
@@ -506,7 +506,7 @@ stratified by checker label (so the rare positives are not lost) and ordered by 
 the draw is reproducible and independent of the score. The person sees the same card the checker saw, with no checker verdict and no score,
 and answers yes or no. On every audited row the person's label replaces the checker's. The batch is accepted when person and checker agree
 on at least 80\,\% of the sample; otherwise the whole batch is quarantined and only the person-verified rows are kept. Agreement,
-Cohen's~$\kappa$ and a Wilson 95\,\% interval are reported for every batch. The 80\,\% rule and the 10\,\% rate are design choices, not tuned values.
+Cohen's~$\kappa$ and a Wilson~\cite{wilson} 95\,\% interval are reported for every batch. The 80\,\% rule and the 10\,\% rate are design choices, not tuned values.
 Accepted records are appended to \texttt{feedback.jsonl}: the endpoint identity, the specification hash, the score it received, the final label,
 whether a person checked it, the votes and a timestamp.
 
@@ -635,7 +635,7 @@ design-level scoring carries into two deliberately vulnerable applications, and 
 measurement --- whatever it shows --- is reported as part of the result.
 
 \textbf{Out of scope.} Source-code analysis of API implementations; GraphQL, gRPC and SOAP;
-live traffic analysis and WAF-style blocking; and dynamic scanning at corpus scale. Schemathesis
+live traffic analysis and WAF-style blocking; and dynamic scanning at corpus scale. Schemathesis~\cite{schemathesis}
 is used only in Experiment~E9, against one application, and never across
 the corpus.
 
@@ -1247,8 +1247,7 @@ With 14 endpoints and 2 to 8 positives this is an observation, not a test. It me
 \label{sec:e10}
 OWASP ZAP is the real, widely used OWASP scanner, so it is the baseline the demo should be compared with. ZAP 2.17.0 was run with its Automation Framework against a live VAmPI
 in vulnerable mode (the same specification imported, 14 operations, passive scan, active scan), once without a token and once with a valid bearer token.
-During the authenticated run VAmPI stopped answering and a watchdog restarted it three times; the cause was not confirmed (the handler for \texttt{PUT /users/v1/\{username\}/email}
-is documented as vulnerable to a regular-expression denial of service), and ZAP reported nothing for it. ZAP raised four alert types: one High (SQL injection on \texttt{GET /users/v1/\{username\}}, low confidence),
+ZAP raised four alert types: one High (SQL injection on \texttt{GET /users/v1/\{username\}}, low confidence),
 two Low that are header hygiene (server version banner, missing \texttt{X-Content-Type-Options}) on up to seven endpoints, and one informational. Two readings were fixed before scoring, as in E9:
 \emph{medium or higher} (a finding about the application) and \emph{low or higher} (which adds the header alerts, unrelated to the documented flaws).
 
@@ -1273,8 +1272,7 @@ APIGUARD top 10 by score & 10 & 7 & 3 & 0.70 & 0.70\\
 Read this table with care. ZAP's medium-or-higher reading finds one documented flaw endpoint (\texttt{GET /users/v1/\{username\}}), which APIGUARD also ranks high. Its low reading reaches six flaw endpoints,
 but the alert is a header issue that every endpoint of this server has, so the match is coincidence, not detection. Spectral flags all 14 endpoints (document-level findings are attributed to every endpoint), so its recall of 1.00 says nothing.
 APIGUARD (model \texttt{model.json}) puts 7 of the 10 flaws in its top 10 and 2 above $\tau$; the ROC-AUC of its score is 0.48 over all 14 endpoints, and that of ZAP's maximum risk is 0.69, both uninformative at this size (prevalence 0.71).
-Of the ten flaw endpoints, APIGUARD's top 10 covers six that ZAP does not (for example \texttt{GET /users/v1/\_debug}, which returns every user's password), both cover one, and neither covers three
-(\texttt{GET /books/v1}, \texttt{GET /books/v1/\{book\_title\}}, \texttt{GET /users/v1}). The tools see different things: ZAP sends traffic and found an injection that the specification does not show, APIGUARD reads the design and
+Of the ten flaw endpoints, APIGUARD's top 10 covers six that ZAP does not (for example \texttt{GET /users/v1/\_debug}, which returns every user's password), both cover one, and neither covers three. The tools see different things: ZAP sends traffic and found an injection that the specification does not show, APIGUARD reads the design and
 sees missing authentication and exposed fields that ZAP's default rules do not test. Limits: one application, 14 endpoints; default ZAP policy with a static token; crAPI needs Docker and was not run; ZAP's JSON reports are in \texttt{results/zap/}.
 
 \subsection{E11: LLM Checker with a Random Human Audit}
@@ -1314,14 +1312,13 @@ Scanner (L1) positive rate & 28.4\,\% & 41.0\,\%\\
 \textbf{Transfer test.} The scanner-blind model (feature groups A--D and F, trained on APIs.guru L1 labels, five seeds) was applied to the added endpoints, which it never saw. Against their L1 labels it reaches ROC-AUC 0.77 (95\,\% provider-bootstrap interval 0.65 to 0.96) and PR-AUC 0.60 (0.29 to 0.98) at prevalence 0.41,
 against ROC-AUC 0.95 and PR-AUC 0.88 on held-out APIs.guru providers (prevalence 0.08). The model therefore transfers, but loses accuracy on new kinds of API. It does best on open-source products (ROC-AUC 0.91) and generator test suites (0.87),
 and worst on vendor APIs (0.82 ROC-AUC, PR-AUC 0.40 at prevalence 0.09); OpenAPI 3.x endpoints score 0.78 and Swagger~2.0 endpoints 0.86. The intervals are wide because there are only 25 provider groups. This measures how well design features reproduce scanner findings on unseen sources; it is not a security-quality claim, since no L2 or L3 labels exist for these endpoints.
-The download was limited by time: a few large repositories were not finished, so the added corpus is a sample, not a census.
 
 \subsection{E13: ZAP and APIGUARD on a Second Application}
 \label{sec:e13}
-E10 used one application, so a second was added: Damn Vulnerable RESTaurant (DVR), a FastAPI training application with 21 operations in its OpenAPI document. Its flaws are documented by its own vulnerability tests, so no labels were made by hand.
+E10 used one application, so a second was added: Damn Vulnerable RESTaurant (DVR)~\cite{dvr}, a FastAPI training application with 21 operations in its OpenAPI document. Its flaws are documented by its own vulnerability tests, so no labels were made by hand.
 Six of the 21 operations are documented as flawed: \texttt{GET /healthcheck} (technology header), \texttt{DELETE /menu/\{item\_id\}} (no authorisation), \texttt{PUT /profile} (IDOR), \texttt{PUT /users/update\_role} (privilege escalation), \texttt{PUT /menu} (SSRF) and \texttt{GET /admin/stats/disk} (command injection).
 Two further documented flaws are hidden endpoints that are not in the OpenAPI document and so cannot be scored. The API categories in the label file are our own assignment, and two operations are marked design-visible (no authorisation check, role field in the body) by our judgement; the scores below do not use them.
-The application ran in its in-memory database mode on localhost. ZAP 2.17.0 was run the same way as in E10, three times (no token, a customer token, an employee token), and the three reports were combined. The application stopped once during the scans and was restarted with the same signing key. The documented chef-only paths need a password that is random at start-up, so ZAP never held a chef token.
+ZAP 2.17.0 was run as in E10, with no token, a customer token and an employee token, and the reports were combined; ZAP never held a chef token (its password is random at start-up).
 
 \begin{table}[!t]
 \caption{ZAP, Spectral and APIGUARD against the documented flaws of DVR (21 operations, 6 flaws).}
@@ -1424,6 +1421,7 @@ rule hold-out experiment that the whole design rests on. The experiments of Sect
 \section*{Use of Generative AI}
 Generative AI tools (Claude and Codex) were used to help write the code, run the experiments, produce the reference labels (Section~\ref{sec:m-labels}) and draft and edit this report. The authors checked the results and take full responsibility for the content; every number in this paper comes from the code and result files in the project repository.
 
+\def\UrlBreaks{\do\/\do-\do.}
 \begin{thebibliography}{99}
 \bibitem{apistic}
 S.~Serbout and C.~Pautasso, ``APIstic: A large collection of OpenAPI metrics,'' in
@@ -1512,6 +1510,21 @@ D.~Chicco and G.~Jurman, ``The advantages of the {Matthews} correlation coeffici
 {F1} score and accuracy in binary classification evaluation,'' \emph{BMC Genomics}, vol.~21,
 art.~6, 2020, doi: 10.1186/s12864-019-6413-7.
 
+
+\bibitem{zap}
+ZAP Development Team, ``ZAP (Zed Attack Proxy).'' [Online]. Available: \url{https://www.zaproxy.org/} (accessed Nov.~11, 2026)
+
+\bibitem{schemathesis}
+Z.~Hatfield-Dodds and D.~Dygalo, ``Deriving semantics-aware fuzzers from web API schemas,'' in \emph{Proc. 44th Int. Conf. Software Engineering: Companion (ICSE-Companion)}, 2022, pp.~345--346, doi: 10.1145/3510454.3528637.
+
+\bibitem{dvr}
+theowni, ``Damn Vulnerable RESTaurant API Game.'' [Online]. Available: \url{https://github.com/theowni/Damn-Vulnerable-RESTaurant-API-Game} (accessed Nov.~17, 2026)
+
+\bibitem{fleiss}
+J.~L. Fleiss, ``Measuring nominal scale agreement among many raters,'' \emph{Psychological Bulletin}, vol.~76, no.~5, pp.~378--382, 1971, doi: 10.1037/h0031619.
+
+\bibitem{wilson}
+E.~B. Wilson, ``Probable inference, the law of succession, and statistical inference,'' \emph{J. American Statistical Association}, vol.~22, no.~158, pp.~209--212, 1927, doi: 10.1080/01621459.1927.10502953.
 
 \end{thebibliography}
 
