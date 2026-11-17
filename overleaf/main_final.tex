@@ -48,7 +48,7 @@ Continuous API Security Assessment in DevSecOps Pipelines\\
 \IEEEauthorblockA{Sirindhorn International Institute of Technology (SIIT),
 Thammasat University, Pathum Thani, Thailand\\
 Adviser: Somchart Fugkeaw}
-\thanks{This deliverable describes the system for the registered topic
+\thanks{This report describes the system for the registered topic
 ``Continuous API Security Assessment in DevSecOps Pipelines.'' It replaces the
 Infrastructure-as-Code system presented in Deliverable~1, which was withdrawn because that
 topic had already been reserved by another group. The target artefact is now the OpenAPI specification instead of Terraform code.}}
@@ -60,19 +60,19 @@ Rule-based linting is the only security check most OpenAPI specifications receiv
 deployment. A linter fires when a written rule matches, which leaves it unable to say which
 findings matter, unable to distinguish an endpoint returning a health-check string from one
 returning customer records, and silent about anything no rule covers. In a CI/CD pipeline
-this produces alert fatigue and blind spots at the same time. This document specifies the
-system model of APIGUARD, a framework that places a supervised classifier \emph{after} the
+this produces alert fatigue and blind spots at the same time. This paper presents
+APIGUARD, a framework that places a supervised classifier \emph{after} the
 rule scanner rather than in place of it. The scanner keeps its authority over what rules
 cover; the model assigns every endpoint a risk score, ranks the findings, and explains each
 score with SHAP attributions, so that the pipeline gate acts on a risk score rather than on
 an alert count. We define the entities and their trust relationships, the notation and the
 gate decision rule, every runtime and offline component with its inputs, outputs and
 guarantees, the data flow of a single pipeline run, the threat model and its stated limits,
-and the deployment form. We also map each research question to the experiment that will
-answer it. The methodology section then specifies how labels are made and kept apart from the
+and the deployment form. We also map each research question to the experiment that
+answers it. The methodology section then specifies how labels are made and kept apart from the
 scanner's own output, the training algorithm, a gate that judges only new or changed endpoints,
 and the rule hold-out protocol that tests whether the model generalises beyond the rules.
-Trained on scanner labels the model matches but does not beat the scanner (PR-AUC 0.42 against 0.47); trained on language-model reference labels it ranks better by ROC-AUC (0.84 against 0.69), and combined with the scanner it ranks better on both PR-AUC (0.55 against 0.47) and ROC-AUC. The rule hold-out generalises for one of three testable categories, and the model ranks the documented flaws of VAmPI but not those of crAPI.
+Trained on scanner labels the model matches but does not beat the scanner (PR-AUC 0.42 against 0.47); trained on language-model reference labels it ranks better by ROC-AUC (0.84 against 0.69), and combined with the scanner it ranks better on both PR-AUC (0.55 against 0.47) and ROC-AUC. The rule hold-out generalises for one of three testable categories, and the model ranks the documented flaws of VAmPI but not those of crAPI. After adviser feedback the corpus was extended with 368 specifications from 25 further sources, OWASP ZAP was run against VAmPI and Damn Vulnerable RESTaurant as a real dynamic baseline (at medium risk or higher it flags one documented flaw endpoint in each application), and the feedback lane became an LLM checker followed by a random human audit (a person agreed with the checker on 28 of 28 audited verdicts). A revised model (v3) that keeps each scanner finding with its own endpoint, drops the context features and adds fourteen flaw-pattern features reaches PR-AUC 0.62 and ROC-AUC 0.85 against 0.47 and 0.69 for the scanner, with both provider-level intervals excluding zero; it still does not rank the flaws of crAPI, because the reference labels rarely mark an authenticated endpoint as risky.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -104,10 +104,10 @@ and it is almost untouched as training data for security.
 APIGUARD places a supervised model \emph{after} the rule scanner. The scanner keeps finding
 what rules find; the model gives every endpoint a risk score, ranks the findings, and
 explains each score with SHAP. The pipeline gate then acts on a risk score instead of a raw
-alert count. This document specifies the system model: the entities involved, the notation
+alert count. This paper specifies the system model: the entities involved, the notation
 used, every component with its inputs and outputs, the data flow of a single pipeline run,
 the trust assumptions, and the way the system is deployed. It then specifies the proposed
-methodology and algorithms (Section~\ref{sec:method}).
+methodology and algorithms (Section~\ref{sec:method}) and reports the experiments (Section~\ref{sec:results}).
 
 The contributions are:
 \begin{itemize}
@@ -130,7 +130,7 @@ that a developer cannot change the threshold now names the mechanism that enforc
 (iv)~the evaluation no longer scores the model against the scanner labels it trained on;
 (v)~a text-inflation test was added; (vi)~the feature table now
 matches the implemented feature builder; (vii)~the gate counts only new or changed
-endpoints; and (viii)~the human reviewer of the feedback lane is replaced by an automatic checker and a promotion test, so that no person is in the loop.
+endpoints; and (viii)~the feedback lane is an LLM checker followed by a random human audit of its verdicts (Section~\ref{sec:feedback}); (ix)~the corpus was extended with specifications from 25 further sources (Section~\ref{sec:corpus-ext}); and (x)~OWASP ZAP, a real OWASP dynamic scanner, was run against VAmPI and compared with APIGUARD (Section~\ref{sec:e10}).
 
 %==============================================================
 \section{Related Work}
@@ -176,7 +176,7 @@ pipeline, must finish in seconds, and is fully automatic.
 \item The \textbf{offline lane} builds the model. It runs rarely, on a workstation or build
 server, and may take hours.
 \item The \textbf{feedback lane} is how a corrected verdict re-enters the system. It is
-automatic, with no person in the loop, deliberately slow, and never reaches the model directly.
+an LLM checker labels the uncertain endpoints and a person checks a random sample of its verdicts; it is deliberately slow and never reaches the model directly.
 \end{itemize}
 
 Fig.~\ref{fig:arch} shows the three lanes and the two connections between them: the trained
@@ -185,11 +185,11 @@ runtime compute features identically.
 
 \begin{figure*}[!t]
 \centering
-\includegraphics[width=\textwidth]{architecture_v3.pdf}
+\includegraphics[width=\textwidth]{architecture_v4.pdf}
 \caption{APIGUARD system model. The runtime lane (S0--S3) runs inside the pipeline; the
-offline lane (T1--T4) produces \texttt{model.json}; the feedback lane returns the verdicts of an automatic checker
+offline lane (T1--T4) produces \texttt{model.json}; the feedback lane returns LLM-checked verdicts, audited at random by a person,
 to the label store. Amber marks shared code and the model artefact; dashed teal marks
-the automatic feedback path. The unit of analysis is one endpoint.}
+the feedback path, and its dashed box is the one step done by a person. The unit of analysis is one endpoint.}
 \label{fig:arch}
 \end{figure*}
 
@@ -224,7 +224,7 @@ for a fixed specification, ruleset version and model.\\
 Rule scanner & Third-party linter (Spectral with the OWASP ruleset). Supplies findings used
 as a baseline and as model input. & Trusted but incomplete. Version is pinned, because a
 version change silently changes every label.\\
-Automatic checker (replaces the human analyst of Deliverable~2) & Re-labels the endpoints whose verdict is in doubt with three independent language-model passes, and keeps a label only when all three agree. & Trusted only when unanimous; split votes are dropped. It reuses the three-pass protocol that produced the L2 reference labels (Section~\ref{sec:method}); as a running feedback loop it is a role of the design and was not exercised in this study.\\
+LLM checker and human auditor (replace the human analyst of Deliverable~2) & The checker re-labels the endpoints whose verdict is in doubt with three independent language-model passes and keeps a label only when all three agree. A person labels a seeded random sample of the accepted verdicts without seeing them. & The checker is trusted only when unanimous. The person's label always wins on the audited rows, and a batch whose audit agreement is below 80\,\% is quarantined (Section~\ref{sec:feedback}).\\
 Offline trainer & Builds the corpus, assembles labels, trains the model and emits
 \texttt{model.json}. & Runs outside the pipeline. Never invoked automatically by a gate
 decision.\\
@@ -415,7 +415,7 @@ scores also carry their SHAP reasons.
 \section{Offline Lane: Components T1--T4}
 
 \subsection{T1 --- Corpus}
-Table~\ref{tab:corpora} lists the four sources; only APIs.guru, VAmPI and crAPI were used. Each downloaded specification is stored with
+Table~\ref{tab:corpora} lists the sources; APIs.guru, the added sources of Section~\ref{sec:corpus-ext}, VAmPI and crAPI were used. Each downloaded specification is stored with
 its source URL and a snapshot date, and is de-duplicated by a hash of the file text before
 anything else happens. Public API specifications are heavily copied and templated between
 projects; near-duplicates left in the corpus would appear on both sides of a train/test
@@ -432,6 +432,7 @@ split.
 \midrule
 APIs.guru~\cite{apisguru} & 2{,}529 APIs, 108{,}837 endpoints & Primary corpus; curated,
 clean, version-stable.\\
+Added sources (Sec.~\ref{sec:corpus-ext}) & 368 specifications, 9{,}741 endpoints, 25 GitHub owners & Variety: telecom, banking, DevOps tools, IoT, generator test suites, vulnerable-by-design apps. Used for the transfer test E12, not for training.\\
 APIstic~\cite{apistic} & 1{,}275{,}568 specifications & Not used for training; cited as related work and as a scale reference.\\
 VAmPI~\cite{vampi} & 1 API, documented flaws & Ground truth: flaws documented by the
 authors, mapped to endpoints.\\
@@ -451,7 +452,7 @@ the scanner.
 \item \textbf{L2 reference labels.} A stratified sample of 304 endpoints labelled independently
 by three language-model passes that never saw scanner output or model scores, combined by
 majority vote, with agreement reported as Cohen's~\cite{cohen} and Fleiss' $\kappa$. No human labelled
-these endpoints. Small and imperfect, but independent of the scanner, which is what the
+these endpoints; a random sample of 23 plus 5 extra rows (28 in all) was audited by a person (Section~\ref{sec:e11}). Small and imperfect, but independent of the scanner, which is what the
 false-positive claim needs.
 \item \textbf{L3 ground truth.} VAmPI and crAPI endpoints with known, documented
 vulnerabilities.
@@ -484,22 +485,34 @@ it.
 
 %==============================================================
 \section{Feedback Lane}
-The feedback lane has no person in it. The human reviewer of Deliverable~2 is replaced by an
-automatic checker, so that the lane can run unattended.
+\label{sec:feedback}
+After adviser feedback the lane has two checks in series: a language model checks the verdicts that are in doubt, and a person
+then checks a random sample of the language model's work. The person is not a reviewer of every verdict (that does not scale
+and was the weakness of Deliverable~2); the person is a quality control on the checker.
 
 \textbf{Selection.} After a pipeline run, the endpoints whose verdict is in doubt are
-selected: those whose score $r(e)$ lies close to $\tau$, and those on which the model and the
+selected: those whose score $r(e)$ lies within 0.10 of $\tau$, and those on which the model and the
 scanner disagree (flagged by S1 but scored low, or not flagged but scored high).
 
-\textbf{Automatic checker.} Each selected endpoint is labelled by three independent
+\textbf{LLM checker.} Each selected endpoint is labelled by three independent
 language-model passes that follow the codebook of Section~\ref{sec:method} and see neither
 the scanner output nor the model score. A label is accepted only when all three passes agree;
 split votes are discarded. Where the API can be run in a test environment, a failure that a
 dynamic tester finds on an endpoint is also accepted as a positive label. A clean dynamic run
-is not evidence of safety and is never accepted as a negative label. Each accepted label is
-appended to \texttt{feedback.jsonl} as one record per endpoint: the endpoint identity, the
-specification hash, the score it received, the checker verdict, the source of the verdict and
-a timestamp.
+is not evidence of safety and is never accepted as a negative label.
+
+\textbf{Random human audit.} A seeded random sample of the \emph{accepted} verdicts, 10\,\% and at least 20, is drawn
+stratified by checker label (so the rare positives are not lost) and ordered by a hash of the seed and the endpoint identity, so that
+the draw is reproducible and independent of the score. The person sees the same card the checker saw, with no checker verdict and no score,
+and answers yes or no. On every audited row the person's label replaces the checker's. The batch is accepted when person and checker agree
+on at least 80\,\% of the sample; otherwise the whole batch is quarantined and only the person-verified rows are kept. Agreement,
+Cohen's~$\kappa$ and a Wilson 95\,\% interval are reported for every batch. The 80\,\% rule and the 10\,\% rate are design choices, not tuned values.
+Accepted records are appended to \texttt{feedback.jsonl}: the endpoint identity, the specification hash, the score it received, the final label,
+whether a person checked it, the votes and a timestamp.
+
+\textbf{What a small audit can and cannot catch.} With $n$ audited rows and threshold 0.80, the chance that a batch with true checker error rate $d$ is
+quarantined is $P(\mathrm{Binomial}(n,1-d)<\lceil 0.8n\rceil)$. For $n=23$ it is 0.07 at $d=0.10$, 0.50 at $d=0.20$ and 0.86 at $d=0.30$. The audit therefore
+catches a checker that is badly wrong, not one that is slightly wrong, and the frozen test set below remains the second safeguard.
 
 \textbf{Retraining and promotion.} The queue is an input to T2 at the \emph{next scheduled
 retrain}. T4 then trains a candidate model, and the candidate is scored on a frozen test set
@@ -515,12 +528,10 @@ verdicts are therefore new labels from a source that does not see the model's sc
 confirmation of that score, and the frozen test set limits the damage that a noisy checker
 can do.
 
-\textbf{Status.} This lane is part of the design only. The checker reuses the three-pass
-protocol that produced the L2 reference labels of this study, with a stricter agreement rule,
-but the queue writer, the scheduled retrain and the promotion test were not implemented, and
-the loop was not exercised. Removing the person also removes a safeguard: the three passes
-agreed only moderately on the L2 sample (Fleiss' $\kappa=0.54$), so the unanimity rule and
-the promotion test are the only protection against label noise in this lane.
+\textbf{Status.} Implemented in \texttt{src/apiguard/feedback.py} (selection, vote rule, audit sampling, blind sheet, agreement and decision, queue writer;
+5 unit tests) and exercised in E11 (Section~\ref{sec:e11}) on the 304-endpoint L2 study. The scheduled retrain and the promotion test were not implemented,
+so the loop was never closed in this study. The checker reuses the three-pass protocol that produced the L2 labels, whose agreement was only moderate
+(Fleiss' $\kappa=0.54$); this is the reason for the audit.
 
 %==============================================================
 \section{End-to-End Data Flow}
@@ -549,9 +560,9 @@ exits 0 or 1. An unflagged endpoint may appear at the top of the ranking --- for
 \texttt{email} and \texttt{phone}.
 \item The runner fails the build on exit code~1 and surfaces the SARIF annotations in the
 pull request.
-\item The developer fixes the specification and pushes again. No person reviews the verdict.
-\item The automatic checker labels the endpoints whose verdict is in doubt and appends the
-labels on which all three passes agree to \texttt{feedback.jsonl}.
+\item The developer fixes the specification and pushes again. No person reviews the gate verdict.
+\item The LLM checker labels the endpoints whose verdict is in doubt; a label is accepted when all three passes agree.
+\item A seeded random sample of the accepted verdicts (10\,\%, at least 20) goes blind to a person, whose label wins. If agreement is below 80\,\% the batch is quarantined; otherwise the final labels are appended to \texttt{feedback.jsonl}.
 \item At the next scheduled retrain, T2 adds the queued labels, T4 trains a candidate model,
 and the candidate replaces \texttt{model.json} only if it scores at least as well as the
 current model on the frozen test set.
@@ -729,13 +740,13 @@ $k$, which is the recommended way to introduce it to an existing API before it i
 block a build.
 
 %==============================================================
-\section{How the System Model Will Be Validated}
+\section{Validation Plan}
 The system model above defines what the experiments must measure.
 Table~\ref{tab:validation} maps each research question to the experiment that answers it.
 
 E2 is the experiment that answers the obvious criticism of the whole design --- that a model
 trained on scanner labels has only learned the scanner. It is protected in the schedule ahead of
-every optional component; the cut order is given in Section~\ref{sec:method}.
+every optional component.
 
 
 %==============================================================
@@ -789,6 +800,7 @@ version effect is possible. Training on OpenAPI~3.x files only is implemented (\
 \end{enumerate}
 
 \subsection{Labelling Protocol (T2)}
+\label{sec:m-labels}
 Three label sources are used, and each has a fixed job (Table~\ref{tab:labels}).
 
 \begin{table}[!t]
@@ -990,8 +1002,8 @@ which tests the requirement that the runtime lane finishes in seconds.
 \textbf{E4, external validity.} VAmPI and crAPI are scored by the final model, which never saw
 them. Report the area under the ROC curve and the rank of each documented-flaw endpoint among
 all endpoints. Schemathesis is run against the live VAmPI container (E9) to give an
-independent dynamic finding set, which is compared with the ranking. OWASP ZAP was not run.
-The tool is used here only, never on the corpus.
+independent dynamic finding set, which is compared with the ranking. OWASP ZAP 2.17.0 is run the same way (E10).
+Both tools are used here only, never on the corpus.
 
 \textbf{E5, ablation and explanation.} Remove each feature group in turn, and also remove
 group E alone, and report the loss in PR-AUC. Report mean absolute SHAP values globally.
@@ -1029,15 +1041,12 @@ one project folder, and the model file used for each reported table is committed
 L1 labels, so a model trained mostly on L1 can fit its training labels by copying group~E and
 add little beyond the scanner. E5 measures this directly by removing group~E, and E2 tests it
 category by category; if the shortcut dominates, that is reported as a finding.
-\textbf{Small, model-labelled sample.} 304 endpoints give wide intervals, and the labels come from three language-model passes with Fleiss' $\kappa=0.54$ and no human check; intervals are reported rather
+\textbf{Small, model-labelled sample.} 304 endpoints give wide intervals, and the labels come from three language-model passes with Fleiss' $\kappa=0.54$ and a human audit of only 28 rows; intervals are reported rather
 than hidden, and L3, whose flaws are documented by the VAmPI authors, is the external anchor (the flaw-to-endpoint mapping was done by a language model reading the handler source). \textbf{Specification versus implementation.} Design-level scores cannot see
 implementation flaws; E4 measures the gap. \textbf{Corpus bias.} APIs.guru is dominated by
 public commercial APIs and may not represent internal APIs. \textbf{Language.} The lexicon is
 English only. \textbf{Tool drift.} A new Spectral or ruleset version changes L1 and the
 baseline together, so versions are pinned. \textbf{Splits and tuning.} The five seeds differ only in how provider ties are broken: about 87\% of endpoints sit in the same fold under every seed, and the hyperparameters were tuned once under seed~0, so the spread over seeds understates uncertainty and the bootstrap intervals are the better guide. Precision at $k$ is not weighted by sampling probability. \textbf{Missing baseline.} The language-model baseline B4 was not run.
-
-\subsection{Cut Order if the Schedule Slips}
-Items were to be cut in this order if the schedule slipped: the APIstic scale-up, the 42Crunch audit score, and B4 on any sample larger than L2. In the end the APIstic scale-up, the 42Crunch audit score and B4 were not done. E1 to E5, and in particular E2, were kept.
 
 %==============================================================
 \section{Results}
@@ -1114,7 +1123,7 @@ go to read (GET) endpoints that declare no authentication, which are the cleares
 (\texttt{/users/v1/\_debug} in VAmPI, \texttt{receive\_report} in crAPI). A model trained to agree with scanner
 and language-model labels inherits whatever they under-weight. Two cautions apply: each application is small, so
 no interval is given, and the flaw-to-endpoint mapping was made by a language model from the project documentation and handler
-source (Section~\ref{sec:m-prob}). The dynamic comparison with Schemathesis is reported in Section~\ref{sec:e9} for VAmPI only; OWASP ZAP was not run and crAPI was not tested dynamically. Section~\ref{sec:e6} tests a likely cause.
+source (Section~\ref{sec:m-prob}). The dynamic comparison with Schemathesis is reported in Section~\ref{sec:e9} for VAmPI only; OWASP ZAP was run on VAmPI and on Damn Vulnerable RESTaurant (Sections~\ref{sec:e10} and~\ref{sec:e13}); crAPI needs Docker and was not tested dynamically. Section~\ref{sec:e6} tests a likely cause.
 
 \subsection{E5: Ablation and Explanation}
 Removing the structural group A cost the most (PR-AUC 0.44 to 0.30). Removing B cost 0.03, and removing C, D, E or F did not lower it (0.46, 0.44, 0.44 and 0.48), so the data-sensitivity group C, which was meant to capture what a rule cannot see, carries no measurable signal in this sample.
@@ -1234,13 +1243,157 @@ Taking the dynamic finding as the label, the model score gives a ROC-AUC of 0.25
 the model ranks endpoints whose design resembles known OWASP risks, whereas Schemathesis finds endpoints that misbehave under malformed input. The endpoint the model ranks first (\texttt{GET /users/v1/\{username\}}) is not flagged by Schemathesis at all.
 With 14 endpoints and 2 to 8 positives this is an observation, not a test. It means the dynamic tool cannot confirm the ranking, and it also cannot refute it, because it does not look for the flaws that the ground truth lists.
 
+\subsection{E10: OWASP ZAP on VAmPI}
+\label{sec:e10}
+OWASP ZAP is the real, widely used OWASP scanner, so it is the baseline the demo should be compared with. ZAP 2.17.0 was run with its Automation Framework against a live VAmPI
+in vulnerable mode (the same specification imported, 14 operations, passive scan, active scan), once without a token and once with a valid bearer token.
+During the authenticated run VAmPI stopped answering and a watchdog restarted it three times; the cause was not confirmed (the handler for \texttt{PUT /users/v1/\{username\}/email}
+is documented as vulnerable to a regular-expression denial of service), and ZAP reported nothing for it. ZAP raised four alert types: one High (SQL injection on \texttt{GET /users/v1/\{username\}}, low confidence),
+two Low that are header hygiene (server version banner, missing \texttt{X-Content-Type-Options}) on up to seven endpoints, and one informational. Two readings were fixed before scoring, as in E9:
+\emph{medium or higher} (a finding about the application) and \emph{low or higher} (which adds the header alerts, unrelated to the documented flaws).
+
+\begin{table}[!t]
+\caption{ZAP, Spectral and APIGUARD against the L3 ground truth of VAmPI (14 endpoints, 10 documented flaws).}
+\label{tab:e10}
+\centering
+\footnotesize
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Reading} & \textbf{Flagged} & \textbf{TP} & \textbf{FP} & \textbf{Recall} & \textbf{Prec.}\\
+\midrule
+ZAP medium or higher & 1 & 1 & 0 & 0.10 & 1.00\\
+ZAP low or higher (headers) & 7 & 6 & 1 & 0.60 & 0.86\\
+Spectral OWASP (S1 alone) & 14 & 10 & 4 & 1.00 & 0.71\\
+APIGUARD score $\geq\tau$ & 2 & 2 & 0 & 0.20 & 1.00\\
+APIGUARD top 10 by score & 10 & 7 & 3 & 0.70 & 0.70\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Read this table with care. ZAP's medium-or-higher reading finds one documented flaw endpoint (\texttt{GET /users/v1/\{username\}}), which APIGUARD also ranks high. Its low reading reaches six flaw endpoints,
+but the alert is a header issue that every endpoint of this server has, so the match is coincidence, not detection. Spectral flags all 14 endpoints (document-level findings are attributed to every endpoint), so its recall of 1.00 says nothing.
+APIGUARD (model \texttt{model.json}) puts 7 of the 10 flaws in its top 10 and 2 above $\tau$; the ROC-AUC of its score is 0.48 over all 14 endpoints, and that of ZAP's maximum risk is 0.69, both uninformative at this size (prevalence 0.71).
+Of the ten flaw endpoints, APIGUARD's top 10 covers six that ZAP does not (for example \texttt{GET /users/v1/\_debug}, which returns every user's password), both cover one, and neither covers three
+(\texttt{GET /books/v1}, \texttt{GET /books/v1/\{book\_title\}}, \texttt{GET /users/v1}). The tools see different things: ZAP sends traffic and found an injection that the specification does not show, APIGUARD reads the design and
+sees missing authentication and exposed fields that ZAP's default rules do not test. Limits: one application, 14 endpoints; default ZAP policy with a static token; crAPI needs Docker and was not run; ZAP's JSON reports are in \texttt{results/zap/}.
+
+\subsection{E11: LLM Checker with a Random Human Audit}
+\label{sec:e11}
+\texttt{experiments/e11\_audit\_loop.py} runs the lane of Section~\ref{sec:feedback} on the real L2 study. The checker accepted 228 of the 304 verdicts (75\,\%) because all three passes agreed, and dropped 76 split votes. Of the accepted verdicts 38 are positive.
+The seeded audit sample (seed 20261117) holds 23 endpoints, 4 of them positive by the checker. The blind sheet is \texttt{results/audit/L2\_audit\_sheet.csv} and the person labels it in \texttt{AUDIT\_TOOL.html} (about ten minutes).
+\textbf{Result.} One person (a team member, working alone and blind to the checker's verdicts) labelled the 23 rows, then 5 further rows drawn at random from the same accepted verdicts (1 checker-positive). The person and the checker agreed on all 28 (agreement 1.00, Wilson 95\,\% interval 0.88 to 1.00, Cohen's $\kappa=1.00$), so the batch is accepted and no label was changed. Read this with care: 28 rows is a small sample, only 5 are checker-positive, the person has no specialist security training, and the audit can only catch a checker whose error rate is high (it would have quarantined a checker with 30\,\% error 86\,\% of the time, but one with 10\,\% error only 7\,\% of the time). The result says the unanimous verdicts are consistent with one person's reading on a random sample; it does not show the checker is correct. The audit files are \texttt{results/audit/}.
+
+\subsection{E12: A Wider Corpus}
+\label{sec:corpus-ext}
+APIs.guru is mostly public vendor and cloud APIs. To add variation, \texttt{tools/fetch\_extended.py} downloaded specifications from 50 further GitHub repositories chosen for
+different kinds of author and domain: telecom (CAMARA), banking and payments, communication and SaaS vendors, DevOps and observability products, backend-as-a-service tools, IoT, generator test suites with edge-case specifications, and vulnerable-by-design applications.
+Every file is stored with its repository, commit, path and hash (\texttt{corpus\_ext/manifest.*.jsonl}). Of 436 files, 17 failed to parse (3.9\,\%, against 0.12\,\% for APIs.guru) and one failed in the scanner. Specifications whose operations overlap an APIs.guru file by Jaccard 0.5 or more
+were dropped as near-copies (45 specifications, 2{,}139 endpoints), leaving 368 specifications, 9{,}741 endpoints and 25 provider groups. Of these, 78\,\% are OpenAPI 3.x (the rest Swagger~2.0). The two corpora differ in composition (Table~\ref{tab:ext}): the added endpoints more often declare no security (62\,\% against 34\,\%),
+are fewer per specification and use plain-HTTP servers about half as often.
+
+\begin{table}[!t]
+\caption{APIs.guru and the added sources (after near-copy removal).}
+\label{tab:ext}
+\centering
+\footnotesize
+\begin{tabular}{lrr}
+\toprule
+ & \textbf{APIs.guru} & \textbf{Added}\\
+\midrule
+Specifications & 2{,}493 & 368\\
+Endpoints & 80{,}974 & 9{,}741\\
+Provider groups & 665 & 25\\
+Median endpoints per spec. & 8 & 5\\
+No security requirement & 34.0\,\% & 62.3\,\%\\
+Server on plain HTTP & 23.5\,\% & 11.8\,\%\\
+Scanner (L1) positive rate & 28.4\,\% & 41.0\,\%\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Transfer test.} The scanner-blind model (feature groups A--D and F, trained on APIs.guru L1 labels, five seeds) was applied to the added endpoints, which it never saw. Against their L1 labels it reaches ROC-AUC 0.77 (95\,\% provider-bootstrap interval 0.65 to 0.96) and PR-AUC 0.60 (0.29 to 0.98) at prevalence 0.41,
+against ROC-AUC 0.95 and PR-AUC 0.88 on held-out APIs.guru providers (prevalence 0.08). The model therefore transfers, but loses accuracy on new kinds of API. It does best on open-source products (ROC-AUC 0.91) and generator test suites (0.87),
+and worst on vendor APIs (0.82 ROC-AUC, PR-AUC 0.40 at prevalence 0.09); OpenAPI 3.x endpoints score 0.78 and Swagger~2.0 endpoints 0.86. The intervals are wide because there are only 25 provider groups. This measures how well design features reproduce scanner findings on unseen sources; it is not a security-quality claim, since no L2 or L3 labels exist for these endpoints.
+The download was limited by time: a few large repositories were not finished, so the added corpus is a sample, not a census.
+
+\subsection{E13: ZAP and APIGUARD on a Second Application}
+\label{sec:e13}
+E10 used one application, so a second was added: Damn Vulnerable RESTaurant (DVR), a FastAPI training application with 21 operations in its OpenAPI document. Its flaws are documented by its own vulnerability tests, so no labels were made by hand.
+Six of the 21 operations are documented as flawed: \texttt{GET /healthcheck} (technology header), \texttt{DELETE /menu/\{item\_id\}} (no authorisation), \texttt{PUT /profile} (IDOR), \texttt{PUT /users/update\_role} (privilege escalation), \texttt{PUT /menu} (SSRF) and \texttt{GET /admin/stats/disk} (command injection).
+Two further documented flaws are hidden endpoints that are not in the OpenAPI document and so cannot be scored. The API categories in the label file are our own assignment, and two operations are marked design-visible (no authorisation check, role field in the body) by our judgement; the scores below do not use them.
+The application ran in its in-memory database mode on localhost. ZAP 2.17.0 was run the same way as in E10, three times (no token, a customer token, an employee token), and the three reports were combined. The application stopped once during the scans and was restarted with the same signing key. The documented chef-only paths need a password that is random at start-up, so ZAP never held a chef token.
+
+\begin{table}[!t]
+\caption{ZAP, Spectral and APIGUARD against the documented flaws of DVR (21 operations, 6 flaws).}
+\label{tab:e13}
+\centering
+\footnotesize
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Reading} & \textbf{Flagged} & \textbf{TP} & \textbf{FP} & \textbf{Recall} & \textbf{Prec.}\\
+\midrule
+ZAP medium or higher & 5 & 1 & 4 & 0.17 & 0.20\\
+ZAP low or higher (headers) & 14 & 4 & 10 & 0.67 & 0.29\\
+Spectral OWASP (S1 alone) & 21 & 6 & 15 & 1.00 & 0.29\\
+APIGUARD score $\geq\tau$ & 5 & 1 & 4 & 0.17 & 0.20\\
+APIGUARD top 6 by score & 6 & 2 & 4 & 0.33 & 0.33\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The result is weak for both tools. ZAP's medium-or-higher reading finds only \texttt{PUT /profile}; its other four High alerts (SQL injection on \texttt{/reset-password}, \texttt{/reset-password/new-password}, \texttt{/orders} and \texttt{PATCH /profile}) are counted as false positives here, but we did not confirm them by hand.
+Their evidence is a server error after a quote character or a changed response to \texttt{OR 1=1}, and the application uses an ORM for these routes, so they are probably false alarms. They might also be real undocumented flaws, which a documented-flaw ground truth cannot tell.
+APIGUARD ranks \texttt{GET /admin/stats/disk} highest of the flawed operations and \texttt{GET /healthcheck} sixth; its other four top-ranked operations are authentication routes that are not flawed. ZAP found the flaw that APIGUARD missed (\texttt{PUT /profile}) and APIGUARD found two that ZAP missed
+(the command injection, which ZAP could not reach without a chef token, and the header, which ZAP reports only as a low alert). Three flaws were found by neither (\texttt{DELETE /menu/\{item\_id\}}, \texttt{PUT /menu}, \texttt{PUT /users/update\_role}), which are the authorisation and role flaws.
+The ROC-AUC of APIGUARD's score is 0.62 and that of ZAP's maximum risk is 0.47 (prevalence 0.29); with six positives the difference is not meaningful. Across E10 and E13 the pattern is the same: the two tools find different flaws, neither dominates, and each misses most authorisation flaws.
+Limits: two applications, both small; documented flaws only; default ZAP policy; crAPI still not run (it needs Docker). Reports and scoring are in \texttt{results/e13\_zap.json}.
+
+\subsection{E14: Trying to Improve the Model}
+\label{sec:e14}
+E10 and E13 showed that the model misses authorisation, role and injection flaws, so eight pattern features were added (group G, schema 1.1) after those misses were known. On the 304 reference endpoints (provider-grouped five-fold cross-validation, three seeds, fixed XGBoost parameters, same folds) the PR-AUC rose from $0.42\pm0.03$ to $0.48\pm0.01$, with a 95\,\% provider-bootstrap interval of $-0.11$ to $+0.14$ for the difference, so the gain is not distinguishable from noise. A threshold rule fixed in advance (the highest value with out-of-fold recall of at least 0.60) gave $\tau=0.90$. Scored once on VAmPI and DVR, the new model did not improve (ROC-AUC 0.48 to 0.40 and 0.62 to 0.50, both within noise); DVR declares an authentication scheme on every operation, so a specification-only model cannot see that the server does not check it. The model was not adopted and nothing was tuned on the test applications; E15 is a separate, later revision. Files: \texttt{results/e14\_improve.json}, \texttt{results/e14b\_tau.json}.
+
+\subsection{E15: Model v3}
+\label{sec:e15}
+The earlier experiments pointed to three causes of weak ranking. The model trained on scanner labels can only copy the scanner (E1--E4); the context group F hurt in the ablation (E5); and S1 attached every document-level finding (components, security schemes, servers) to every endpoint of a specification, so most endpoints of one specification carried the same rules and group E could not tell them apart. Model v3 changes four things and nothing else:
+(i)~it is trained only on the 608 reference labels of E7, with scanner output used as features, never as labels;
+(ii)~group E counts only the findings on the endpoint's own operation or path item, and document-level findings are kept out (they were also tried as a separate group S);
+(iii)~group F is removed;
+(iv)~a new group H of fourteen flaw-pattern features is added: an object identifier in the path of a read, update or delete (and the same for user-like objects and without authentication), admin and debug words in the path, a write without authentication, privilege, ownership or money fields that the request body can set, a URL-valued field, an authentication endpoint with and without a rate limit, a secret in the success response, an unpaged collection and a numeric path identifier (schema s2a-3.0, \texttt{features\_v3.py}).
+Like group G (E14), group H was written after the misses of E10 and E13 were known; every variant therefore uses the same fixed XGBoost settings (depth 3, learning rate 0.05, early stopping) and nothing was tuned.
+
+\textbf{Protocol.} The test set is the 304 original reference endpoints, with provider-grouped five-fold cross-validation over five seeds; the other 304 reference endpoints are always in training, except those from a provider in the test fold. Scores are weighted as in E1 and all variants share the same folds; the harness reproduces the earlier figures (scanner 0.47 as in E1, v1 features 0.52 as in E8). For the external check each variant is trained on all 608 labels.
+
+\begin{table}[!t]
+\caption{E15: Model variants on the same folds (mean of five seeds). External columns are ROC-AUC.}
+\label{tab:e15}
+\centering
+\scriptsize
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Variant} & \textbf{PR-AUC} & \textbf{ROC} & \textbf{P@10} & \textbf{VAmPI} & \textbf{crAPI}\\
+\midrule
+Random & 0.21 & 0.50 & -- & 0.50 & 0.50\\
+Scanner only (B1) & 0.47 & 0.69 & 0.40 & 0.51 & 0.61\\
+v1 features (E8 model) & 0.52 & 0.81 & 0.70 & 0.82 & 0.37\\
++ per-endpoint E, no F & 0.51 & 0.80 & 0.72 & 0.85 & 0.40\\
+\textbf{+ group H (v3)} & \textbf{0.62} & \textbf{0.85} & 0.76 & 0.80 & 0.40\\
+v3 + document-level S & 0.56 & 0.82 & 0.82 & 0.78 & 0.41\\
+v3 without scanner features & 0.63 & 0.83 & 0.82 & 0.82 & 0.53\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Result.} Table~\ref{tab:e15} gives the variants. Per-endpoint attribution and the removal of F leave the score unchanged; the gain comes from group H. Against the scanner, v3 gains $+0.01$ to $+0.43$ in PR-AUC and $+0.05$ to $+0.35$ in ROC-AUC (provider-level 95\,\% intervals, both excluding zero); it is the first single model in this paper whose PR-AUC interval against the scanner excludes zero. Against the v1 features trained on the same labels the gain is $-0.07$ to $+0.26$ in PR-AUC and $-0.005$ to $+0.10$ in ROC-AUC, so it is better on average but not significantly. Combining v3 with the scanner as in E8 adds nothing (PR-AUC 0.60), document-level findings (S) lower the score, and removing the scanner features gives a similar score, so most of the signal is in the design features. With the rule fixed in E14 (the highest threshold with out-of-fold recall of at least 0.60), $\tau=0.60$, with precision 0.56 and 72 of the 304 endpoints flagged. SHAP ranks the security-scheme features first; \texttt{h\_write\_noauth} is fourth.
+
+\textbf{Limit.} On crAPI v3 is still below chance (ROC-AUC 0.40, against 0.61 for the scanner); on VAmPI it reaches 0.80. The cause is in the labels: of the 129 positive reference labels, 117 are endpoints without authentication, and only 12 of the 377 authenticated endpoints are positive. The model therefore learns that a missing login means risk. Every crAPI endpoint is authenticated and its flaws are authorisation and logic flaws, so v3 ranks its public login and sign-up operations first. New features cannot fix this; it needs labels in which an authenticated endpoint can be risky. A codebook for that (one question per OWASP category; public-by-design endpoints not risky for lacking a login) is in \texttt{results/v3/CODEBOOK\_v3.md}. v3 was not scored on DVR, and the packaged command line still loads the v1 model. Files: \texttt{experiments/v3/}, \texttt{results/v3/}.
+
 \subsection{Discussion and Limitations}
 The honest conclusion has two parts. Trained on scanner labels (E1 to E4), APIGUARD matches the scanner at similar accuracy and the same cost, generalises to one
 unseen category, and does not beat the scanner. Trained only on the reference labels (E6), it beats the scanner on ROC-AUC (difference $+0.01$ to $+0.33$) and on F1 and MCC, but not
 significantly on PR-AUC, and it still ranks crAPI flaws no better than chance, even with twice as many reference labels (E7). Combined with the scanner (E8), it ranks better than the scanner alone in both PR-AUC and ROC-AUC, which is the use the design intends. Four things limit this. (i)~The reference labels were produced by
-language models, with Fleiss' $\kappa=0.54$ and no human check, so noise in them caps every score. (ii)~Only 62 positives exist,
+language models, with Fleiss' $\kappa=0.54$ and a human check only of 28 rows (a random 23-row sample plus 5 extra) of the accepted verdicts (Section~\ref{sec:e11}), so noise in them caps every score. (ii)~The test set holds only 62 positives (129 across all 608 reference labels),
 so most categories were untestable. (iii)~L1 labels are the scanner's own, so a model trained on them can at best
-approximate it. (iv)~On the two external applications the scanner-trained model ranked flawed endpoints no better than chance (E4), and the L2-trained model did well on VAmPI but not on crAPI (E6), so the claim is limited to the corpus labels, and the dynamic comparison covers VAmPI only, with Schemathesis (E9); ZAP was not run. A larger, human-labelled sample and more vulnerable-by-design applications would be the first things to add.
+approximate it. (iv)~On the two external applications the scanner-trained model ranked flawed endpoints no better than chance (E4), and the L2-trained model did well on VAmPI but not on crAPI (E6), so the claim is limited to the corpus labels, and the dynamic comparison covers VAmPI (Schemathesis, E9; ZAP, E10) and Damn Vulnerable RESTaurant (ZAP, E13). The added sources (E12) are few providers with wide intervals and carry scanner labels only. A larger, human-labelled sample and more runnable vulnerable-by-design applications would be the first things to add. The revised model v3 (E15) is the strongest result: it beats the scanner on both PR-AUC and ROC-AUC with intervals that exclude zero, but it shares the label limit above, which is why it still fails on crAPI.
 
 \textbf{Sensitivity to the labels.} The analysis was repeated with an earlier key made from two passes
 plus an adjudication (46 positives). E1 was similar (XGBoost 0.46, scanner 0.43, difference $-0.21$ to $+0.30$).
@@ -1251,22 +1404,25 @@ treat RQ2 as unresolved at this sample size.
 
 %==============================================================
 \section{Conclusion}
-This deliverable has specified the APIGUARD system model: three lanes separated by when they
+This paper has specified the APIGUARD system model: three lanes separated by when they
 run and how far they are trusted, a runtime path of four components from specification to CI
 exit code, an offline path that produces the model artefact those components load, and a
-feedback path that returns the verdicts of an automatic checker to the label store without ever closing a loop into
+feedback path that returns LLM-checked verdicts, audited at random by a person, to the label store without ever closing a loop into
 the model. The notation and the gate rules in~\eqref{eq:scored}, \eqref{eq:gate}
 and~\eqref{eq:gatedelta} fix what the implementation must compute, and the interface contracts
 fix what each component must guarantee. Section~\ref{sec:method} turns this model into the proposed methodology and algorithm: the label
 protocol that keeps scanner labels out of every evaluation, the feature extraction, the grouped
 training procedure, a gate that judges only new or changed endpoints, and the protocol for the
-rule hold-out experiment that the whole design rests on. The experiments of Section~\ref{sec:results} show that, trained on scanner labels, the model matches but does not beat the scanner and generalises in the rule hold-out for one of three testable categories. Trained on language-model reference labels it ranks better by ROC-AUC, and combined with the scanner it ranks better on PR-AUC and ROC-AUC, but it does not reliably rank the flaws of crAPI. All reference labels were produced by language models, so these results measure agreement with those labels, and a human-labelled sample is the main next step.
+rule hold-out experiment that the whole design rests on. The experiments of Section~\ref{sec:results} show that, trained on scanner labels, the model matches but does not beat the scanner and generalises in the rule hold-out for one of three testable categories. Trained on language-model reference labels it ranks better by ROC-AUC, and combined with the scanner it ranks better on PR-AUC and ROC-AUC, but it does not reliably rank the flaws of crAPI. The revised model v3 (E15), with per-endpoint scanner findings and flaw-pattern features, beats the scanner on both PR-AUC (0.62 against 0.47) and ROC-AUC (0.85 against 0.69). All reference labels were produced by language models, and they mark almost only unauthenticated endpoints as risky, so these results measure agreement with those labels; relabelling with a codebook that lets authenticated endpoints be risky, on a sample drawn from more providers, is the main next step.
 
 %==============================================================
 % If you prefer BibTeX on Overleaf, delete the thebibliography block
 % below and uncomment these two lines (refs.bib is included):
 % \bibliographystyle{IEEEtran}
 % \bibliography{refs}
+
+\section*{Use of Generative AI}
+Generative AI tools (Claude and Codex) were used to help write the code, run the experiments, produce the reference labels (Section~\ref{sec:m-labels}) and draft and edit this report. The authors checked the results and take full responsibility for the content; every number in this paper comes from the code and result files in the project repository.
 
 \begin{thebibliography}{99}
 \bibitem{apistic}

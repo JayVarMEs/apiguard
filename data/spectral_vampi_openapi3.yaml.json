@@ -1,0 +1,5622 @@
+[
+	{
+		"code": "owasp:api9:2023-inventory-access",
+		"path": [
+			"servers",
+			"0"
+		],
+		"message": "Declare intended audience of every server by defining servers[0].x-internal as true/false.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 9,
+				"character": 4
+			},
+			"end": {
+				"line": 9,
+				"character": 30
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-no-server-http",
+		"path": [
+			"servers",
+			"0",
+			"url"
+		],
+		"message": "Server URLs must not use http://. Use https:// or wss:// instead.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 9,
+				"character": 9
+			},
+			"end": {
+				"line": 9,
+				"character": 30
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api2:2023-jwt-best-practices",
+		"path": [
+			"components",
+			"securitySchemes",
+			"bearerAuth"
+		],
+		"message": "Security schemes using JWTs must explicitly declare support for RFC8725 in the description.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 12,
+				"character": 15
+			},
+			"end": {
+				"line": 16,
+				"character": 64
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api2:2023-read-restricted",
+		"path": [
+			"paths",
+			"/createdb",
+			"get"
+		],
+		"message": "This read operation is not protected by any security scheme.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 19,
+				"character": 8
+			},
+			"end": {
+				"line": 32,
+				"character": 72
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/createdb",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 24,
+				"character": 16
+			},
+			"end": {
+				"line": 32,
+				"character": 72
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/createdb",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 24,
+				"character": 16
+			},
+			"end": {
+				"line": 32,
+				"character": 72
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-401",
+		"path": [
+			"paths",
+			"/createdb",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[401].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 24,
+				"character": 16
+			},
+			"end": {
+				"line": 32,
+				"character": 72
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-401",
+		"path": [
+			"paths",
+			"/createdb",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[401].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 24,
+				"character": 16
+			},
+			"end": {
+				"line": 32,
+				"character": 72
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/createdb",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 24,
+				"character": 16
+			},
+			"end": {
+				"line": 32,
+				"character": 72
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/createdb",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 24,
+				"character": 16
+			},
+			"end": {
+				"line": 32,
+				"character": 72
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-validation",
+		"path": [
+			"paths",
+			"/createdb",
+			"get",
+			"responses"
+		],
+		"message": "Missing error response of either 400, 422 or 4XX.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 24,
+				"character": 16
+			},
+			"end": {
+				"line": 32,
+				"character": 72
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/createdb",
+			"get",
+			"responses",
+			"200"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 25,
+				"character": 14
+			},
+			"end": {
+				"line": 32,
+				"character": 72
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/createdb",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 32,
+				"character": 26
+			},
+			"end": {
+				"line": 32,
+				"character": 72
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/createdb",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 32,
+				"character": 26
+			},
+			"end": {
+				"line": 32,
+				"character": 72
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api2:2023-read-restricted",
+		"path": [
+			"paths",
+			"/",
+			"get"
+		],
+		"message": "This read operation is not protected by any security scheme.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 34,
+				"character": 8
+			},
+			"end": {
+				"line": 49,
+				"character": 55
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 39,
+				"character": 16
+			},
+			"end": {
+				"line": 49,
+				"character": 55
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 39,
+				"character": 16
+			},
+			"end": {
+				"line": 49,
+				"character": 55
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-401",
+		"path": [
+			"paths",
+			"/",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[401].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 39,
+				"character": 16
+			},
+			"end": {
+				"line": 49,
+				"character": 55
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-401",
+		"path": [
+			"paths",
+			"/",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[401].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 39,
+				"character": 16
+			},
+			"end": {
+				"line": 49,
+				"character": 55
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 39,
+				"character": 16
+			},
+			"end": {
+				"line": 49,
+				"character": 55
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 39,
+				"character": 16
+			},
+			"end": {
+				"line": 49,
+				"character": 55
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-validation",
+		"path": [
+			"paths",
+			"/",
+			"get",
+			"responses"
+		],
+		"message": "Missing error response of either 400, 422 or 4XX.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 39,
+				"character": 16
+			},
+			"end": {
+				"line": 49,
+				"character": 55
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/",
+			"get",
+			"responses",
+			"200"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 40,
+				"character": 14
+			},
+			"end": {
+				"line": 49,
+				"character": 55
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 47,
+				"character": 26
+			},
+			"end": {
+				"line": 47,
+				"character": 77
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 47,
+				"character": 26
+			},
+			"end": {
+				"line": 47,
+				"character": 77
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"help"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 48,
+				"character": 23
+			},
+			"end": {
+				"line": 48,
+				"character": 37
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"help"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 48,
+				"character": 23
+			},
+			"end": {
+				"line": 48,
+				"character": 37
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api2:2023-read-restricted",
+		"path": [
+			"paths",
+			"/users/v1",
+			"get"
+		],
+		"message": "This read operation is not protected by any security scheme.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 51,
+				"character": 8
+			},
+			"end": {
+				"line": 70,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/users/v1",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 56,
+				"character": 16
+			},
+			"end": {
+				"line": 70,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/users/v1",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 56,
+				"character": 16
+			},
+			"end": {
+				"line": 70,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-401",
+		"path": [
+			"paths",
+			"/users/v1",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[401].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 56,
+				"character": 16
+			},
+			"end": {
+				"line": 70,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-401",
+		"path": [
+			"paths",
+			"/users/v1",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[401].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 56,
+				"character": 16
+			},
+			"end": {
+				"line": 70,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/users/v1",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 56,
+				"character": 16
+			},
+			"end": {
+				"line": 70,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/users/v1",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 56,
+				"character": 16
+			},
+			"end": {
+				"line": 70,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-validation",
+		"path": [
+			"paths",
+			"/users/v1",
+			"get",
+			"responses"
+		],
+		"message": "Missing error response of either 400, 422 or 4XX.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 56,
+				"character": 16
+			},
+			"end": {
+				"line": 70,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/users/v1",
+			"get",
+			"responses",
+			"200"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 57,
+				"character": 14
+			},
+			"end": {
+				"line": 70,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-array-limit",
+		"path": [
+			"paths",
+			"/users/v1",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"users"
+		],
+		"message": "Schema of type array must specify maxItems.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 64,
+				"character": 24
+			},
+			"end": {
+				"line": 70,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"users",
+			"items",
+			"properties",
+			"email"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 69,
+				"character": 30
+			},
+			"end": {
+				"line": 69,
+				"character": 71
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"users",
+			"items",
+			"properties",
+			"email"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 69,
+				"character": 30
+			},
+			"end": {
+				"line": 69,
+				"character": 71
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"users",
+			"items",
+			"properties",
+			"username"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 70,
+				"character": 33
+			},
+			"end": {
+				"line": 70,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"users",
+			"items",
+			"properties",
+			"username"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 70,
+				"character": 33
+			},
+			"end": {
+				"line": 70,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api2:2023-read-restricted",
+		"path": [
+			"paths",
+			"/users/v1/_debug",
+			"get"
+		],
+		"message": "This read operation is not protected by any security scheme.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 72,
+				"character": 8
+			},
+			"end": {
+				"line": 93,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/users/v1/_debug",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 77,
+				"character": 16
+			},
+			"end": {
+				"line": 93,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/users/v1/_debug",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 77,
+				"character": 16
+			},
+			"end": {
+				"line": 93,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-401",
+		"path": [
+			"paths",
+			"/users/v1/_debug",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[401].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 77,
+				"character": 16
+			},
+			"end": {
+				"line": 93,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-401",
+		"path": [
+			"paths",
+			"/users/v1/_debug",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[401].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 77,
+				"character": 16
+			},
+			"end": {
+				"line": 93,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/users/v1/_debug",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 77,
+				"character": 16
+			},
+			"end": {
+				"line": 93,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/users/v1/_debug",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 77,
+				"character": 16
+			},
+			"end": {
+				"line": 93,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-validation",
+		"path": [
+			"paths",
+			"/users/v1/_debug",
+			"get",
+			"responses"
+		],
+		"message": "Missing error response of either 400, 422 or 4XX.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 77,
+				"character": 16
+			},
+			"end": {
+				"line": 93,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/users/v1/_debug",
+			"get",
+			"responses",
+			"200"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 78,
+				"character": 14
+			},
+			"end": {
+				"line": 93,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-array-limit",
+		"path": [
+			"paths",
+			"/users/v1/_debug",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"users"
+		],
+		"message": "Schema of type array must specify maxItems.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 85,
+				"character": 24
+			},
+			"end": {
+				"line": 93,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/_debug",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"users",
+			"items",
+			"properties",
+			"email"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 91,
+				"character": 30
+			},
+			"end": {
+				"line": 91,
+				"character": 71
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/_debug",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"users",
+			"items",
+			"properties",
+			"email"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 91,
+				"character": 30
+			},
+			"end": {
+				"line": 91,
+				"character": 71
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/_debug",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"users",
+			"items",
+			"properties",
+			"password"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 92,
+				"character": 33
+			},
+			"end": {
+				"line": 92,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/_debug",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"users",
+			"items",
+			"properties",
+			"password"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 92,
+				"character": 33
+			},
+			"end": {
+				"line": 92,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/_debug",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"users",
+			"items",
+			"properties",
+			"username"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 93,
+				"character": 33
+			},
+			"end": {
+				"line": 93,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/_debug",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"users",
+			"items",
+			"properties",
+			"username"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 93,
+				"character": 33
+			},
+			"end": {
+				"line": 93,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api2:2023-write-restricted",
+		"path": [
+			"paths",
+			"/users/v1/register",
+			"post"
+		],
+		"message": "This write operation is not protected by any security scheme.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 95,
+				"character": 9
+			},
+			"end": {
+				"line": 123,
+				"character": 21
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/register",
+			"post",
+			"requestBody",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"username"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 108,
+				"character": 25
+			},
+			"end": {
+				"line": 108,
+				"character": 57
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/register",
+			"post",
+			"requestBody",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"username"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 108,
+				"character": 25
+			},
+			"end": {
+				"line": 108,
+				"character": 57
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/register",
+			"post",
+			"requestBody",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"password"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 109,
+				"character": 25
+			},
+			"end": {
+				"line": 109,
+				"character": 57
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/register",
+			"post",
+			"requestBody",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"password"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 109,
+				"character": 25
+			},
+			"end": {
+				"line": 109,
+				"character": 57
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/register",
+			"post",
+			"requestBody",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"email"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 110,
+				"character": 22
+			},
+			"end": {
+				"line": 110,
+				"character": 66
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/register",
+			"post",
+			"requestBody",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"email"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 110,
+				"character": 22
+			},
+			"end": {
+				"line": 110,
+				"character": 66
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/users/v1/register",
+			"post",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 111,
+				"character": 16
+			},
+			"end": {
+				"line": 123,
+				"character": 21
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/users/v1/register",
+			"post",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 111,
+				"character": 16
+			},
+			"end": {
+				"line": 123,
+				"character": 21
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-401",
+		"path": [
+			"paths",
+			"/users/v1/register",
+			"post",
+			"responses"
+		],
+		"message": "Operation is missing responses[401].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 111,
+				"character": 16
+			},
+			"end": {
+				"line": 123,
+				"character": 21
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-401",
+		"path": [
+			"paths",
+			"/users/v1/register",
+			"post",
+			"responses"
+		],
+		"message": "Operation is missing responses[401].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 111,
+				"character": 16
+			},
+			"end": {
+				"line": 123,
+				"character": 21
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/users/v1/register",
+			"post",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 111,
+				"character": 16
+			},
+			"end": {
+				"line": 123,
+				"character": 21
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/users/v1/register",
+			"post",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 111,
+				"character": 16
+			},
+			"end": {
+				"line": 123,
+				"character": 21
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/users/v1/register",
+			"post",
+			"responses",
+			"200"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 112,
+				"character": 14
+			},
+			"end": {
+				"line": 120,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/register",
+			"post",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 119,
+				"character": 26
+			},
+			"end": {
+				"line": 119,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/register",
+			"post",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 119,
+				"character": 26
+			},
+			"end": {
+				"line": 119,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/users/v1/register",
+			"post",
+			"responses",
+			"400"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 121,
+				"character": 14
+			},
+			"end": {
+				"line": 123,
+				"character": 21
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api2:2023-write-restricted",
+		"path": [
+			"paths",
+			"/users/v1/login",
+			"post"
+		],
+		"message": "This write operation is not protected by any security scheme.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 125,
+				"character": 9
+			},
+			"end": {
+				"line": 159,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/login",
+			"post",
+			"requestBody",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"username"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 138,
+				"character": 25
+			},
+			"end": {
+				"line": 138,
+				"character": 57
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/login",
+			"post",
+			"requestBody",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"username"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 138,
+				"character": 25
+			},
+			"end": {
+				"line": 138,
+				"character": 57
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/login",
+			"post",
+			"requestBody",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"password"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 139,
+				"character": 25
+			},
+			"end": {
+				"line": 139,
+				"character": 57
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/login",
+			"post",
+			"requestBody",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"password"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 139,
+				"character": 25
+			},
+			"end": {
+				"line": 139,
+				"character": 57
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/users/v1/login",
+			"post",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 140,
+				"character": 16
+			},
+			"end": {
+				"line": 159,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/users/v1/login",
+			"post",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 140,
+				"character": 16
+			},
+			"end": {
+				"line": 159,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-401",
+		"path": [
+			"paths",
+			"/users/v1/login",
+			"post",
+			"responses"
+		],
+		"message": "Operation is missing responses[401].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 140,
+				"character": 16
+			},
+			"end": {
+				"line": 159,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-401",
+		"path": [
+			"paths",
+			"/users/v1/login",
+			"post",
+			"responses"
+		],
+		"message": "Operation is missing responses[401].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 140,
+				"character": 16
+			},
+			"end": {
+				"line": 159,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/users/v1/login",
+			"post",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 140,
+				"character": 16
+			},
+			"end": {
+				"line": 159,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/users/v1/login",
+			"post",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 140,
+				"character": 16
+			},
+			"end": {
+				"line": 159,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/users/v1/login",
+			"post",
+			"responses",
+			"200"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 141,
+				"character": 14
+			},
+			"end": {
+				"line": 150,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/login",
+			"post",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"auth_token"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 148,
+				"character": 29
+			},
+			"end": {
+				"line": 148,
+				"character": 43
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/login",
+			"post",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"auth_token"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 148,
+				"character": 29
+			},
+			"end": {
+				"line": 148,
+				"character": 43
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/login",
+			"post",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 149,
+				"character": 26
+			},
+			"end": {
+				"line": 149,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/login",
+			"post",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 149,
+				"character": 26
+			},
+			"end": {
+				"line": 149,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/users/v1/login",
+			"post",
+			"responses",
+			"400"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 151,
+				"character": 14
+			},
+			"end": {
+				"line": 159,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/login",
+			"post",
+			"responses",
+			"400",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 159,
+				"character": 26
+			},
+			"end": {
+				"line": 159,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/login",
+			"post",
+			"responses",
+			"400",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 159,
+				"character": 26
+			},
+			"end": {
+				"line": 159,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/me",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 168,
+				"character": 16
+			},
+			"end": {
+				"line": 191,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/me",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 168,
+				"character": 16
+			},
+			"end": {
+				"line": 191,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/me",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 168,
+				"character": 16
+			},
+			"end": {
+				"line": 191,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/me",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 168,
+				"character": 16
+			},
+			"end": {
+				"line": 191,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-validation",
+		"path": [
+			"paths",
+			"/me",
+			"get",
+			"responses"
+		],
+		"message": "Missing error response of either 400, 422 or 4XX.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 168,
+				"character": 16
+			},
+			"end": {
+				"line": 191,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/me",
+			"get",
+			"responses",
+			"200"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 169,
+				"character": 14
+			},
+			"end": {
+				"line": 182,
+				"character": 59
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/me",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"data",
+			"properties",
+			"email"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 180,
+				"character": 28
+			},
+			"end": {
+				"line": 180,
+				"character": 69
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/me",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"data",
+			"properties",
+			"email"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 180,
+				"character": 28
+			},
+			"end": {
+				"line": 180,
+				"character": 69
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/me",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"data",
+			"properties",
+			"username"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 181,
+				"character": 31
+			},
+			"end": {
+				"line": 181,
+				"character": 63
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/me",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"data",
+			"properties",
+			"username"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 181,
+				"character": 31
+			},
+			"end": {
+				"line": 181,
+				"character": 63
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/me",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"status"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 182,
+				"character": 25
+			},
+			"end": {
+				"line": 182,
+				"character": 59
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/me",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"status"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 182,
+				"character": 25
+			},
+			"end": {
+				"line": 182,
+				"character": 59
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/me",
+			"get",
+			"responses",
+			"401"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 183,
+				"character": 14
+			},
+			"end": {
+				"line": 191,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/me",
+			"get",
+			"responses",
+			"401",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"status"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 190,
+				"character": 25
+			},
+			"end": {
+				"line": 190,
+				"character": 39
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/me",
+			"get",
+			"responses",
+			"401",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"status"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 190,
+				"character": 25
+			},
+			"end": {
+				"line": 190,
+				"character": 39
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/me",
+			"get",
+			"responses",
+			"401",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 191,
+				"character": 26
+			},
+			"end": {
+				"line": 191,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/me",
+			"get",
+			"responses",
+			"401",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 191,
+				"character": 26
+			},
+			"end": {
+				"line": 191,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api2:2023-read-restricted",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"get"
+		],
+		"message": "This read operation is not protected by any security scheme.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 193,
+				"character": 8
+			},
+			"end": {
+				"line": 222,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"get",
+			"parameters",
+			"0",
+			"schema"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 203,
+				"character": 17
+			},
+			"end": {
+				"line": 203,
+				"character": 49
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"get",
+			"parameters",
+			"0",
+			"schema"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 203,
+				"character": 17
+			},
+			"end": {
+				"line": 203,
+				"character": 49
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 204,
+				"character": 16
+			},
+			"end": {
+				"line": 222,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 204,
+				"character": 16
+			},
+			"end": {
+				"line": 222,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-401",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[401].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 204,
+				"character": 16
+			},
+			"end": {
+				"line": 222,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-401",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[401].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 204,
+				"character": 16
+			},
+			"end": {
+				"line": 222,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 204,
+				"character": 16
+			},
+			"end": {
+				"line": 222,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 204,
+				"character": 16
+			},
+			"end": {
+				"line": 222,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-validation",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"get",
+			"responses"
+		],
+		"message": "Missing error response of either 400, 422 or 4XX.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 204,
+				"character": 16
+			},
+			"end": {
+				"line": 222,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"get",
+			"responses",
+			"200"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 205,
+				"character": 14
+			},
+			"end": {
+				"line": 213,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"username"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 212,
+				"character": 27
+			},
+			"end": {
+				"line": 212,
+				"character": 59
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"username"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 212,
+				"character": 27
+			},
+			"end": {
+				"line": 212,
+				"character": 59
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"email"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 213,
+				"character": 24
+			},
+			"end": {
+				"line": 213,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"email"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 213,
+				"character": 24
+			},
+			"end": {
+				"line": 213,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"get",
+			"responses",
+			"404"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 214,
+				"character": 14
+			},
+			"end": {
+				"line": 222,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"get",
+			"responses",
+			"404",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 222,
+				"character": 26
+			},
+			"end": {
+				"line": 222,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"get",
+			"responses",
+			"404",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 222,
+				"character": 26
+			},
+			"end": {
+				"line": 222,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"delete",
+			"parameters",
+			"0",
+			"schema"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 235,
+				"character": 17
+			},
+			"end": {
+				"line": 235,
+				"character": 49
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"delete",
+			"parameters",
+			"0",
+			"schema"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 235,
+				"character": 17
+			},
+			"end": {
+				"line": 235,
+				"character": 49
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"delete",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 236,
+				"character": 16
+			},
+			"end": {
+				"line": 263,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"delete",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 236,
+				"character": 16
+			},
+			"end": {
+				"line": 263,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"delete",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 236,
+				"character": 16
+			},
+			"end": {
+				"line": 263,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"delete",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 236,
+				"character": 16
+			},
+			"end": {
+				"line": 263,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-validation",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"delete",
+			"responses"
+		],
+		"message": "Missing error response of either 400, 422 or 4XX.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 236,
+				"character": 16
+			},
+			"end": {
+				"line": 263,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"delete",
+			"responses",
+			"200"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 237,
+				"character": 14
+			},
+			"end": {
+				"line": 245,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"delete",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 244,
+				"character": 26
+			},
+			"end": {
+				"line": 244,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"delete",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 244,
+				"character": 26
+			},
+			"end": {
+				"line": 244,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"delete",
+			"responses",
+			"401"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 246,
+				"character": 14
+			},
+			"end": {
+				"line": 254,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"delete",
+			"responses",
+			"401",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 254,
+				"character": 26
+			},
+			"end": {
+				"line": 254,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"delete",
+			"responses",
+			"401",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 254,
+				"character": 26
+			},
+			"end": {
+				"line": 254,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"delete",
+			"responses",
+			"404"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 255,
+				"character": 14
+			},
+			"end": {
+				"line": 263,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"delete",
+			"responses",
+			"404",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 263,
+				"character": 26
+			},
+			"end": {
+				"line": 263,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/{username}",
+			"delete",
+			"responses",
+			"404",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 263,
+				"character": 26
+			},
+			"end": {
+				"line": 263,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}/email",
+			"put",
+			"parameters",
+			"0",
+			"schema"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 277,
+				"character": 17
+			},
+			"end": {
+				"line": 277,
+				"character": 49
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/{username}/email",
+			"put",
+			"parameters",
+			"0",
+			"schema"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 277,
+				"character": 17
+			},
+			"end": {
+				"line": 277,
+				"character": 49
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}/email",
+			"put",
+			"requestBody",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"email"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 286,
+				"character": 22
+			},
+			"end": {
+				"line": 286,
+				"character": 63
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/{username}/email",
+			"put",
+			"requestBody",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"email"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 286,
+				"character": 22
+			},
+			"end": {
+				"line": 286,
+				"character": 63
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/users/v1/{username}/email",
+			"put",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 287,
+				"character": 16
+			},
+			"end": {
+				"line": 308,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/users/v1/{username}/email",
+			"put",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 287,
+				"character": 16
+			},
+			"end": {
+				"line": 308,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/users/v1/{username}/email",
+			"put",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 287,
+				"character": 16
+			},
+			"end": {
+				"line": 308,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/users/v1/{username}/email",
+			"put",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 287,
+				"character": 16
+			},
+			"end": {
+				"line": 308,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}/email",
+			"put",
+			"responses",
+			"204"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 288,
+				"character": 14
+			},
+			"end": {
+				"line": 290,
+				"character": 21
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}/email",
+			"put",
+			"responses",
+			"400"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 291,
+				"character": 14
+			},
+			"end": {
+				"line": 299,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}/email",
+			"put",
+			"responses",
+			"400",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 299,
+				"character": 26
+			},
+			"end": {
+				"line": 299,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/{username}/email",
+			"put",
+			"responses",
+			"400",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 299,
+				"character": 26
+			},
+			"end": {
+				"line": 299,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}/email",
+			"put",
+			"responses",
+			"401"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 300,
+				"character": 14
+			},
+			"end": {
+				"line": 308,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}/email",
+			"put",
+			"responses",
+			"401",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 308,
+				"character": 26
+			},
+			"end": {
+				"line": 308,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/{username}/email",
+			"put",
+			"responses",
+			"401",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 308,
+				"character": 26
+			},
+			"end": {
+				"line": 308,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}/password",
+			"put",
+			"parameters",
+			"0",
+			"schema"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 322,
+				"character": 17
+			},
+			"end": {
+				"line": 322,
+				"character": 49
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/{username}/password",
+			"put",
+			"parameters",
+			"0",
+			"schema"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 322,
+				"character": 17
+			},
+			"end": {
+				"line": 322,
+				"character": 49
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}/password",
+			"put",
+			"requestBody",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"password"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 331,
+				"character": 25
+			},
+			"end": {
+				"line": 331,
+				"character": 57
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/{username}/password",
+			"put",
+			"requestBody",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"password"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 331,
+				"character": 25
+			},
+			"end": {
+				"line": 331,
+				"character": 57
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/users/v1/{username}/password",
+			"put",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 332,
+				"character": 16
+			},
+			"end": {
+				"line": 353,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/users/v1/{username}/password",
+			"put",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 332,
+				"character": 16
+			},
+			"end": {
+				"line": 353,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/users/v1/{username}/password",
+			"put",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 332,
+				"character": 16
+			},
+			"end": {
+				"line": 353,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/users/v1/{username}/password",
+			"put",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 332,
+				"character": 16
+			},
+			"end": {
+				"line": 353,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}/password",
+			"put",
+			"responses",
+			"204"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 333,
+				"character": 14
+			},
+			"end": {
+				"line": 335,
+				"character": 21
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}/password",
+			"put",
+			"responses",
+			"400"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 336,
+				"character": 14
+			},
+			"end": {
+				"line": 344,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}/password",
+			"put",
+			"responses",
+			"400",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 344,
+				"character": 26
+			},
+			"end": {
+				"line": 344,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/{username}/password",
+			"put",
+			"responses",
+			"400",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 344,
+				"character": 26
+			},
+			"end": {
+				"line": 344,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}/password",
+			"put",
+			"responses",
+			"401"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 345,
+				"character": 14
+			},
+			"end": {
+				"line": 353,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/users/v1/{username}/password",
+			"put",
+			"responses",
+			"401",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 353,
+				"character": 26
+			},
+			"end": {
+				"line": 353,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/users/v1/{username}/password",
+			"put",
+			"responses",
+			"401",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 353,
+				"character": 26
+			},
+			"end": {
+				"line": 353,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api2:2023-read-restricted",
+		"path": [
+			"paths",
+			"/books/v1",
+			"get"
+		],
+		"message": "This read operation is not protected by any security scheme.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 355,
+				"character": 8
+			},
+			"end": {
+				"line": 374,
+				"character": 43
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/books/v1",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 360,
+				"character": 16
+			},
+			"end": {
+				"line": 374,
+				"character": 43
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/books/v1",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 360,
+				"character": 16
+			},
+			"end": {
+				"line": 374,
+				"character": 43
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-401",
+		"path": [
+			"paths",
+			"/books/v1",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[401].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 360,
+				"character": 16
+			},
+			"end": {
+				"line": 374,
+				"character": 43
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-401",
+		"path": [
+			"paths",
+			"/books/v1",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[401].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 360,
+				"character": 16
+			},
+			"end": {
+				"line": 374,
+				"character": 43
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/books/v1",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 360,
+				"character": 16
+			},
+			"end": {
+				"line": 374,
+				"character": 43
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/books/v1",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 360,
+				"character": 16
+			},
+			"end": {
+				"line": 374,
+				"character": 43
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-validation",
+		"path": [
+			"paths",
+			"/books/v1",
+			"get",
+			"responses"
+		],
+		"message": "Missing error response of either 400, 422 or 4XX.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 360,
+				"character": 16
+			},
+			"end": {
+				"line": 374,
+				"character": 43
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/books/v1",
+			"get",
+			"responses",
+			"200"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 361,
+				"character": 14
+			},
+			"end": {
+				"line": 374,
+				"character": 43
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-array-limit",
+		"path": [
+			"paths",
+			"/books/v1",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"Books"
+		],
+		"message": "Schema of type array must specify maxItems.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 368,
+				"character": 24
+			},
+			"end": {
+				"line": 374,
+				"character": 43
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/books/v1",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"Books",
+			"items",
+			"properties",
+			"book_title"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 373,
+				"character": 35
+			},
+			"end": {
+				"line": 373,
+				"character": 49
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/books/v1",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"Books",
+			"items",
+			"properties",
+			"book_title"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 373,
+				"character": 35
+			},
+			"end": {
+				"line": 373,
+				"character": 49
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/books/v1",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"Books",
+			"items",
+			"properties",
+			"user"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 374,
+				"character": 29
+			},
+			"end": {
+				"line": 374,
+				"character": 43
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/books/v1",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"Books",
+			"items",
+			"properties",
+			"user"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 374,
+				"character": 29
+			},
+			"end": {
+				"line": 374,
+				"character": 43
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/books/v1",
+			"post",
+			"requestBody",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"book_title"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 390,
+				"character": 27
+			},
+			"end": {
+				"line": 390,
+				"character": 60
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/books/v1",
+			"post",
+			"requestBody",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"book_title"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 390,
+				"character": 27
+			},
+			"end": {
+				"line": 390,
+				"character": 60
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/books/v1",
+			"post",
+			"requestBody",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"secret"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 391,
+				"character": 23
+			},
+			"end": {
+				"line": 391,
+				"character": 61
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/books/v1",
+			"post",
+			"requestBody",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"secret"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 391,
+				"character": 23
+			},
+			"end": {
+				"line": 391,
+				"character": 61
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/books/v1",
+			"post",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 392,
+				"character": 16
+			},
+			"end": {
+				"line": 419,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/books/v1",
+			"post",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 392,
+				"character": 16
+			},
+			"end": {
+				"line": 419,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/books/v1",
+			"post",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 392,
+				"character": 16
+			},
+			"end": {
+				"line": 419,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/books/v1",
+			"post",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 392,
+				"character": 16
+			},
+			"end": {
+				"line": 419,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/books/v1",
+			"post",
+			"responses",
+			"200"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 393,
+				"character": 14
+			},
+			"end": {
+				"line": 401,
+				"character": 65
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/books/v1",
+			"post",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 400,
+				"character": 26
+			},
+			"end": {
+				"line": 400,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/books/v1",
+			"post",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 400,
+				"character": 26
+			},
+			"end": {
+				"line": 400,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/books/v1",
+			"post",
+			"responses",
+			"400"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 402,
+				"character": 14
+			},
+			"end": {
+				"line": 410,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/books/v1",
+			"post",
+			"responses",
+			"400",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 410,
+				"character": 26
+			},
+			"end": {
+				"line": 410,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/books/v1",
+			"post",
+			"responses",
+			"400",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 410,
+				"character": 26
+			},
+			"end": {
+				"line": 410,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/books/v1",
+			"post",
+			"responses",
+			"401"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 411,
+				"character": 14
+			},
+			"end": {
+				"line": 419,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/books/v1",
+			"post",
+			"responses",
+			"401",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 419,
+				"character": 26
+			},
+			"end": {
+				"line": 419,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/books/v1",
+			"post",
+			"responses",
+			"401",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 419,
+				"character": 26
+			},
+			"end": {
+				"line": 419,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/books/v1/{book_title}",
+			"get",
+			"parameters",
+			"0",
+			"schema"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 433,
+				"character": 17
+			},
+			"end": {
+				"line": 433,
+				"character": 55
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/books/v1/{book_title}",
+			"get",
+			"parameters",
+			"0",
+			"schema"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 433,
+				"character": 17
+			},
+			"end": {
+				"line": 433,
+				"character": 55
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/books/v1/{book_title}",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 434,
+				"character": 16
+			},
+			"end": {
+				"line": 464,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit-responses-429",
+		"path": [
+			"paths",
+			"/books/v1/{book_title}",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing rate limiting response in responses[429].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 434,
+				"character": 16
+			},
+			"end": {
+				"line": 464,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/books/v1/{book_title}",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 434,
+				"character": 16
+			},
+			"end": {
+				"line": 464,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-responses-500",
+		"path": [
+			"paths",
+			"/books/v1/{book_title}",
+			"get",
+			"responses"
+		],
+		"message": "Operation is missing responses[500].content.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 434,
+				"character": 16
+			},
+			"end": {
+				"line": 464,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api8:2023-define-error-validation",
+		"path": [
+			"paths",
+			"/books/v1/{book_title}",
+			"get",
+			"responses"
+		],
+		"message": "Missing error response of either 400, 422 or 4XX.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 434,
+				"character": 16
+			},
+			"end": {
+				"line": 464,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/books/v1/{book_title}",
+			"get",
+			"responses",
+			"200"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 435,
+				"character": 14
+			},
+			"end": {
+				"line": 446,
+				"character": 76
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-array-limit",
+		"path": [
+			"paths",
+			"/books/v1/{book_title}",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema"
+		],
+		"message": "Schema of type array must specify maxItems.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 439,
+				"character": 21
+			},
+			"end": {
+				"line": 446,
+				"character": 76
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/books/v1/{book_title}",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"items",
+			"properties",
+			"book_title"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 444,
+				"character": 31
+			},
+			"end": {
+				"line": 444,
+				"character": 69
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/books/v1/{book_title}",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"items",
+			"properties",
+			"book_title"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 444,
+				"character": 31
+			},
+			"end": {
+				"line": 444,
+				"character": 69
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/books/v1/{book_title}",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"items",
+			"properties",
+			"owner"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 445,
+				"character": 26
+			},
+			"end": {
+				"line": 445,
+				"character": 58
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/books/v1/{book_title}",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"items",
+			"properties",
+			"owner"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 445,
+				"character": 26
+			},
+			"end": {
+				"line": 445,
+				"character": 58
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/books/v1/{book_title}",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"items",
+			"properties",
+			"secret"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 446,
+				"character": 27
+			},
+			"end": {
+				"line": 446,
+				"character": 76
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/books/v1/{book_title}",
+			"get",
+			"responses",
+			"200",
+			"content",
+			"application/json",
+			"schema",
+			"items",
+			"properties",
+			"secret"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 446,
+				"character": 27
+			},
+			"end": {
+				"line": 446,
+				"character": 76
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/books/v1/{book_title}",
+			"get",
+			"responses",
+			"401"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 447,
+				"character": 14
+			},
+			"end": {
+				"line": 455,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/books/v1/{book_title}",
+			"get",
+			"responses",
+			"401",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 455,
+				"character": 26
+			},
+			"end": {
+				"line": 455,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/books/v1/{book_title}",
+			"get",
+			"responses",
+			"401",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 455,
+				"character": 26
+			},
+			"end": {
+				"line": 455,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-rate-limit",
+		"path": [
+			"paths",
+			"/books/v1/{book_title}",
+			"get",
+			"responses",
+			"404"
+		],
+		"message": "All 2XX and 4XX responses should define rate limiting headers.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 456,
+				"character": 14
+			},
+			"end": {
+				"line": 464,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-limit",
+		"path": [
+			"paths",
+			"/books/v1/{book_title}",
+			"get",
+			"responses",
+			"404",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string must specify maxLength, enum, or const.",
+		"severity": 0,
+		"range": {
+			"start": {
+				"line": 464,
+				"character": 26
+			},
+			"end": {
+				"line": 464,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	},
+	{
+		"code": "owasp:api4:2023-string-restricted",
+		"path": [
+			"paths",
+			"/books/v1/{book_title}",
+			"get",
+			"responses",
+			"404",
+			"content",
+			"application/json",
+			"schema",
+			"properties",
+			"message"
+		],
+		"message": "Schema of type string should specify a format, pattern, enum, or const.",
+		"severity": 1,
+		"range": {
+			"start": {
+				"line": 464,
+				"character": 26
+			},
+			"end": {
+				"line": 464,
+				"character": 40
+			}
+		},
+		"source": "/home/claude/work/demo/specs/vampi_openapi3.yaml"
+	}
+]

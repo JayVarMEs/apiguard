@@ -1,0 +1,1199 @@
+{
+ "n_l2": 608,
+ "n_pos": 129,
+ "n_test_main": 304,
+ "n_pos_main": 62,
+ "label_source": "L2 (LLM majority vote); L3 for external",
+ "params": {
+  "max_depth": 3,
+  "eta": 0.05,
+  "subsample": 0.8,
+  "colsample_bytree": 0.8,
+  "min_child_weight": 3,
+  "reg_lambda": 2
+ },
+ "variants": {
+  "v1 (A-F, findings merged)": {
+   "n_features": 66,
+   "xgb": {
+    "pr_auc": [
+     0.520647089587069,
+     0.038307915457114046
+    ],
+    "roc_auc": [
+     0.8051339432655595,
+     0.02287652815805598
+    ],
+    "p@10": [
+     0.7,
+     0.20976176963403032
+    ],
+    "p@20": [
+     0.56,
+     0.11575836902790225
+    ],
+    "hyb_pr_auc": [
+     0.5005582709503588,
+     0.06801959209250794
+    ],
+    "hyb_roc_auc": [
+     0.7961230782792778,
+     0.012777491167869212
+    ],
+    "hyb_p@10": [
+     0.6599999999999999,
+     0.20591260281974
+    ]
+   },
+   "lr": {
+    "pr_auc": [
+     0.4338823914465859,
+     0.024446598643338854
+    ],
+    "roc_auc": [
+     0.8094356389059942,
+     0.008413667836849105
+    ],
+    "p@10": [
+     0.21999999999999997,
+     0.16
+    ],
+    "p@20": [
+     0.34,
+     0.037416573867739424
+    ],
+    "hyb_pr_auc": [
+     0.4755540060827464,
+     0.02610599779852193
+    ],
+    "hyb_roc_auc": [
+     0.7875626316883821,
+     0.006397407131902481
+    ],
+    "hyb_p@10": [
+     0.52,
+     0.09797958971132711
+    ]
+   },
+   "external": {
+    "crapi": {
+     "n": 44,
+     "n_flaw": 15,
+     "roc_auc": 0.3689655172413793,
+     "pr_auc": 0.2845467450345499,
+     "prevalence": 0.3409090909090909,
+     "roc_auc_design_visible": 0.5632183908045977,
+     "flaws_in_top5": 0,
+     "flaws_in_top10": 2,
+     "rank_design_visible": [
+      11,
+      20,
+      21
+     ]
+    },
+    "vampi": {
+     "n": 14,
+     "n_flaw": 10,
+     "roc_auc": 0.825,
+     "pr_auc": 0.9326515151515151,
+     "prevalence": 0.7142857142857143,
+     "roc_auc_design_visible": 0.95,
+     "flaws_in_top5": 5,
+     "flaws_in_top10": 8,
+     "rank_design_visible": [
+      3,
+      4,
+      5,
+      6,
+      8
+     ]
+    }
+   }
+  },
+  "v1 minus F": {
+   "n_features": 64,
+   "xgb": {
+    "pr_auc": [
+     0.4832975354396233,
+     0.0242885161489733
+    ],
+    "roc_auc": [
+     0.7992748421930885,
+     0.014475708908944975
+    ],
+    "p@10": [
+     0.62,
+     0.16
+    ],
+    "p@20": [
+     0.54,
+     0.128062484748657
+    ],
+    "hyb_pr_auc": [
+     0.4650528432752581,
+     0.05895608495559753
+    ],
+    "hyb_roc_auc": [
+     0.7913206794831987,
+     0.011408522274052531
+    ],
+    "hyb_p@10": [
+     0.44000000000000006,
+     0.27999999999999997
+    ]
+   },
+   "lr": {
+    "pr_auc": [
+     0.5503771108883783,
+     0.0706377690270909
+    ],
+    "roc_auc": [
+     0.8387963726535206,
+     0.014958447469345477
+    ],
+    "p@10": [
+     0.5800000000000001,
+     0.11661903789690603
+    ],
+    "p@20": [
+     0.5900000000000001,
+     0.048989794855663564
+    ],
+    "hyb_pr_auc": [
+     0.5662678824664042,
+     0.049271988807062295
+    ],
+    "hyb_roc_auc": [
+     0.8061074316904115,
+     0.009743179484131176
+    ],
+    "hyb_p@10": [
+     0.78,
+     0.11661903789690603
+    ]
+   },
+   "external": {
+    "crapi": {
+     "n": 44,
+     "n_flaw": 15,
+     "roc_auc": 0.3816091954022989,
+     "pr_auc": 0.2875698716675211,
+     "prevalence": 0.3409090909090909,
+     "roc_auc_design_visible": 0.5804597701149425,
+     "flaws_in_top5": 0,
+     "flaws_in_top10": 2,
+     "rank_design_visible": [
+      10,
+      19,
+      22
+     ]
+    },
+    "vampi": {
+     "n": 14,
+     "n_flaw": 10,
+     "roc_auc": 0.85,
+     "pr_auc": 0.941540404040404,
+     "prevalence": 0.7142857142857143,
+     "roc_auc_design_visible": 0.95,
+     "flaws_in_top5": 5,
+     "flaws_in_top10": 8,
+     "rank_design_visible": [
+      3,
+      4,
+      5,
+      6,
+      8
+     ]
+    }
+   }
+  },
+  "v3a: per-endpoint scanner, no F (A-E)": {
+   "n_features": 64,
+   "xgb": {
+    "pr_auc": [
+     0.5055749780430532,
+     0.05204206599687497
+    ],
+    "roc_auc": [
+     0.8021650542731977,
+     0.007890603309360651
+    ],
+    "p@10": [
+     0.72,
+     0.2712931993250107
+    ],
+    "p@20": [
+     0.63,
+     0.09273618495495703
+    ],
+    "hyb_pr_auc": [
+     0.5285029926935045,
+     0.021672541720150033
+    ],
+    "hyb_roc_auc": [
+     0.8006833851615935,
+     0.008240044969966331
+    ],
+    "hyb_p@10": [
+     0.72,
+     0.16
+    ]
+   },
+   "lr": {
+    "pr_auc": [
+     0.5292506804207292,
+     0.03984736170758778
+    ],
+    "roc_auc": [
+     0.8234510482951807,
+     0.012442298206860911
+    ],
+    "p@10": [
+     0.5599999999999999,
+     0.10198039027185568
+    ],
+    "p@20": [
+     0.6,
+     0.06324555320336757
+    ],
+    "hyb_pr_auc": [
+     0.5457782725927751,
+     0.02272172454587182
+    ],
+    "hyb_roc_auc": [
+     0.8072804864684733,
+     0.008191951601099826
+    ],
+    "hyb_p@10": [
+     0.8,
+     0.0894427190999916
+    ]
+   },
+   "external": {
+    "crapi": {
+     "n": 44,
+     "n_flaw": 15,
+     "roc_auc": 0.40229885057471265,
+     "pr_auc": 0.29666452253947206,
+     "prevalence": 0.3409090909090909,
+     "roc_auc_design_visible": 0.5747126436781609,
+     "flaws_in_top5": 0,
+     "flaws_in_top10": 2,
+     "rank_design_visible": [
+      11,
+      20,
+      22
+     ]
+    },
+    "vampi": {
+     "n": 14,
+     "n_flaw": 10,
+     "roc_auc": 0.85,
+     "pr_auc": 0.941540404040404,
+     "prevalence": 0.7142857142857143,
+     "roc_auc_design_visible": 0.95,
+     "flaws_in_top5": 5,
+     "flaws_in_top10": 8,
+     "rank_design_visible": [
+      1,
+      4,
+      5,
+      6,
+      8
+     ]
+    }
+   }
+  },
+  "v3b: + flaw patterns H": {
+   "n_features": 78,
+   "xgb": {
+    "pr_auc": [
+     0.616803251515211,
+     0.04137300692152671
+    ],
+    "roc_auc": [
+     0.8481910113127968,
+     0.01637361098394826
+    ],
+    "p@10": [
+     0.76,
+     0.20591260281974003
+    ],
+    "p@20": [
+     0.7100000000000001,
+     0.13564659966250533
+    ],
+    "hyb_pr_auc": [
+     0.6030467696538738,
+     0.016320708449458196
+    ],
+    "hyb_roc_auc": [
+     0.8306220655334368,
+     0.00718435727847412
+    ],
+    "hyb_p@10": [
+     0.86,
+     0.04898979485566354
+    ]
+   },
+   "lr": {
+    "pr_auc": [
+     0.5072471952246043,
+     0.023866106463334792
+    ],
+    "roc_auc": [
+     0.8265033889004341,
+     0.00922318133252853
+    ],
+    "p@10": [
+     0.45999999999999996,
+     0.04898979485566355
+    ],
+    "p@20": [
+     0.49000000000000005,
+     0.07348469228349537
+    ],
+    "hyb_pr_auc": [
+     0.5347371707629502,
+     0.019646241251992512
+    ],
+    "hyb_roc_auc": [
+     0.8099946120803116,
+     0.00815605553209389
+    ],
+    "hyb_p@10": [
+     0.7,
+     0.0632455532033676
+    ]
+   },
+   "external": {
+    "crapi": {
+     "n": 44,
+     "n_flaw": 15,
+     "roc_auc": 0.4045977011494252,
+     "pr_auc": 0.2947585682970545,
+     "prevalence": 0.3409090909090909,
+     "roc_auc_design_visible": 0.5862068965517242,
+     "flaws_in_top5": 0,
+     "flaws_in_top10": 2,
+     "rank_design_visible": [
+      11,
+      19,
+      22
+     ]
+    },
+    "vampi": {
+     "n": 14,
+     "n_flaw": 10,
+     "roc_auc": 0.8,
+     "pr_auc": 0.9183658008658008,
+     "prevalence": 0.7142857142857143,
+     "roc_auc_design_visible": 0.9,
+     "flaws_in_top5": 5,
+     "flaws_in_top10": 8,
+     "rank_design_visible": [
+      3,
+      4,
+      5,
+      7,
+      8
+     ]
+    }
+   }
+  },
+  "v3c: + doc-level scanner S": {
+   "n_features": 83,
+   "xgb": {
+    "pr_auc": [
+     0.5576780764643289,
+     0.07538930239235006
+    ],
+    "roc_auc": [
+     0.8150452930898945,
+     0.024531649020154426
+    ],
+    "p@10": [
+     0.82,
+     0.16
+    ],
+    "p@20": [
+     0.6799999999999999,
+     0.12083045973594571
+    ],
+    "hyb_pr_auc": [
+     0.5045519471286037,
+     0.07940546033957217
+    ],
+    "hyb_roc_auc": [
+     0.8034796024285253,
+     0.015305071101201818
+    ],
+    "hyb_p@10": [
+     0.6199999999999999,
+     0.24819347291981714
+    ]
+   },
+   "lr": {
+    "pr_auc": [
+     0.558138467387502,
+     0.03252243782079185
+    ],
+    "roc_auc": [
+     0.847794169163764,
+     0.0062679455694197115
+    ],
+    "p@10": [
+     0.66,
+     0.08000000000000002
+    ],
+    "p@20": [
+     0.6,
+     0.04472135954999579
+    ],
+    "hyb_pr_auc": [
+     0.5761192757657647,
+     0.016362509240624237
+    ],
+    "hyb_roc_auc": [
+     0.8248044345795,
+     0.0054359852037262416
+    ],
+    "hyb_p@10": [
+     0.76,
+     0.10198039027185572
+    ]
+   },
+   "external": {
+    "crapi": {
+     "n": 44,
+     "n_flaw": 15,
+     "roc_auc": 0.40804597701149425,
+     "pr_auc": 0.29580218470291486,
+     "prevalence": 0.3409090909090909,
+     "roc_auc_design_visible": 0.5804597701149425,
+     "flaws_in_top5": 0,
+     "flaws_in_top10": 2,
+     "rank_design_visible": [
+      10,
+      18,
+      24
+     ]
+    },
+    "vampi": {
+     "n": 14,
+     "n_flaw": 10,
+     "roc_auc": 0.775,
+     "pr_auc": 0.9016991341991342,
+     "prevalence": 0.7142857142857143,
+     "roc_auc_design_visible": 0.85,
+     "flaws_in_top5": 4,
+     "flaws_in_top10": 8,
+     "rank_design_visible": [
+      3,
+      4,
+      6,
+      7,
+      8
+     ]
+    }
+   }
+  },
+  "v3 H only + A,B (no scanner)": {
+   "n_features": 46,
+   "xgb": {
+    "pr_auc": [
+     0.6311036471871169,
+     0.031464718506880075
+    ],
+    "roc_auc": [
+     0.8259482215447438,
+     0.00926374680555774
+    ],
+    "p@10": [
+     0.82,
+     0.07483314773547885
+    ],
+    "p@20": [
+     0.7299999999999999,
+     0.050990195135927854
+    ],
+    "hyb_pr_auc": [
+     0.5971831193089099,
+     0.020633325393231716
+    ],
+    "hyb_roc_auc": [
+     0.8026328935468083,
+     0.008042919874312432
+    ],
+    "hyb_p@10": [
+     0.8200000000000001,
+     0.132664991614216
+    ]
+   },
+   "lr": {
+    "pr_auc": [
+     0.5758433522628301,
+     0.023875304701581567
+    ],
+    "roc_auc": [
+     0.8294844358217961,
+     0.006701738106002685
+    ],
+    "p@10": [
+     0.6199999999999999,
+     0.132664991614216
+    ],
+    "p@20": [
+     0.6599999999999999,
+     0.037416573867739396
+    ],
+    "hyb_pr_auc": [
+     0.5734799074667128,
+     0.009556876977422033
+    ],
+    "hyb_roc_auc": [
+     0.8063330470904878,
+     0.005349467461736382
+    ],
+    "hyb_p@10": [
+     0.8,
+     0.0
+    ]
+   },
+   "external": {
+    "crapi": {
+     "n": 44,
+     "n_flaw": 15,
+     "roc_auc": 0.5344827586206896,
+     "pr_auc": 0.3411711497996328,
+     "prevalence": 0.3409090909090909,
+     "roc_auc_design_visible": 0.5919540229885056,
+     "flaws_in_top5": 0,
+     "flaws_in_top10": 2,
+     "rank_design_visible": [
+      10,
+      16,
+      27
+     ]
+    },
+    "vampi": {
+     "n": 14,
+     "n_flaw": 10,
+     "roc_auc": 0.825,
+     "pr_auc": 0.9216666666666667,
+     "prevalence": 0.7142857142857143,
+     "roc_auc_design_visible": 0.85,
+     "flaws_in_top5": 4,
+     "flaws_in_top10": 9,
+     "rank_design_visible": [
+      3,
+      4,
+      6,
+      7,
+      8
+     ]
+    }
+   }
+  }
+ },
+ "scanner_B1": {
+  "pr_auc": 0.46821752618533613,
+  "roc_auc": 0.6949495983423719,
+  "p@10": 0.4,
+  "p@20": 0.55
+ },
+ "random_pr_auc": 0.21151720913328598,
+ "scanner_B1_external": {
+  "crapi": {
+   "roc_auc": 0.6091954022988505,
+   "pr_auc": 0.4211261634367411
+  },
+  "vampi": {
+   "roc_auc": 0.5125,
+   "pr_auc": 0.790595238095238
+  }
+ },
+ "final": "v3b: + flaw patterns H",
+ "bootstrap_ci95": {
+  "v3_minus_v1_pr": [
+   -0.06838056836643902,
+   0.26485882459782445
+  ],
+  "v3_minus_v1_roc": [
+   -0.004546084002931078,
+   0.10244401384434623
+  ],
+  "v3_minus_scanner_pr": [
+   0.010258061959991308,
+   0.43269101470739285
+  ],
+  "v3_minus_scanner_roc": [
+   0.04885621183289397,
+   0.3479338596907048
+  ],
+  "v3hybrid_minus_scanner_pr": [
+   0.030708047766909483,
+   0.36573490470220016
+  ]
+ },
+ "tau": {
+  "rule": "highest tau with weighted OOF recall >= 0.60",
+  "tau": 0.5981287479400634,
+  "recall": 0.6111124020903351,
+  "precision": 0.5568276822398881,
+  "flagged_of_304": 72,
+  "max_f1_tau": 0.4936984360218048,
+  "max_f1": 0.637678028210238
+ },
+ "shap_global_top15": [
+  [
+   "has_security",
+   0.6866337656974792,
+   "B"
+  ],
+  [
+   "src_none",
+   0.38155949115753174,
+   "B"
+  ],
+  [
+   "sens_resp_ratio",
+   0.12686868011951447,
+   "C"
+  ],
+  [
+   "h_write_noauth",
+   0.10984697192907333,
+   "H"
+  ],
+  [
+   "owasp_api2",
+   0.10207734256982803,
+   "E"
+  ],
+  [
+   "n_header_params",
+   0.09115549921989441,
+   "A"
+  ],
+  [
+   "n_path_params",
+   0.08988533169031143,
+   "A"
+  ],
+  [
+   "path_depth",
+   0.0645127072930336,
+   "A"
+  ],
+  [
+   "resp_prop_count",
+   0.05180759355425835,
+   "A"
+  ],
+  [
+   "sens_resp_count",
+   0.044715818017721176,
+   "C"
+  ],
+  [
+   "m_get",
+   0.041104529052972794,
+   "A"
+  ],
+  [
+   "mean_resp_desc_len",
+   0.019766205921769142,
+   "D"
+  ],
+  [
+   "summary_len",
+   0.017414899542927742,
+   "D"
+  ],
+  [
+   "rule_count",
+   0.01469620130956173,
+   "E"
+  ],
+  [
+   "has_pagination",
+   0.014612083323299885,
+   "D"
+  ]
+ ],
+ "shap_by_group": {
+  "A": 0.37300565280020237,
+  "B": 1.0744072482921183,
+  "C": 0.19612432783469558,
+  "D": 0.07096764887683094,
+  "E": 0.12141443463042378,
+  "H": 0.11850060918368399
+ },
+ "external_table": [
+  {
+   "app": "crapi",
+   "endpoint": "POST /identity/api/auth/v2.7/user/login-with-token",
+   "score": 0.654,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "POST /identity/api/auth/login",
+   "score": 0.638,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "POST /identity/api/auth/forget-password",
+   "score": 0.576,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "POST /identity/api/auth/v4.0/user/login-with-token",
+   "score": 0.567,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "POST /identity/api/auth/signup",
+   "score": 0.536,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "POST /workshop/api/mechanic/signup",
+   "score": 0.535,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "POST /identity/api/auth/v3/check-otp",
+   "score": 0.533,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "POST /identity/api/auth/v2/check-otp",
+   "score": 0.533,
+   "flaw": 1,
+   "category": "API2;API4",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "GET /workshop/api/shop/return_qr_code",
+   "score": 0.507,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "GET /identity/api/v2/user/dashboard",
+   "score": 0.455,
+   "flaw": 1,
+   "category": "API2",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "GET /workshop/api/mechanic/receive_report",
+   "score": 0.451,
+   "flaw": 1,
+   "category": "API2",
+   "design_visible": 1
+  },
+  {
+   "app": "crapi",
+   "endpoint": "GET /workshop/api/management/users/all",
+   "score": 0.409,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "GET /workshop/api/mechanic/service_requests",
+   "score": 0.397,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "POST /identity/api/v2/user/videos",
+   "score": 0.341,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "GET /workshop/api/mechanic/",
+   "score": 0.326,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "GET /workshop/api/mechanic/mechanic_report",
+   "score": 0.311,
+   "flaw": 1,
+   "category": "API1",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "PUT /identity/api/v2/user/videos/{video_id}",
+   "score": 0.308,
+   "flaw": 1,
+   "category": "API3",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "POST /community/api/v2/community/posts/{postId}/comment",
+   "score": 0.301,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "GET /identity/api/v2/user/videos/{video_id}",
+   "score": 0.296,
+   "flaw": 1,
+   "category": "API3",
+   "design_visible": 1
+  },
+  {
+   "app": "crapi",
+   "endpoint": "POST /community/api/v2/community/posts",
+   "score": 0.281,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "GET /workshop/api/shop/orders/all",
+   "score": 0.262,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "GET /community/api/v2/community/posts/recent",
+   "score": 0.252,
+   "flaw": 1,
+   "category": "API3",
+   "design_visible": 1
+  },
+  {
+   "app": "crapi",
+   "endpoint": "POST /identity/api/v2/user/reset-password",
+   "score": 0.24,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "GET /workshop/api/shop/orders/{order_id}",
+   "score": 0.238,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "PUT /workshop/api/shop/orders/{order_id}",
+   "score": 0.238,
+   "flaw": 1,
+   "category": "API3",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "DELETE /identity/api/v2/user/videos/{video_id}",
+   "score": 0.232,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "GET /community/api/v2/community/posts/{postId}",
+   "score": 0.228,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "POST /identity/api/v2/user/verify-email-token",
+   "score": 0.225,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "POST /workshop/api/shop/orders/return_order",
+   "score": 0.224,
+   "flaw": 1,
+   "category": "API6",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "GET /identity/api/v2/vehicle/vehicles",
+   "score": 0.219,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "POST /identity/api/v2/user/change-email",
+   "score": 0.217,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "GET /identity/api/v2/user/videos/convert_video",
+   "score": 0.217,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "GET /identity/api/v2/vehicle/{vehicleId}/location",
+   "score": 0.208,
+   "flaw": 1,
+   "category": "API1",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "POST /workshop/api/shop/products",
+   "score": 0.207,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "DELETE /identity/api/v2/admin/videos/{video_id}",
+   "score": 0.205,
+   "flaw": 1,
+   "category": "API5",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "POST /workshop/api/shop/apply_coupon",
+   "score": 0.201,
+   "flaw": 1,
+   "category": "API8",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "GET /workshop/api/shop/products",
+   "score": 0.2,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "POST /workshop/api/shop/orders",
+   "score": 0.2,
+   "flaw": 1,
+   "category": "API3",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "POST /workshop/api/merchant/contact_mechanic",
+   "score": 0.2,
+   "flaw": 1,
+   "category": "API4;API7",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "POST /identity/api/v2/vehicle/add_vehicle",
+   "score": 0.199,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "POST /identity/api/v2/user/pictures",
+   "score": 0.197,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "POST /identity/api/v2/vehicle/resend_email",
+   "score": 0.197,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "POST /community/api/v2/coupon/new-coupon",
+   "score": 0.195,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "crapi",
+   "endpoint": "POST /community/api/v2/coupon/validate-coupon",
+   "score": 0.195,
+   "flaw": 1,
+   "category": "API8",
+   "design_visible": 0
+  },
+  {
+   "app": "vampi",
+   "endpoint": "POST /users/v1/login",
+   "score": 0.704,
+   "flaw": 1,
+   "category": "API2;API4",
+   "design_visible": 0
+  },
+  {
+   "app": "vampi",
+   "endpoint": "POST /users/v1/register",
+   "score": 0.701,
+   "flaw": 1,
+   "category": "API3",
+   "design_visible": 0
+  },
+  {
+   "app": "vampi",
+   "endpoint": "GET /users/v1/{username}",
+   "score": 0.68,
+   "flaw": 1,
+   "category": "API1;API2",
+   "design_visible": 1
+  },
+  {
+   "app": "vampi",
+   "endpoint": "GET /users/v1/_debug",
+   "score": 0.613,
+   "flaw": 1,
+   "category": "API3",
+   "design_visible": 1
+  },
+  {
+   "app": "vampi",
+   "endpoint": "GET /users/v1",
+   "score": 0.522,
+   "flaw": 1,
+   "category": "API2;API3",
+   "design_visible": 1
+  },
+  {
+   "app": "vampi",
+   "endpoint": "GET /",
+   "score": 0.518,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "vampi",
+   "endpoint": "GET /books/v1",
+   "score": 0.5,
+   "flaw": 1,
+   "category": "API2",
+   "design_visible": 1
+  },
+  {
+   "app": "vampi",
+   "endpoint": "GET /createdb",
+   "score": 0.499,
+   "flaw": 1,
+   "category": "API5",
+   "design_visible": 1
+  },
+  {
+   "app": "vampi",
+   "endpoint": "GET /me",
+   "score": 0.457,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "vampi",
+   "endpoint": "GET /books/v1/{book_title}",
+   "score": 0.421,
+   "flaw": 1,
+   "category": "API1",
+   "design_visible": 0
+  },
+  {
+   "app": "vampi",
+   "endpoint": "PUT /users/v1/{username}/password",
+   "score": 0.25,
+   "flaw": 1,
+   "category": "API1",
+   "design_visible": 0
+  },
+  {
+   "app": "vampi",
+   "endpoint": "PUT /users/v1/{username}/email",
+   "score": 0.236,
+   "flaw": 1,
+   "category": "API4",
+   "design_visible": 0
+  },
+  {
+   "app": "vampi",
+   "endpoint": "DELETE /users/v1/{username}",
+   "score": 0.22,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  },
+  {
+   "app": "vampi",
+   "endpoint": "POST /books/v1",
+   "score": 0.218,
+   "flaw": 0,
+   "category": "",
+   "design_visible": 0
+  }
+ ]
+}
