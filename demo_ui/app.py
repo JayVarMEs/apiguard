@@ -19,7 +19,7 @@ PORT = int(os.environ.get("PORT", 8765))
 HOST = os.environ.get("HOST", "127.0.0.1")   # set HOST=0.0.0.0 when deployed
 MAX_BYTES = 3_000_000                        # upload size cap
 SLOTS = threading.BoundedSemaphore(2)        # at most 2 scans at once
-LAST_PING = [0.0]                            # the page pings every 3 s; no ping for 20 s after the first = window closed
+LAST_PING = [0.0]                            # the page pings every 3 s; no ping for 10 min = window closed (minimised windows are throttled by the browser, so a short limit stopped the app)
 
 
 def open_app_window(url):
@@ -227,7 +227,7 @@ def serve():
             while True:
                 time.sleep(3)
                 now = time.time()
-                if (LAST_PING[0] and now - LAST_PING[0] > 20) or (not LAST_PING[0] and now - start > 90):
+                if (LAST_PING[0] and now - LAST_PING[0] > 600) or (not LAST_PING[0] and now - start > 300):
                     os._exit(0)
         threading.Thread(target=watchdog, daemon=True).start()
     try:
